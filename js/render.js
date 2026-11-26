@@ -20,6 +20,7 @@ import { WALL2, ART2 } from './looks2.js';
 import { HEROES } from './heroes.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js';
+import { drawRolled, noteRoll, drawSoilGround, drawSoil } from './boulder-roll.js'; // (round 19, lane boulder19: boulders and snowballs drawn rolling, and their dirt trail)
 import { airTier, projZ, takeShadows, shadowOfH, LOB_SHADOW_R } from './height.js'; // round 19 (lane sys19): heights, one shadow system // round 13 (lane E): the newer enemies' extra drawing
 
 // One outline thickness for everything drawn here, in room units (util.js; round 19, lane outline19: the parts' and the
@@ -263,6 +264,7 @@ function drawScene(ctx, w) {
   drawDanger(ctx, w);
   drawGroundFx(ctx, w);
   drawFoeGround(ctx, w); // round 13 (lane E): snow tracks, burrow mounds
+  drawSoilGround(ctx, w); // (round 19, lane boulder19: a rolling boulder's scuffs in the floor)
   flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
   // one shadow system (round 19, lane sys19: "MAKE SURE YOU USE 1 SHADOW SYSTEM FOR EVERYTHING"): a round shadow
   // straight under every unit, obstacle, crate, chest, lobbed thing and code-drawn thing in the air (top-down: no side
@@ -270,6 +272,7 @@ function drawScene(ctx, w) {
   // fainter the higher it is. Laid before the obstacles and pickups, so a shadow passes under a pillar, not over it.
   drawShadows(ctx, w, tf);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
+  drawSoil(ctx, w); // (round 19, lane boulder19: the dust and clods a rolling boulder kicks up, under the balls)
   for (const p of w.pillars) if (!p.painted) drawPillar(ctx, p, w); // (lane W: p.painted = already in the ground's picture, convoy.js)
   // crates on the grid (layout.js): square obstacles, colliding as the wall rectangle they are (48 across at sc 1)
   for (const r of w.walls) if (r.prop) { const x = r.x + r.w / 2, y = r.y + r.h / 2; prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
@@ -443,6 +446,8 @@ function drawHazard(ctx, h, t) {
 
 function drawPillar(ctx, p, w) {
   if (p.snowball) { // round 10: a yeti's snowball (foes10.js): packed snow, a blue shade and a few clumps
+    noteRoll(p, w, 'yeti-snowball'); // (round 19, lane boulder19: its turn and its trail, from how far it moved)
+    if (drawRolled(ctx, p, w, 'yeti-snowball')) return; // (round 19, lane boulder19: ?boulder=a|b, the ball drawn rolling, its picture's two bands gone)
     if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) { snowRoll(ctx, p); return; } // art round 9: its own prop, like the troll's boulder; round 13 (lane E): it turns as it rolls
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#F4FAFF');
     ctx.fillStyle = 'rgba(150,190,225,0.45)'; ctx.beginPath(); ctx.arc(p.x + p.r * 0.18, p.y + p.r * 0.2, p.r * 0.78, 0, TAU); ctx.fill();
@@ -462,6 +467,7 @@ function drawPillar(ctx, p, w) {
   if (name === 'rock') name = obstacleFor({ x: p.x, y: p.y, r: 99 }, w); // the style's boulder
   // grid obstacles (layout.js) fill their cell: a barrel 47 across at sc 1, a boulder ~60 at r 30
   const sc = p.grid ? (name === 'barrel' ? 1.5 : name === 'brazier' ? 1.25 : 1.2) : name === 'crate' || name === 'barrel' ? 1 : p.r / 30;
+  if (p.boulder) { noteRoll(p, w, name); if (drawRolled(ctx, p, w, name)) return; } // (round 19, lane boulder19: a troll's boulder drawn rolling, ?boulder=a|b, and its dirt trail)
   if (name !== 'pipe' && prop(ctx, name, p.x, p.y, PROP_BOX, { sc })) return;
   drawPillarThemed(ctx, p, w);
 }

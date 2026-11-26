@@ -28,6 +28,7 @@ import { makeMap } from './camp-map.js';
 import * as LOOKS from './looks.js';
 import { OUTLINES, setOutlines, OLCOL, setOlColor, PIXEL, setPixel } from './util.js'; // round 19 (lane toggles19): the two drawing switches; (lane looks19): outline colour, pixel look
 import { HPBARS, setHpBars } from './hpstyle.js';
+import { BOULDER_LOOKS, BOULDER_LOOK, setBoulderLook, DIRT, setDirt } from './boulder-roll.js'; // (round 19, lane boulder19: the boulders' two rolling looks to compare, and their dirt trail)
 import { resultStats, wireStats } from './stats-ui.js';
 
 // ---------------------------------------------------------------- dungeons (themes)
@@ -251,6 +252,10 @@ function bookView() {
 }
 
 // ================================================================ settings
+// (round 19, lane boulder19) a small ball for each rolling look: the texture sliding (lines behind it), the picture turning
+// (an arrow over it), the picture standing still (its moss on top)
+const boulderSwatch = (l) => `<svg viewBox="0 0 90 30"><g stroke="#2B2230" stroke-width="2.4" stroke-linecap="round">${l.id === 'b' ? '<path d="M16 10h14M10 16h20M16 22h14" stroke="#B9B2A6"/>' : ''}<circle cx="52" cy="15" r="12" fill="#9F998E"/></g>${
+  l.id === 'old' ? '<path d="M48 5q8-1 13 6l-4 1-3 3-3-2z" fill="#6E9C55"/>' : l.id === 'a' ? '<path d="M44 22q-2-12 12-12l-1-3 6 5-6 4v-3q-9 0-11 9z" fill="#FFF4DC" stroke="#2B2230" stroke-width="1.2"/>' : '<path d="M45 13q5-4 9 0l-3 2-2 3-3-2z" fill="#6E9C55"/>'}</svg>`;
 function settingsView() {
   resetArmed = false; // a redraw always shows the unarmed button
   const looks = (list, cur, act, swatch) => `<div class="looks">${list.map((l) => `<button class="look ${String(cur) === String(l.id) ? 'on' : ''}" data-act="${act}:${l.id}">
@@ -272,7 +277,9 @@ function settingsView() {
     <section class="group dev"><h3 class="cap">Dev</h3>
       <div role="button" class="rowbtn ${save.cheat ? 'on' : ''}" data-act="cheat"><div><b>Unlimited gold and points</b><span class="quiet small">Everything is free, every dungeon is open and the Book shows every monster. Your real purse is kept for when you switch it off.</span></div><span class="switch"><i></i></span></div>
       <div role="button" class="rowbtn ${showAll() ? 'on' : ''}" data-act="webAll"><div><b>Show the whole skill web</b><span class="quiet small">Every node, even ones far from what a hero knows.</span></div><span class="switch"><i></i></span></div>
-      <div role="button" class="rowbtn ${save.battleDev ? 'on' : ''}" data-act="battleDev"><div><b>Battle: field everything</b><span class="quiet small">Every hero and monster can be picked on the battle page, beaten or not.</span></div><span class="switch"><i></i></span></div></section>
+      <div role="button" class="rowbtn ${save.battleDev ? 'on' : ''}" data-act="battleDev"><div><b>Battle: field everything</b><span class="quiet small">Every hero and monster can be picked on the battle page, beaten or not.</span></div><span class="switch"><i></i></span></div>
+      <h3 class="cap">Rolling boulders</h3>${looks(BOULDER_LOOKS, BOULDER_LOOK, 'boulder', boulderSwatch)}
+      <div role="button" class="rowbtn ${DIRT ? 'on' : ''}" data-act="dirt"><div><b>Boulder dirt trail</b><span class="quiet small">Dust, clods and scuffs behind a rolling boulder; snow behind a snowball.</span></div><span class="switch"><i></i></span></div></section>
     <section class="group"><h3 class="cap">Account</h3>
       <button class="btn wide" data-act="reset" id="resetBtn">Reset account</button>
       <p class="quiet small" id="resetNote">Start over from nothing. Sound and look settings are kept.</p></section>
@@ -416,6 +423,8 @@ function onClick(e) {
     case 'iconstats': case 'iconitems': setIconPick(act === 'iconstats' ? 'stats' : 'items', arg).then(() => render()); cue('tap'); break;
     case 'cheat': save.cheat = !save.cheat; ok(); break;
     case 'battleDev': save.battleDev = !save.battleDev; cue('tap'); ok(); break;
+    case 'boulder': setBoulderLook(arg); cue('tap'); render(); break; // (round 19, lane boulder19)
+    case 'dirt': setDirt(!DIRT); cue('tap'); render(); break; // (round 19, lane boulder19)
     case 'reset': if (!resetArmed) { resetArmed = true; cue('tap'); showReset(); setTimeout(() => { resetArmed = false; showReset(); }, 5000); } else { resetSave(); location.reload(); } break;
     case 'webAll': setShowAll(!showAll()); cue('tap'); render(); break;
     case 'closesheet': closeSheet(); break;
