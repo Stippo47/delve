@@ -7,6 +7,22 @@ pushed back when being held."
 And later in the round: "For the troll. Things that are touching the boulder almost get glued to it, in front. Like if
 he rolls the bolder into someone it kind of holds the target in front."
 
+## What was asked, and where to see it
+
+- **"The troll should rotate more around the boulder when turning."** It walks round the boulder now; the boulder
+  shifts about its own width (it used to swing right round the troll). As quick as before. `after-turn180-troll.mp4`
+  0:00-0:01 against `before-turn180-troll.mp4` 0:00-0:01; rock troll `after-turn180-rocktroll.mp4` 0:00-0:01.
+- **"Many times the boulder just pushes entities through walls and stuff as it supposedly doesnt get pushed back when
+  being held."** The boulder is a solid body: walls, rocks and the room's edge stop it, bodies push back on it by their
+  weight, a stopped boulder stops the troll. In every test, nobody ends up in a wall or outside the room any more (5,464
+  times before, 0 after). `after-corner-rocktroll.mp4` 0:02 on against `before-corner-rocktroll.mp4` 0:02-0:03;
+  `after-door-troll.mp4` against `before-door-troll.mp4` from 0:02.
+- **"Things that are touching the boulder almost get glued to it, in front. Like if he rolls the bolder into someone it
+  kind of holds the target in front."** The troll stops pushing when the boulder reaches its target and bowls it into
+  them; anyone else in the boulder's way slips off to the side. `after-push-troll.mp4` 0:01-0:05 against
+  `before-push-troll.mp4` 0:01-0:05 (walked out of the picture on the boulder's front).
+- **"the troll shaped units"**: troll, rock troll and yeti, their elites and majors, wherever they turn up (below).
+
 ## Who is troll-shaped
 
 - **Troll** (js/enemies.js; the Warren's third floor, its elite room; its boulder has health and breaks), **Rock Troll**
