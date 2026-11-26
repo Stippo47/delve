@@ -108,8 +108,8 @@ const FILMS = {
   drake: { battle: 'cinder,imp|paladin,dame,berserker,oldguard,cleric', arena: 'ember', secs: 9, zoom: 1.0, q: 'bossmove=death', stage: `
     const dr = of('b', 'cinder'), sp = of('b', 'imp'); side('a').forEach((u) => { tough(u, 6, 1); });
     put(sp, 60, 60); hold(sp); tough(sp, 80, 0);
-    // (a spare of its side: the battle goes on after the drake; it is put past the husk, so the heroes walk over it to get there)
-    each = (T) => { at(T, 1.2, 'kill', () => { if (dr && !dr.dead) { cam(dr.x, dr.y); die(dr, side('a')[0], 0); const a = Math.atan2(dr.y - CY, dr.x - CX) + Math.PI; put(sp, dr.x + Math.cos(dr.facing) * 260, dr.y + Math.sin(dr.facing) * 260); } }); };` },
+    // (a spare of its side: the battle goes on after the drake; it is put on the husk, so the heroes come and stand over it)
+    each = (T) => { at(T, 1.2, 'kill', () => { if (dr && !dr.dead) { cam(dr.x, dr.y); die(dr, side('a')[0], 0); put(sp, dr.x, dr.y); } }); };` },
   // The Great Engine brought down beside the heroes: its dome drops and its cog rolls off. Before: both drawn over the
   // heroes; after: on the floor under them (plates and bolts still fly over them while in the air).
   engine: { battle: 'greatEngine,gearSprite|paladin,dame,berserker,oldguard', arena: 'foundry', secs: 5, zoom: 1.1, stage: `

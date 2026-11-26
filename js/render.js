@@ -257,7 +257,7 @@ function drawScene(ctx, w) {
   if (view.pixel && floorCache.exact) ctx.imageSmoothingEnabled = false; // (round 19, lane looks19: the floor at its own pixels)
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   if (view.pixel) ctx.imageSmoothingEnabled = !NEAREST;
-  const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt; // (round 19, lane corpses19: up here, as the downed are drawn now)
+  const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); // (round 19, lane corpses19: up here, as the downed are drawn now; w._dt is still set where it was, as the arena's drawing reads it)
   drawBodies(ctx, w, dt); // (round 19, lane corpses19: the bodies first, on the bare floor, under everything)
   drawDoors(ctx, w);
   for (const r of w.walls) if (r.temp != null) { if (r.kind === 'ice') drawIceWall(ctx, r, w.time); else if (WALL2[r.kind]) WALL2[r.kind](ctx, r, w.time); /* round 15 (lane N): a wall with its own look (the Earth Mage's stone) */ else drawWallThemed(ctx, r, w); } // the rest are in the floor cache
@@ -288,6 +288,7 @@ function drawScene(ctx, w) {
   // thrown foe, a pounce's hang, a hop, a swoop, the imps, the spirit eagle, bats), each by its depth on screen
   // (round 19, lane corpses19: the downed are drawn with the bodies now, drawBodies; still first here for the overlays)
   const order = [...w.units].map((u) => (u._tier = airTier(u), u)).sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || a._tier - b._tier || screenDepth(a) - screenDepth(b));
+  w._lastDraw = w.time; w._dt = dt;
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
