@@ -456,7 +456,8 @@ Object.assign(DRAW2, {
   // Earthquake III: the floor heaves up: a ring of slabs thrust out of it, then they sink
   heaveUp(ctx, f, w, layer) {
     const k = k01(f.t / f.max), up = k < 0.25 ? easeOut(k / 0.25) : 1 - k01((k - 0.5) / 0.5);
-    if (layer === 'ground') { for (let i = 0; i < 12; i++) { const b = i / 12 * TAU; dust(ctx, f.x + Math.cos(b) * f.r * (0.4 + 0.6 * easeOut(k)), f.y + Math.sin(b) * f.r * (0.4 + 0.6 * easeOut(k)), 15 * (1 - k) + 4, 0.55 * (1 - k)); } return; }
+    if (layer !== 'ground') return; // (round 19, lane physics19: "spikes shouldn't ever render onto of an entity": the slabs come up under the bodies; they were drawn over them)
+    for (let i = 0; i < 12; i++) { const b = i / 12 * TAU; dust(ctx, f.x + Math.cos(b) * f.r * (0.4 + 0.6 * easeOut(k)), f.y + Math.sin(b) * f.r * (0.4 + 0.6 * easeOut(k)), 15 * (1 - k) + 4, 0.55 * (1 - k)); }
     if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.9, '#FFF8E6', 0.5 * (1 - k / 0.2)));
     const L = []; for (let i = 0; i < 11; i++) { const b = i / 11 * TAU, rr = f.r * (i % 2 ? 0.75 : 0.42); L.push([f.x + Math.cos(b) * rr, f.y + Math.sin(b) * rr, i]); }
     L.sort((p, q) => (vyOf() ? p[1] - q[1] : q[0] - p[0]));
@@ -465,7 +466,8 @@ Object.assign(DRAW2, {
   // Spike Chain: stone spikes bursting out of the floor one after another along the line, each standing a moment
   spikeRun(ctx, f, w, layer) {
     const L = Math.hypot(f.x1 - f.x, f.y1 - f.y), n = Math.max(2, Math.round(L / 19));
-    if (layer === 'ground') { const k = k01(f.t / f.run); ctx.save(); ctx.globalAlpha *= 0.55 * fade(f, 0.05, 0.4); ctx.strokeStyle = 'rgba(43,34,48,0.65)'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(lerp(f.x, f.x1, k), lerp(f.y, f.y1, k)); ctx.stroke(); ctx.restore(); return; }
+    if (layer !== 'ground') return; // (round 19, lane physics19: the spikes run under the bodies; they were drawn over them)
+    { const k = k01(f.t / f.run); ctx.save(); ctx.globalAlpha *= 0.55 * fade(f, 0.05, 0.4); ctx.strokeStyle = 'rgba(43,34,48,0.65)'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(lerp(f.x, f.x1, k), lerp(f.y, f.y1, k)); ctx.stroke(); ctx.restore(); }
     const S = []; for (let i = 1; i <= n; i++) { const q = i / n, born = q * f.run, age = f.t - born; if (age < 0) continue; const off = (hash(i, 3) - 0.5) * 12, nx = -(f.y1 - f.y) / (L || 1), ny = (f.x1 - f.x) / (L || 1);
       const up = age < 0.09 ? easeOut(age / 0.09) : 1 - k01((age - 0.4) / 0.28); if (up <= 0) continue; S.push([lerp(f.x, f.x1, q) + nx * off, lerp(f.y, f.y1, q) + ny * off, i, up, age]); }
     S.sort((p, q) => (vyOf() ? p[1] - q[1] : q[0] - p[0]));
@@ -474,7 +476,8 @@ Object.assign(DRAW2, {
   // the spike that comes up under one enemy: three, the middle one tall (held: it stands as long as the root)
   bigSpike(ctx, f, w, layer) {
     const u = f.unit && live(f.unit) ? f.unit : null, x = u ? u.x : f.x, y = u ? u.y : f.y, k = k01(f.t / f.max), up = f.t < 0.1 ? easeOut(f.t / 0.1) : 1 - k01((f.max - 0.25 - f.t) / -0.25);
-    if (layer === 'ground') { if (f.t < 0.3) dust(ctx, x, y, f.r * (0.8 + f.t * 2), 0.5 * (1 - f.t / 0.3)); return; }
+    if (layer !== 'ground') return; // (round 19, lane physics19: the spikes come up under the one they hold, not over it)
+    if (f.t < 0.3) dust(ctx, x, y, f.r * (0.8 + f.t * 2), 0.5 * (1 - f.t / 0.3));
     if (f.t < 0.12) lit(ctx, () => glowDisc(ctx, x, y, f.r * 1.2, '#FFF8E6', 0.6 * (1 - f.t / 0.12)));
     const h = k01(up); spike(ctx, x - f.r * 0.55, y + 2, 20 * h, 7, -0.35); spike(ctx, x + f.r * 0.55, y + 2, 22 * h, 7, 0.35); spike(ctx, x, y + f.r * 0.5, 36 * h, 9.5, 0.06 * Math.sin(k * 9));
   },

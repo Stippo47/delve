@@ -348,7 +348,11 @@ export function dragFling(w, u, o) {
   const T = Math.max(0.16, L / sp * 1.2);
   const canCarry = (e) => o.carry !== false && !e.fixed && !e.def.boss && !e.def.part && e.mass <= (o.maxMass ?? Math.max(3, u.mass * 1.6)) && !(e.buffs || []).some((b) => b.knockImmune) && !(e.trinketHooks || []).some((h) => h.knockImmune);
   const carry = (w2) => { if (!held) return; if (!alive(held)) { held = null; return; }
-    held.x = u.x + Math.cos(a) * (u.r + held.r + 1); held.y = u.y + Math.sin(a) * (u.r + held.r + 1); held.vx = held.vy = held.kx = held.ky = held.dvx = held.dvy = 0; held.spd = 0;
+    // (round 19, lane physics19: picked up, it is drawn onto the carrier's front over a few steps: 35% of the way a
+    // step and never less than 9. It was put there in the one step it was met, up to 60 or 70 from where it stood: a
+    // crawler's head went 54 in a step and its whole body with it)
+    { const tx = u.x + Math.cos(a) * (u.r + held.r + 1), ty = u.y + Math.sin(a) * (u.r + held.r + 1), ex = tx - held.x, ey = ty - held.y, ed = Math.hypot(ex, ey), go = ed <= 9 ? 1 : Math.max(0.35, 9 / ed);
+      held.x += ex * go; held.y += ey * go; } held.vx = held.vy = held.kx = held.ky = held.dvx = held.dvy = 0; held.spd = 0;
     held.stunT = Math.max(held.stunT || 0, 0.12); held.passUntil = w2.time + 0.05; };
   const letGo = (D, slam) => { const e = held; held = null; if (!e || !alive(e)) return;
     const kn = (o.knock ?? 300) * (slam ? 0.5 : 1);

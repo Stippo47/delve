@@ -2256,7 +2256,7 @@ export const ABILITIES2 = {
       if (tier >= 2) heal(w, u, u.maxHp * 0.15, u);
       k2(w, { draw: 'arenaRing', x: cx, y: cy, r: R, max: dur, ab: 'showboat' }); k2(w, { draw: 'horn', unit: u, x: u.x, y: u.y, r: 200, max: 0.8 });
       timer(u, 'arena', dur, () => {
-        for (const o of w.units) { if (o === u || o === t || !alive(o) || o.fixed) continue; const d = dist(o.x, o.y, cx, cy); if (d < R + o.r) { const a = angleTo(cx, cy, o.x, o.y); o.x = cx + Math.cos(a) * (R + o.r); o.y = cy + Math.sin(a) * (R + o.r); } }
+        for (const o of w.units) { if (o === u || o === t || !alive(o) || o.fixed) continue; const d = dist(o.x, o.y, cx, cy); if (d < R + o.r) { const a = angleTo(cx, cy, o.x, o.y), go = Math.min(R + o.r - d, 7); o.x += Math.cos(a) * go; o.y += Math.sin(a) * go; } } // (round 19, lane physics19: eased out of the ring, 7 a step: whoever stood in it when it went up was put on its rim in one step, up to 130 away)
         for (const p of w.projectiles) if (p.life > 0 && !p.noHit && p.owner !== u && p.owner !== t) { const d = dist(p.x, p.y, cx, cy); if (Math.abs(d - R) < 14 + p.r) { p.life = 0; sparks(w, p.x, p.y, angleTo(cx, cy, p.x, p.y), 5, '#F2C14E', 1); } }
         if (!alive(t)) return true;
       });

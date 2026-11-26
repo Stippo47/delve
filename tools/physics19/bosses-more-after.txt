@@ -1,0 +1,5 @@
+ikSpider      sewers   L25  sewers  won 161/200 lost 39 stuck 0 err 0| avg 167s 1 rooms
+cinder        ember    L44  ember   won 111/200 lost 89 stuck 0 err 0| avg 154s 1 rooms
+winterQueen   frost    L36  frost   won 133/200 lost 67 stuck 0 err 0| avg 150s 1 rooms
+chieftain     warren   L13  warren  won 133/200 lost 67 stuck 0 err 0| avg 109s 1 rooms
+sandWurm      dunes    L51  dunes   won 110/200 lost 90 stuck 0 err 0| avg 145s 1 rooms

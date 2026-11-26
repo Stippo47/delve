@@ -33,6 +33,7 @@ export const rOf = (off) => { for (let i = 1; i < SPINE.length; i++) if (off <= 
 // the chain: a joint every SEG along it; how far each may bend from the one before (radians): the neck is supple, the
 // trunk between the shoulders and the hips stiff, the tail freer towards its tip
 const SEG = 18, NODES = Math.ceil(LEN / SEG) + 1, NECK = 0.55, HEAD_TURN = 1.5, LEAD = 1.1;
+const SWING = 2.6; // (round 19, lane physics19) how fast a joint bent past its limit comes back to it, rad/s
 const bendOf = (off) => (off <= 110 ? 0.42 : off <= HIP ? 0.24 : 0.3 + 0.08 * (off - HIP) / (LEN - HIP));
 const stiffOf = (off) => (off <= 110 ? 1.2 : off <= HIP ? 3.2 : 1.6);   // how fast a bend eases out (a second): the trunk is stiffest
 const BOXES = [[92, 27], [128, 40], [178, 44], [228, 43], [276, 38], [322, 28], [380, 21]]; // the hit boxes along it (offset, radius)
@@ -153,7 +154,12 @@ function spine(w, u, k, dt) {
   let pa = u.facing + Math.PI;
   for (let i = 1; i < n; i++) {
     const p = S[i - 1], c = S[i], off = i * SEG, lim = i === 1 ? NECK : bendOf(off);
-    const a = pa + clamp(wrapAngle(Math.atan2(c.y - p.y, c.x - p.x) - pa), -lim, lim);
+    // (round 19, lane physics19: a joint bent past its limit is brought back to it at SWING a second, not in the one
+    // step. Its head comes round at 8 to 12 rad/s for a tell, each joint was put on its limit at once, so the body
+    // went round behind the head as a stiff rod (its hips at 16 rad/s, its tail's end 60 a step), and a joint bent
+    // past a half turn flipped to the other side: the rear of the body 160 to 190 away in one step)
+    const was = Math.atan2(c.y - p.y, c.x - p.x), to = pa + clamp(wrapAngle(was - pa), -lim, lim);
+    const a = dt > 0 ? was + clamp(wrapAngle(to - was), -SWING * dt, SWING * dt) : to;
     c.x = p.x + Math.cos(a) * SEG; c.y = p.y + Math.sin(a) * SEG; fit(c, off);
     pa = Math.atan2(c.y - p.y, c.x - p.x);
   }

@@ -144,6 +144,8 @@ export const upRot = () => (view.rot ? Math.PI / 2 : 0);
 // ---------------------------------------------------------------- effects that live for a moment
 // The fight pushes one with bfx(w, { type, max, ... }) (boss-kit.js); a drawer per type is registered here by the
 // boss's own art file: BFX[type] = { ground?(ctx, f, k, w), air?(ctx, f, k, w) }, k = 0..1 through its life.
+// (round 19, lane physics19: and low?(ctx, f, k, w): what stands out of the floor, spikes and crystals: drawn after
+// the floor's own effects and before every body.)
 export const BFX = {};
 export function drawBfx(ctx, w, layer) {
   const L = w.bfx; if (!L || !L.length) return;
