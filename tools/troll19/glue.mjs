@@ -30,7 +30,7 @@ function carried(w, st) {
     const L = st.last.get(b) || { x: b.x, y: b.y }; st.last.set(b, { x: b.x, y: b.y });
     const mx = b.x - L.x, my = b.y - L.y, mv = Math.hypot(mx, my); if (mv / DT < 15) continue;
     for (const o of w.units) {
-      if (o.dead || o.downed || o === b.owner || o.fixed) continue;
+      if (o.dead || o.downed || o === b.owner || o.fixed || o.ballOf) continue; // (lane troll19b: o.ballOf, a boulder's health is no body)
       const d = Math.hypot(o.x - b.x, o.y - b.y); if (d > b.r + o.r + 8) continue;
       if (Math.abs(wrap(Math.atan2(o.y - b.y, o.x - b.x) - Math.atan2(my, mx))) > 0.5) continue;
       any++; st.now.add(o); st.dist += mv;

@@ -16,10 +16,11 @@
 //     that separate them").
 // Out (RETHINK / IDK with no replacement): the Brood Queen, Old Frost (as a mini), the Winter Queen (lane B), the magma
 // golem, the ash wraith, the Dragonborn Champion, the Archon, the Hollow Saint.
-import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, silence } from './sim.js';
+import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, silence, stun } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear, circleRect } from './path.js';
-import { ballSweep } from './boulders.js'; // (round 19, lane troll19: the snowball is a solid body)
+import { ballSweep, giveBody, retireBody } from './boulders.js'; // (round 19, lane troll19: the snowball is a solid body; lane troll19b: with a body that carries its health)
+import { BUILD_IDS } from './statuses.js';
 import { ELITES, MAJOR_MOVES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, pounce, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
 import { slam, courtFalls } from './enemies.js';
 import { FOES } from './foes.js';
@@ -61,7 +62,8 @@ function fireball(w, u, a, o = {}) {
 //  - a hero beside or behind it while it pushes: it leaves the ball where it is and fights bare-handed a while.
 // The elite's ball is bigger and bursts into ice.
 const SNOW = { r: 0.62, elite: 1.15, grow: 1.3, growK: 0.0011, push: 0.55, turn: 1.2, fric: 200, heave: 400, hurtSp: 130, burstSp: 220, pack: 1.4, reach: 0.82,
-  hp: 50, dmg: 25, track: 7, haul: 0.45, haulT: 4.5, giveUp: 9 }; // (round 17, lane foes17: the haul, at haul of its pace for up to haulT s; giveUp: s getting nowhere with a ball before it packs another)
+  hp: 70, dmg: 25, track: 7, haul: 0.45, haulT: 4.5, giveUp: 9, // (round 19, lane troll19b: hp 50 -> 70: swings and abilities hurt it now, not only shots and blasts)
+  knock: 480, stun: 0.2 }; // (round 19, lane troll19b: the ball's blow, as the boulder's, foes9.js boulderHits: it was 260 to 420, half sideways) // (round 17, lane foes17: the haul, at haul of its pace for up to haulT s; giveUp: s getting nowhere with a ball before it packs another)
 // pathClear (path.js) for the ball: walls and the other round things, not itself
 function pathClear(w, ax, ay, bx, by, pad, self) {
   if (!lineClear(w, ax, ay, bx, by, pad)) return false;
@@ -89,11 +91,15 @@ function newSnow(w, u, r0) {
     hp, maxHp: hp, hits: new Map(), onShot: snowShot, seen: new Set(), lastX: p.x, lastY: p.y,
     grip: u.r * SNOW.reach + 4, onPush: snowPush, onBlocked: (w2, b2, sp) => { if (sp >= SNOW.hurtSp && !b2.packing) { b2.rollA = Math.atan2(b2.vy, b2.vx); snowHits(w2, b2, sp); } } }; // (round 19, lane troll19: boulders.js keeps it at its hands, pushed along by them, solid)
   w.pillars.push(b); u.snow = b;
+  // (round 19, lane troll19b: its health is carried by a body, boulders.js giveBody: whatever can hurt a unit hurts the
+  // ball, it shows a health bar once hurt, and a hero goes for it when it stands in his way)
+  giveBody(w, b, spawn, 'snowBody', hp); b.onBreak = (w2, b2) => { if (w2.pillars.includes(b2)) burstSnow(w2, b2); };
   b.drv = fx(w, { type: 'snowDrive', every: 1 / 60, max: 1e9, tick: () => snowTick(w, b, 1 / 60) });
   return b;
 }
 function dropSnow(w, b) { // gone (burst, broken, melted)
   const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
+  retireBody(b);
   if (b.drv) b.drv.max = b.drv.t;
   if (b.owner && b.owner.snow === b) b.owner.snow = null;
 }
@@ -118,6 +124,7 @@ function snowPush(w, b, nx, ny, u) {
 }
 // A shot that hits the ball chips it (sim.js) and knocks it along the shot's way, more the smaller it is.
 function snowShot(w, b, p) {
+  { const s = b.body; if (s && !s.dead && !(p.hitSet && p.hitSet.has(s))) hurt(w, s, p.dmg || 0, p.owner && alive(p.owner) ? p.owner : null, { shot: true, kAngle: Math.atan2(p.vy, p.vx), knock: 0 }); } // (round 19, lane troll19b: the chip is its body's)
   const sp = Math.hypot(p.vx, p.vy) || 1, k = clamp((p.dmg || 4) * 7, 25, 110) * (26 / b.r) ** 2;
   if (!b.packing) { b.vx += p.vx / sp * k; b.vy += p.vy / sp * k; b.held = false; } // (in its maker's hands, it only chips)
   w.particles.push({ x: p.x, y: p.y, vx: -p.vx / sp * 60, vy: -p.vy / sp * 60, life: 0.35, max: 0.35, size: 5, color: '#FFFFFF' });
@@ -130,8 +137,8 @@ function snowTick(w, b, dt) {
   if (b.hitT > 0) b.hitT = Math.max(0, b.hitT - dt);
   if (b.hp <= 0) { burstSnow(w, b); return; }
   // blasts nearby throw it about (an explosion this frame: sim.js explode leaves a 'blast' telegraph)
-  for (const t of w.telegraphs) if (t.type === 'blast' && !b.seen.has(t) && dist(t.x, t.y, b.x, b.y) < t.r + b.r) {
-    b.seen.add(t); const a = angleTo(t.x, t.y, b.x, b.y); b.vx += Math.cos(a) * 160 * (26 / b.r); b.vy += Math.sin(a) * 160 * (26 / b.r); b.hp -= 8; b.held = false;
+  for (const t of w.telegraphs) if (t.type === 'blast' && !t.thud && !b.seen.has(t) && dist(t.x, t.y, b.x, b.y) < t.r + b.r) { // (round 19, lane troll19b: t.thud, a boulder's or a ball's own blow shown as a burst: no explosion)
+    b.seen.add(t); const a = angleTo(t.x, t.y, b.x, b.y); b.vx += Math.cos(a) * 160 * (26 / b.r); b.vy += Math.sin(a) * 160 * (26 / b.r); b.held = false; // (round 19, lane troll19b: the blast's own damage lands on its body now; it took a flat 8 here)
   }
   if (b.packing) return; // in the yeti's hands, still being made (yetiBrain)
   // hauled out backwards (round 17, lane foes17: yetiBrain haulTick): it comes after its hands, rolling, as far as
@@ -182,8 +189,15 @@ function snowHits(w, b, sp) {
     if ((b.hits.get(h) || -9) > w.time - 1) continue;
     b.hits.set(h, w.time);
     const a = b.rollA, side = Math.sign(Math.sin(angleTo(b.x, b.y, h.x, h.y) - a)) || 1, k = clamp(sp / 340, 0.5, 1.25) * (b.r / 26);
-    hurt(w, h, SNOW.dmg * k * (up ? u.dmgMul : 1), up ? u : null, { knock: 260 + 160 * k, kAngle: a + side * 0.45, heavy: true, stagger: 45, chill: b.big ? 70 : 55 });
+    // (round 19, lane troll19b: "Boulder should do heavy knockback ... There no strong impact", for the yeti's ball too:
+    // thrown on down its way, by their weight, off their feet a moment, a burst of snow where it struck and a shake)
+    const kk = clamp(sp / 400, 0.45, 1), hm = Math.max(0.5, h.mass || 1);
+    hurt(w, h, SNOW.dmg * k * (up ? u.dmgMul : 1), up ? u : null, { knock: SNOW.knock * kk * hm ** 0.75, kAngle: a + side * 0.33, heavy: true, stagger: 45, chill: b.big ? 70 : 55 });
+    if (h.ballOf) continue;
+    if (alive(h) && kk > 0.55 && !h.def.boss && !h.def.part) stun(w, h, SNOW.stun);
     puff(w, h.x, h.y, '#F4FBFF', 10, 140, 6, 0.45);
+    w.telegraphs.push({ type: 'blast', thud: true, x: (b.x + h.x) / 2, y: (b.y + h.y) / 2, r: 26 + b.r * 0.5 * kk, t: 0.25, max: 0.25, color: '#EAF4FC' });
+    w.shake = Math.max(w.shake, 3 + 3 * kk);
     // the body it hit: the ball loses a share of its speed (more for a heavy one) and glances off it
     const n = { x: (h.x - b.x) / (d || 1), y: (h.y - b.y) / (d || 1) }, into = b.vx * n.x + b.vy * n.y, m = clamp((h.mass || 1) / 6, 0.12, 0.6);
     if (into > 0) { b.vx -= n.x * into * (0.5 + m); b.vy -= n.y * into * (0.5 + m); }
@@ -277,7 +291,7 @@ function yetiBrain(w, u, dt) {
   if (due(u, 'look', dt, 0.2)) {
     again(u, 'look', 0.6);
     const ub = angleTo(u.x, u.y, b.x, b.y), cost = (h) => dist(b.x, b.y, h.x, h.y) + 150 * angleDiff(ub, angleTo(b.x, b.y, h.x, h.y));
-    const n = opp.filter((h) => !h.ethereal).sort((p, q) => cost(p) - cost(q))[0];
+    const n = opp.filter((h) => !h.ethereal && !h.ballOf).sort((p, q) => cost(p) - cost(q))[0]; // (round 19, lane troll19b: not another side's boulder)
     if (n && (!t || cost(n) < cost(t) - 80)) u.target = n;
   }
   if (!targetOf(w, u)) return false;
@@ -323,6 +337,9 @@ function yetiBrain(w, u, dt) {
   if (!lined) { // walk round to the far side of it, or up to it
     Y.pushT = 0;
     const touching = b.held && dB < want + 6;
+    // (round 19, lane troll19b: "the troll should fight back while going to boulder", the yeti too: somebody in reach of
+    // its fists on its way to its ball gets them (the plain brain's blow), then it walks on)
+    if (!touching && swatY(w, u, Y, opp, dt)) { b.held = false; return false; }
     // (round 17, lane foes17: round the ball on a circle just clear of it, the short way where there's room: the way
     // the path finder gave went straight through the ball, which it isn't in, and the steering pushed it back off the
     // ball, so a yeti on the wrong side of its ball dithered there)
@@ -349,6 +366,19 @@ function yetiBrain(w, u, dt) {
   drive(u, sx, sy, sp, dt, 0.5);
   turnTo(u, ba, SNOW.turn, dt);
   u.lean = 0.14; u._force = pushPose(u);
+  return true;
+}
+// Its fists on the way to its ball (round 19, lane troll19b; as the troll's, foes9.js swat). True while it stops for a
+// blow: 0.9 s at most over one, then 1.2 s walking before it looks again.
+function swatY(w, u, Y, opp, dt) {
+  if (u.act) { Y.swT = 0; return true; }
+  if (Y.swRest > 0) { Y.swRest -= dt; return false; }
+  if (u.atkT > 0.15 || u.shackledT > 0 || u.disarmT > 0) { Y.swT = 0; return false; }
+  let best = null, bd = (u.def.range || 30) + 6;
+  for (const h of opp) { if (h.ballOf) continue; const g = gapTo(u, h); if (g < bd) { bd = g; best = h; } }
+  if (!best) { Y.swT = 0; return false; }
+  if ((Y.swT = (Y.swT || 0) + dt) > 0.9) { Y.swT = 0; Y.swRest = 1.2; return false; }
+  u.target = best; u.mode = 'approach';
   return true;
 }
 // Round 17 (lane foes17): where it can push the ball from. A way a (nearest the one it wants, a0, either side, out to
@@ -810,6 +840,10 @@ export const FOES10 = {
     onHop: (w, u) => coldPatch(w, u.x, u.y, 36, 2.4), onDeath: (w, u) => shards(w, u, 7) },
   spiderFrost: { variantOf: 'spiderHunter', name: 'Frost Spider', art: 'art/enemies/frost-spider.svg', headR: 54, poison: 0, chill: 22, xp: 10, res: { chill: 0.2 },
     onDeath: (w, u) => w.hazards.push({ type: 'web', cold: true, x: u.x, y: u.y, r: 48, t: 6, max: 6 }) },
+  // round 19 (lane troll19b): a snowball's health (boulders.js giveBody; as foes9.js boulderBody)
+  snowBody: { team: 'enemy', name: 'Snowball', r: 26, vr: 26, turn: 0, accel: 0, face: 0, mass: 99, hp: 70, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0,
+    temp: 0.2, commit: 1, xp: 0, coins: [0, 0], cost: 99, noElite: true, noCorpse: true, part: true, trap: true /* (never counted as a foe left standing: battle.js, dungeon.js) */, pass: true, ball: 'snow', goo: '#F4FBFF',
+    res: Object.fromEntries(BUILD_IDS.map((id) => [id, 0])), draw: () => {}, brain: () => true },
   yeti: { ...FOE, name: 'Yeti', art: 'art/enemies/yeti.svg', headR: 68, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3,
     hp: 180, speed: 46, role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 15, knock: 220, arc: 2.2, stagger: 30, temp: 0.25, commit: 1.2, xp: 32, coins: [6, 12],
     attackAnim: 'swing', res: { chill: 0, burn: 1.3 }, brain: yetiBrain, onDeath: (w, u) => { const b = snowOf(w, u); if (b && b.packing) burstSnow(w, b, false); else if (b) b.held = false; } }, // (its ball rolls on, and melts)
