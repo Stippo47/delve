@@ -1,5 +1,5 @@
 // Keeps the whole game on the phone so it opens with no signal. Bump VERSION on every release.
-const VERSION = '0.39.0';
+const VERSION = '0.40.0';
 const CACHE = `delve-${VERSION}`;
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png',
   'icons/icon-512.png', 'js/armour.js', 'js/audio.js', 'js/battle-ui.js', 'js/battle.js', 'js/bestiary.js',
@@ -7,9 +7,9 @@ const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png',
   'js/boss-cinder-fx.js', 'js/boss-cinder.js', 'js/boss-draw.js', 'js/boss-engine-fx.js', 'js/boss-engine.js',
   'js/boss-kit.js', 'js/boss-ooze-fx.js', 'js/boss-ooze.js', 'js/boss-queen-fx.js', 'js/boss-queen.js',
   'js/boss-spider-fx.js', 'js/boss-spider.js', 'js/boss-stilt-fx.js', 'js/boss-stilt.js', 'js/boss-wurm-fx.js',
-  'js/boss-wurm.js', 'js/boss.js', 'js/bosses.js', 'js/camp-art.js', 'js/camp-map.js', 'js/camp-scene.js',
-  'js/camp.js', 'js/convoy-art.js', 'js/convoy-ui.js', 'js/convoy.js', 'js/dashes.js', 'js/dunes.js',
-  'js/dungeon.js', 'js/elderent.js', 'js/elites.js', 'js/enemies.js', 'js/env.js', 'js/families.js',
+  'js/boss-wurm.js', 'js/boss.js', 'js/bosses.js', 'js/boulder-roll.js', 'js/camp-art.js', 'js/camp-map.js',
+  'js/camp-scene.js', 'js/camp.js', 'js/convoy-art.js', 'js/convoy-ui.js', 'js/convoy.js', 'js/dashes.js',
+  'js/dunes.js', 'js/dungeon.js', 'js/elderent.js', 'js/elites.js', 'js/enemies.js', 'js/env.js', 'js/families.js',
   'js/floors19.js', 'js/foe-draw.js', 'js/foes.js', 'js/foes10.js', 'js/foes9.js', 'js/folk-kind.js', 'js/folk.js',
   'js/foundry.js', 'js/fx-boss.js', 'js/fx-dash.js', 'js/fx-hit-r19.js', 'js/fx-melee.js', 'js/fx-rogue19.js',
   'js/fx-status.js', 'js/fx-water.js', 'js/fx.js', 'js/fx2.js', 'js/fx3.js', 'js/fxkit.js', 'js/fxtag.js',

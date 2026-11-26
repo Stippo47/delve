@@ -18,7 +18,7 @@
 // fields on the ball, p._r19); nothing in the fight reads them, and no dice are used.
 // Dirt trail (?dirt=0 to turn off): puffs of dust and small clods kicked out behind a rolling boulder, faint scuffs
 // pressed into the floor; snow spray and clumps behind a snowball. More with speed, nothing standing still.
-import { INK, TAU, clamp, OUTLINES, OUTLINE, readFlag } from './util.js';
+import { INK, TAU, clamp, OUTLINES, OUTLINE, readFlag, inkFor } from './util.js';
 import { view } from './render.js';
 import { hash } from './fx.js';
 
@@ -295,7 +295,7 @@ export function drawRolled(ctx, p, w, name, look = p.look19 || BOULDER_LOOK) {
     // drawn here so a growing snowball never shows another size's picture standing in with its thicker ring)
     // (looks19's inkFor(fill) gives the outline its own colour: the lead wires it at merge; INK as every prop had)
     const k = Rr / A.Rsvg; ctx.save(); ctx.scale(k, k); ctx.translate(-100, -100);
-    ctx.fillStyle = ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.lineWidth = OUTLINE * 2 / k; ctx.fill(A.path); ctx.stroke(A.path); ctx.restore();
+    ctx.fillStyle = ctx.strokeStyle = inkFor(p.prop === 'yeti-snowball' ? '#d8e3ec' : '#8a847c'); ctx.lineJoin = 'round'; ctx.lineWidth = OUTLINE * 2 / k; ctx.fill(A.path); ctx.stroke(A.path); ctx.restore(); // (lead, merge: outline colour via inkFor)
   }
   ctx.drawImage(s.cv, -b.half * f, -b.half * f, b.S * f, b.S * f);
   ctx.restore();
@@ -401,7 +401,7 @@ export function drawSoil(ctx, w) {
     blobs.push([x, y, r, q.col], [x + Math.cos(h) * r * 0.7, y + Math.sin(h) * r * 0.7, r * 0.62, q.col]);
   }
   if (blobs.length) {
-    if (OUTLINES) { ctx.fillStyle = INK; ctx.beginPath(); for (const [x, y, r] of blobs) { ctx.moveTo(x + r + OUTLINE, y); ctx.arc(x, y, r + OUTLINE, 0, TAU); } ctx.fill(); }
+    if (OUTLINES) { ctx.fillStyle = inkFor(blobs[0][3]); ctx.beginPath(); for (const [x, y, r] of blobs) { ctx.moveTo(x + r + OUTLINE, y); ctx.arc(x, y, r + OUTLINE, 0, TAU); } ctx.fill(); }
     for (const [x, y, r, c] of blobs) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
   }
   for (const q of list) if (q.type === 'clod') {
@@ -411,6 +411,6 @@ export function drawSoil(ctx, w) {
 }
 function chip(ctx, x, y, r, rot, col, n) { // a small stone chip / clump of snow: five corners, a little uneven
   const path = () => { ctx.beginPath(); for (let i = 0; i < 5; i++) { const a = rot + i / 5 * TAU, rr = r * (0.75 + 0.5 * hash(n, i, 5)); i ? ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr) : ctx.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } ctx.closePath(); };
-  if (OUTLINES) { ctx.save(); ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; path(); ctx.stroke(); ctx.restore(); }
+  if (OUTLINES) { ctx.save(); ctx.strokeStyle = inkFor(col); ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; path(); ctx.stroke(); ctx.restore(); }
   ctx.fillStyle = col; path(); ctx.fill();
 }
