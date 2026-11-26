@@ -1659,3 +1659,11 @@ js/foes9.js `BOWL`.
 - Checks: battles 535, 0 problems, 9 out of time (main: 8); preview-check 0 / 0 / 0. No new file the game loads. The
   Book's words for the rock troll ("The boulder can't be hurt"), its elite's move, the troll and the yeti were
   corrected to match (bestiary.js, movetext.js).
+
+## Round 19c (2026-11-26): rock troll keeps its charge; a boulder-riding troll; multiplayer asked about
+
+Designer, word for word: "How hard to get mobile multiplayer with twin stick controller support right now. The 3 abilities will show as buttons on the screen. Close to what the maze roguelike does. It would be fun if you made a troll variant that can walk on the boulders like the farmer on hay. Rock troll keep its charge forward."
+
+- Rock troll keeps its run behind its boulder (BOWL.charge stays as troll19b left it, 0.15). Riffle card r19-troll19b/run handled.
+- New troll variant that rides its boulder like the Haymaker rides his hay bale: lane rider19 (worktree ~/Dev/delve-wt/rider19).
+- Multiplayer: a question only, answered in chat with an estimate; nothing built until the designer says go.
