@@ -73,16 +73,16 @@ export const PX_LOOKS = [
   { id: 3, name: 'Medium pixels', blurb: 'Each pixel 3 points across.' },
   { id: 4, name: 'Big pixels', blurb: 'Each pixel 4 points across.' },
 ];
-// a red blob with its outline, drawn on a grid of the look's pixels (or smooth for Off)
+// a red blob with its outline and a glint, drawn on a grid of the look's pixels (smooth for Off)
 export function pxSwatch(l) {
-  const bg = '<rect x="0" y="0" width="64" height="32" rx="6" fill="#B9B5B2"/>';
-  if (!l.id) return `<svg viewBox="0 0 64 32">${bg}<circle cx="22" cy="16" r="9" fill="#D9534F" stroke="${INK_C}" stroke-width="2.4"/><circle cx="44" cy="16" r="6" fill="#3F7AC4" stroke="${INK_C}" stroke-width="2.4"/></svg>`;
-  const c = l.id * 1.45, cells = [];
-  for (const [cx, cy, r, col] of [[22, 16, 9, '#D9534F'], [44, 16, 6, '#3F7AC4']])
-    for (let y = cy - r - 2 * c; y < cy + r + 2 * c; y += c) for (let x = cx - r - 2 * c; x < cx + r + 2 * c; x += c) {
-      const gx = Math.floor(x / c) * c, gy = Math.floor(y / c) * c, d = Math.hypot(gx + c / 2 - cx, gy + c / 2 - cy);
-      if (d < r) cells.push([gx, gy, d < r * 0.4 && gx < cx && gy < cy ? '#F08A80' : col]); else if (d < r + c) cells.push([gx, gy, INK_C]);
-    }
-  const seen = new Set();
-  return `<svg viewBox="0 0 64 32" shape-rendering="crispEdges">${bg}${cells.filter(([x, y]) => { const k = x + ',' + y; if (seen.has(k)) return false; seen.add(k); return true; }).map(([x, y, f]) => `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${(c + 0.05).toFixed(2)}" height="${(c + 0.05).toFixed(2)}" fill="${f}"/>`).join('')}</svg>`;
+  const bg = '<rect x="0" y="0" width="64" height="32" rx="6" fill="#B9B5B2"/>', R = 8.5, cx = 32, cy = 16;
+  if (!l.id) return `<svg viewBox="0 0 64 32">${bg}<circle cx="${cx}" cy="${cy}" r="${R}" fill="#D9534F" stroke="${INK_C}" stroke-width="2.4"/><circle cx="${cx - 3}" cy="${cy - 3}" r="2.5" fill="#F2A098"/></svg>`;
+  const c = l.id * 1.35, out = [];
+  const n = Math.ceil((R + c) / c) + 1; // (the grid centred on the blob, so each size comes out round)
+  for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) { const gx = cx - c / 2 + i * c, gy = cy - c / 2 + j * c;
+    const d = Math.hypot(gx + c / 2 - cx, gy + c / 2 - cy), dh = Math.hypot(gx + c / 2 - (cx - 3), gy + c / 2 - (cy - 3));
+    const f = d < R ? (dh < 2.8 ? '#F2A098' : '#D9534F') : d < R + c ? INK_C : null;
+    if (f) out.push(`<rect x="${gx.toFixed(2)}" y="${gy.toFixed(2)}" width="${(c + 0.05).toFixed(2)}" height="${(c + 0.05).toFixed(2)}" fill="${f}"/>`);
+  }
+  return `<svg viewBox="0 0 64 32" shape-rendering="crispEdges">${bg}${out.join('')}</svg>`;
 }

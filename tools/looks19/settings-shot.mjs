@@ -18,7 +18,7 @@ try {
   await page.evaluate(() => window.CAMP.setMode('settings'));
   await page.waitForTimeout(500);
   for (const a of (opt('click', '') || '').split(',').filter(Boolean)) { await page.click(`[data-act="${a}"]`); await page.waitForTimeout(300); }
-  await page.evaluate(() => { const el = document.querySelector('.draw-opts'); if (el) el.scrollIntoView({ block: 'start' }); });
+  await page.evaluate((dy) => { const el = document.querySelector('.draw-opts'); if (el) { el.scrollIntoView({ block: 'start' }); let p = el.parentElement; while (p && p.scrollHeight <= p.clientHeight + 2) p = p.parentElement; if (p) p.scrollTop += dy; } }, +opt('dy', 0));
   await page.waitForTimeout(400);
   await page.screenshot({ path: out });
   console.log(errs.length ? errs.join('\n') : 'no errors', '->', out);

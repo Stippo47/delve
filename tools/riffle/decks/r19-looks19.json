@@ -1,0 +1,228 @@
+{
+  "title": "Looks: outline colour, pixels",
+  "topic": "art",
+  "stack": "r19b",
+  "order": 1,
+  "cards": [
+    {
+      "id": "outline-colour",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Outlines in own colours",
+      "text": "Each thing's outline a dark shade of its own colour. Same fight, same moment, each way. Tick your favourite.",
+      "why": "You asked to try coloured outlines that follow each thing's colour. It covers heroes, monsters, bosses, props, walls, shots and effects, in fights and at camp. It's a switch in Settings (Outline colour), so you can try each on your phone; Ink stays as it was.",
+      "pick": [
+        "own"
+      ],
+      "details": "My pick: Own colour. Every part gets the shade of the colour it edges (a red cloak a dark red edge, a steel blade a dark steel one), so a figure stays one piece but reads coloured.\n\nPale things (bone, snow, white robes) are taken darker so they still have an edge. A thing the colour of the floor (a grey skeleton on grey flagstones, the red drake on the red Ember floor) has less edge than with ink.\n\nThe deep shade is in the films only: it came out close to plain ink.",
+      "items": [
+        {
+          "id": "ink",
+          "label": "Ink (as now)",
+          "video": "../../../docs/clips/looks19/spider-1-ink.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-1-ink.png",
+          "text": "One dark ink line round everything."
+        },
+        {
+          "id": "own",
+          "label": "Own colour",
+          "video": "../../../docs/clips/looks19/spider-3-own.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-3-own.png",
+          "text": "Each part edged in a dark shade of its own colour."
+        },
+        {
+          "id": "bright",
+          "label": "Own colour, bright",
+          "video": "../../../docs/clips/looks19/spider-4-own-bright.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-4-own-bright.png",
+          "text": "A lighter shade: more colour, a softer edge."
+        },
+        {
+          "id": "one",
+          "label": "One colour each",
+          "video": "../../../docs/clips/looks19/spider-5-one-colour.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-5-one-colour.png",
+          "text": "The whole thing edged in one shade of its main colour."
+        },
+        {
+          "id": "deep",
+          "label": "Own colour, deep",
+          "video": "../../../docs/clips/looks19/spider-2-own-deep.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-2-own-deep.png",
+          "text": "Close to ink, a little tinted. Films only."
+        }
+      ]
+    },
+    {
+      "id": "outline-bosses",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Own colour on bosses",
+      "text": "The drake and the Canopy Idol with ink, then with their own colours. Mark anything that reads worse.",
+      "why": "Bosses are drawn shape by shape, so each shape gets its own shade: the drake's dark red, the idol's leaves dark green, its bamboo dark khaki, its stone hooves grey.",
+      "videos": [
+        "../../../docs/clips/looks19/drake-1-ink.mp4",
+        "../../../docs/clips/looks19/drake-3-own.mp4"
+      ],
+      "parts": [
+        {
+          "id": "drake",
+          "title": "Cinder Drake",
+          "text": "Ink, then own colour. Same fight, same seed.",
+          "videos": [
+            "../../../docs/clips/looks19/drake-1-ink.mp4",
+            "../../../docs/clips/looks19/drake-3-own.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/looks19/stills/drake-t6-1-ink.png",
+            "../../../docs/clips/looks19/stills/drake-t6-3-own.png"
+          ]
+        },
+        {
+          "id": "idol",
+          "title": "Canopy Idol",
+          "text": "Ink, then own colour, in a battle. Close-ups: ink, own colour, bright, one colour each.",
+          "videos": [
+            "../../../docs/clips/looks19/idol-1-ink.mp4",
+            "../../../docs/clips/looks19/idol-3-own.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/looks19/stills/idol-close-t5-1-ink.png",
+            "../../../docs/clips/looks19/stills/idol-close-t5-3-own.png",
+            "../../../docs/clips/looks19/stills/idol-close-t5-4-own-bright.png",
+            "../../../docs/clips/looks19/stills/idol-close-t5-5-one-colour.png"
+          ]
+        },
+        {
+          "id": "camp",
+          "title": "Camp",
+          "text": "The camp's things and heroes: ink, own colour, bright, one colour each.",
+          "images": [
+            "../../../docs/clips/looks19/stills/camp-1-ink.png",
+            "../../../docs/clips/looks19/stills/camp-3-own.png",
+            "../../../docs/clips/looks19/stills/camp-4-own-bright.png",
+            "../../../docs/clips/looks19/stills/camp-5-one-colour.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pixel-size",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Pixel look",
+      "text": "The fight drawn as pixel art: pixels 2, 3 or 4 points across. Menus and cards stay sharp. Tick a size.",
+      "why": "You wanted to see it pixelated. The room is drawn small and blown up without blur. The camera and every figure sit on whole pixels so nothing shimmers, outlines are one pixel, bars over heads stay sharp. It's lighter on the phone, not heavier. A switch in Settings (Pixel look).",
+      "pick": [
+        "pixel2"
+      ],
+      "details": "My pick: 2 points (Small pixels) on your iPhone 11. A hero is about 18 pixels across at the usual zoom (more when you pinch in), so faces and weapons still read; at 4 it is about 9.\n\nWhat it isn't: hand-drawn pixel art. Figures still turn to any angle, so their pixels change as they turn. The camp stays sharp (its names are painted into the picture and would blur).\n\nThe films are compressed, which softens the pixel edges a little; the stills are exact.",
+      "items": [
+        {
+          "id": "sharp",
+          "label": "Off (as now)",
+          "video": "../../../docs/clips/looks19/spider-1-ink.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-1-ink.png",
+          "text": "Sharp, as it has always been."
+        },
+        {
+          "id": "pixel2",
+          "label": "2 points",
+          "video": "../../../docs/clips/looks19/spider-6-pixel2.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-6-pixel2.png",
+          "text": "Small pixels."
+        },
+        {
+          "id": "pixel3",
+          "label": "3 points",
+          "video": "../../../docs/clips/looks19/spider-7-pixel3.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-7-pixel3.png",
+          "text": "Medium pixels."
+        },
+        {
+          "id": "pixel4",
+          "label": "4 points",
+          "video": "../../../docs/clips/looks19/spider-8-pixel4.mp4",
+          "image": "../../../docs/clips/looks19/stills/spider-t5-8-pixel4.png",
+          "text": "Big pixels."
+        }
+      ]
+    },
+    {
+      "id": "pixel-more",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Pixels: more to see",
+      "text": "Pixels with own-colour outlines, the drake in pixels, and the usual zoom. Both switches work together.",
+      "why": "The two looks combine, and turning outlines off still wins over the outline colour.",
+      "videos": [
+        "../../../docs/clips/looks19/spider-9-pixel2-own.mp4",
+        "../../../docs/clips/looks19/drake-9-pixel2-own.mp4"
+      ],
+      "parts": [
+        {
+          "id": "both",
+          "title": "Pixels + own colour",
+          "text": "Pixels at 2 with own-colour outlines.",
+          "videos": [
+            "../../../docs/clips/looks19/spider-9-pixel2-own.mp4",
+            "../../../docs/clips/looks19/drake-9-pixel2-own.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/looks19/stills/spider-t5-9-pixel2-own.png",
+            "../../../docs/clips/looks19/stills/drake-t6-9-pixel2-own.png"
+          ]
+        },
+        {
+          "id": "drake",
+          "title": "Drake in pixels",
+          "text": "The drake fight at 2, 3 and 4 points.",
+          "videos": [
+            "../../../docs/clips/looks19/drake-6-pixel2.mp4",
+            "../../../docs/clips/looks19/drake-7-pixel3.mp4",
+            "../../../docs/clips/looks19/drake-8-pixel4.mp4"
+          ]
+        },
+        {
+          "id": "zoom",
+          "title": "At the usual zoom",
+          "text": "Pixels at 2 at the game's usual zoom, ink and own colour.",
+          "videos": [
+            "../../../docs/clips/looks19/spider-zoom08-6-pixel2.mp4",
+            "../../../docs/clips/looks19/spider-zoom08-9-pixel2-own.mp4"
+          ]
+        },
+        {
+          "id": "idol",
+          "title": "Canopy Idol in pixels",
+          "text": "The idol at 2, ink and own colour; close-ups too.",
+          "videos": [
+            "../../../docs/clips/looks19/idol-6-pixel2.mp4",
+            "../../../docs/clips/looks19/idol-9-pixel2-own.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/looks19/stills/idol-close-t5-6-pixel2.png",
+            "../../../docs/clips/looks19/stills/idol-close-t5-9-pixel2-own.png"
+          ]
+        },
+        {
+          "id": "settings",
+          "title": "The switches",
+          "text": "Settings: Outline colour and Pixel look, under Outlines and health bars.",
+          "images": [
+            "../../../docs/clips/looks19/stills/settings-outline-colour-and-pixel-look.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "default",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Make either the default?",
+      "text": "Both stay off for now (Ink, sharp). Once you've tried them, say if one should be what everyone sees.",
+      "why": "You said you're exploring looks, so nothing changed by default. If own colour or pixels wins, it's one line to make it the default.",
+      "pick": "Keep both as options for now; decide after playing a few runs with them on."
+    }
+  ]
+}

@@ -186,10 +186,10 @@ export function growOwn(src, r) {
 }
 // A part's outline in the Own colour look (cached with its tints): per pixel ('pixel'), the part's commonest colour
 // ('part') or the whole figure's ('figure').
-function ownInk(L, set) {
-  return colored(L, 'o' + OLCOL.key, () => {
+function ownInk(L, set, shift = false) { // (shift: our summons, edged in a shade of their cool blue-grey colours)
+  return colored(L, 'o' + OLCOL.key + (shift ? 's' : ''), () => {
     const how = OLCOL.how, dom = how === 'figure' ? set.dom : L.dom;
-    if (how === 'pixel') return growOwn(L.img, (set.line || LINE) * set.k);
+    if (how === 'pixel') return growOwn(shift ? shifted(L) : L.img, (set.line || LINE) * set.k);
     return dom ? filled(L, inkRGB(dom[0], dom[1], dom[2])) : L.ink;
   });
 }
@@ -370,7 +370,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
     for (const L of Ls) {
       if (hidden(pose, L)) continue;
       g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L));
-      g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : OLCOL.own ? ownInk(L, set) : L.ink, L.x, L.y, L.w, L.h); // (round 19, lane looks19: Own colour)
+      g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : OLCOL.own ? ownInk(L, set, shift) : L.ink, L.x, L.y, L.w, L.h); // (round 19, lane looks19: Own colour)
       g.restore();
     }
     if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : ink || inkFor(set.string.color), set.string.w + (set.line || LINE) * 2);
