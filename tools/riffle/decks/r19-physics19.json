@@ -1,0 +1,181 @@
+{
+  "title": "Smoother physics",
+  "topic": "art",
+  "stack": "r19b",
+  "order": 6,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "No more popping",
+      "text": "Bodies ease apart now. Feet land beside you. Fliers pass over. Spikes come up under. Films: before then after.",
+      "why": "You said units and the spider's and drake's parts jump, a foot set on someone pops one of them, things on the wrong layers collide, and spikes draw over bodies. Each film is the same scene twice: the old game, then the new. Mark any part that still looks off.",
+      "videos": [
+        "../../../docs/clips/physics19/before-spider-feet.mp4",
+        "../../../docs/clips/physics19/after-spider-feet.mp4"
+      ],
+      "parts": [
+        {
+          "id": "feet",
+          "title": "Spider's feet",
+          "text": "At 0:05 a foot lands on the berserker and he is thrown clear in one frame. Now it lands beside him.",
+          "videos": [
+            "../../../docs/clips/physics19/before-spider-feet.mp4",
+            "../../../docs/clips/physics19/after-spider-feet.mp4"
+          ]
+        },
+        {
+          "id": "spiderfight",
+          "title": "Spider, a real fight",
+          "text": "The whole fight with the party at its feet, to check nothing else changed.",
+          "videos": [
+            "../../../docs/clips/physics19/before-spider-fight.mp4",
+            "../../../docs/clips/physics19/after-spider-fight.mp4"
+          ]
+        },
+        {
+          "id": "idol",
+          "title": "Idol's hooves",
+          "text": "Its own lifted hooves shoved its head about. Gone. Small in the film; counted: 25 a step down to 0.",
+          "videos": [
+            "../../../docs/clips/physics19/before-idol-hooves.mp4",
+            "../../../docs/clips/physics19/after-idol-hooves.mp4"
+          ]
+        },
+        {
+          "id": "drake",
+          "title": "Drake's body",
+          "text": "Its body whipped round behind its head and could flip in one frame. It follows in a curve now.",
+          "videos": [
+            "../../../docs/clips/physics19/before-drake-body.mp4",
+            "../../../docs/clips/physics19/after-drake-body.mp4",
+            "../../../docs/clips/physics19/before-drake-fight.mp4",
+            "../../../docs/clips/physics19/after-drake-fight.mp4"
+          ]
+        },
+        {
+          "id": "crowd",
+          "title": "Crowded melee",
+          "text": "Fighters found inside each other were thrown apart in a frame. Now they slide apart in a fifth of a second.",
+          "videos": [
+            "../../../docs/clips/physics19/before-crowd.mp4",
+            "../../../docs/clips/physics19/after-crowd.mp4"
+          ]
+        },
+        {
+          "id": "fliers",
+          "title": "Fliers over walkers",
+          "text": "At 0:03 the bats shove the line of heroes down the room. Now they fly over it. Blades still reach them.",
+          "videos": [
+            "../../../docs/clips/physics19/before-fliers-cross.mp4",
+            "../../../docs/clips/physics19/after-fliers-cross.mp4"
+          ]
+        },
+        {
+          "id": "spikes",
+          "title": "Spikes under bodies",
+          "text": "Eight kinds of spike were drawn over heroes. Each is brought up under one here: over before, under after.",
+          "videos": [
+            "../../../docs/clips/physics19/before-spikes-under.mp4",
+            "../../../docs/clips/physics19/after-spikes-under.mp4"
+          ]
+        },
+        {
+          "id": "structures",
+          "title": "Things put down",
+          "text": "A hive, bomb or turret set down on somebody threw them aside in a frame. Now they are eased off it.",
+          "videos": [
+            "../../../docs/clips/physics19/before-structures.mp4",
+            "../../../docs/clips/physics19/after-structures.mp4"
+          ]
+        },
+        {
+          "id": "serpent",
+          "title": "Sand serpents",
+          "text": "A coil sliding into a hero threw him. Now it shoulders him aside. Its strike still jerks the body.",
+          "videos": [
+            "../../../docs/clips/physics19/before-serpent.mp4",
+            "../../../docs/clips/physics19/after-serpent.mp4"
+          ]
+        },
+        {
+          "id": "count",
+          "title": "Counted",
+          "text": "Thrown hard in one frame: 8,536 times before, 152 after, same 188 fights. Wrong-layer bumps: 25,664 to 0.",
+          "videos": []
+        },
+        {
+          "id": "strength",
+          "title": "Boss strength",
+          "text": "Party wins barely moved: spider 85% to 80%, drake 54% to 55%, queen 72% to 71%. No health or damage changed.",
+          "videos": []
+        }
+      ]
+    },
+    {
+      "id": "fliers",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Fliers never bump walkers?",
+      "text": "Bats, ghosts, wisps, spirits, angels and bees no longer shove anyone on the floor, or get shoved by them.",
+      "why": "They were drawn above the heroes but still pushed them like a walker would: the most common wrong-layer bump by far. They still bump each other, and blades still hit them. The cost: a bat can sit right on top of a hero, drawn over him.",
+      "pick": "Yes: what flies never bumps what walks.",
+      "videos": [
+        "../../../docs/clips/physics19/before-fliers.mp4",
+        "../../../docs/clips/physics19/after-fliers.mp4"
+      ]
+    },
+    {
+      "id": "soft",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "How soft a shove?",
+      "text": "Two fighters found inside each other now slide apart over about a fifth of a second.",
+      "why": "The cost of no popping: for that moment they overlap. In a press you can see two fighters in each other where one would have been thrown clear. Stiffer looks more like the old pop; softer leaves them overlapping longer.",
+      "pick": "Keep it as filmed. Say if overlapping fighters bother you more than the pops did.",
+      "videos": [
+        "../../../docs/clips/physics19/after-crowd.mp4",
+        "../../../docs/clips/physics19/after-crowd-big.mp4"
+      ]
+    },
+    {
+      "id": "bigspike",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Hidden spikes?",
+      "text": "The Earth Mage's spike under one enemy is now mostly hidden by that enemy. Only its tips show round him.",
+      "why": "You said spikes should never draw over a body, so every spike goes under, this one too. It used to be drawn over the enemy it held. It could be made wider than the body so it shows round it, or the enemy could be lifted on it.",
+      "pick": "Keep it under for now; make that spike wider than its victim in the Earth Mage's next pass.",
+      "videos": [
+        "../../../docs/clips/physics19/before-spikes-heroes.mp4",
+        "../../../docs/clips/physics19/after-spikes-heroes.mp4"
+      ]
+    },
+    {
+      "id": "lunges",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Tame the fast lunges?",
+      "text": "Left alone: the drake's bite yanks its whole body, the wurm and Bone King lunge, the engine punches.",
+      "why": "These are fast on purpose, so I did not slow them. They are most of the sudden moves still left in the count. The drake's bite takes its whole body forward in a tenth of a second, tail and all. Grabs, hooks and blinks also still place people at once.",
+      "pick": "Leave the attacks fast. If the drake's bite still jars, only its neck should dart, not the tail.",
+      "videos": [
+        "../../../docs/clips/physics19/after-drake-fight.mp4"
+      ]
+    },
+    {
+      "id": "turn",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Spider turns slower?",
+      "text": "It spun round to aim its web in a blink, feet whipping across the floor. It turns under half as fast now.",
+      "why": "It walks turning slowly, but snapped round six times faster to spit, and the idol the same to throw its liana. Their feet had to cross the floor in a few frames. Slower to aim means the web is a touch easier to see coming.",
+      "pick": "Keep the slower turn.",
+      "videos": [
+        "../../../docs/clips/physics19/after-spider-fight.mp4",
+        "../../../docs/clips/physics19/after-idol-fight.mp4"
+      ]
+    }
+  ]
+}

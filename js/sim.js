@@ -9,7 +9,7 @@ import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul, resTo } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
-import { bodiesCollide, anchored, heldFast, softPush, softRock, SOFT } from './layers.js'; // (round 19, lane physics19: collision layers and soft separation in one place; it was height.js bodiesMeet)
+import { bodiesCollide, anchored, heldFast, softPush, softRock, pushCap } from './layers.js'; // (round 19, lane physics19: collision layers and soft separation in one place; it was height.js bodiesMeet)
 import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
 import { isBall, ballPass, bodyOutOfWalls } from './boulders.js'; // (round 19, lane troll19: a troll's boulder and a yeti's snowball are solid bodies)
 import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf, isArmed, isDisarmed, FOE_WEAPON_ABILITY } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
@@ -1960,7 +1960,7 @@ function physics(w, dt) {
   // unit-unit
   // (round 19, lane physics19: who touches whom is layers.js bodiesCollide: the same height, not two anchors, never
   // its own animal; and they ease apart (layers.js softPush) instead of being put apart in the one step)
-  const cap = SOFT.cap * dt, walled = w.walls.length > 0;
+  const cap = pushCap(dt), walled = w.walls.length > 0;
   for (let i = 0; i < us.length; i++) {
     const a = us[i]; if (a.dead || a.downed || a.ethereal || a.passUntil > time || a.def.pass) continue; // (round 18, lane dash18: passUntil, a dash going through bodies: dashes.js) (round 10: def.pass, things that roll through: gear sprites)
     const fa = anchored(a) || heldFast(a);

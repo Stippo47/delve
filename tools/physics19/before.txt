@@ -1,4 +1,4 @@
-tree scratch\before
+tree scratch/before
 188 fights, 9951 s simulated, 556265 steps, 4903600 unit-steps, errors 0
 jumps of 6 or more in one step: 43879 (264.6 a minute of fight); pushed out of something: 8536; other: 35343; smaller jumps (3 to 6): 102102
 two bodies left in each other (pair-steps; same height, not one animal): more than 8 deep 4107, more than 16 deep 1815, deeper than the smaller one's radius 693
@@ -121,6 +121,9 @@ two bodies left in each other (pair-steps; same height, not one animal): more th
       1  brain:goblin                           mean  23.5  worst   23.5   goblin 1
       1  brain:leechBlood                       mean 110.1  worst  110.1   leechBlood 1
       1  brain:dartTrap                         mean 141.1  worst  141.1   dartTrap 1
+spells of half a second or more with a pair more than 16 deep: 4; the longest 1.3 s
+more than 16 deep, by what the other is: a like body 638, a heavier body 554, a boss part 246, a boss body 238, a boss foot 70, a fixed thing 55, its own parts 10, its own boss 4
+  the pairs: paladin x pyromancer 109, paladin x tower 99, berserker x paladin 61, ghost x griffon 61, oldguard x wurmSegment 58, tower x twinfang 57, paladin x sandWurm 53, spiderFoot x tower 49, paladin x wurmSegment 49, paladin x twinfang 48, berserker x tower 36, berserker x wurmSegment 36, samurai x wurmSegment 34, cinder x samurai 30, ghost x valkyrie 29, angel x valkyrie 29
 layers (pushes the physics made): pairs on different heights 25664; a body against its own boss or its own parts 26869; against its own chain 0
    2777  ghost:2 x rattler:0
    1878  gildedSeraph:2 x samurai:0

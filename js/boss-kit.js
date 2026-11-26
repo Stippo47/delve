@@ -177,6 +177,7 @@ export function stage(w, key, ground, air) {
   const S = w.bossStage || (w.bossStage = { keys: {}, ground: [], air: [], g: null, a: null });
   if (!S.keys[key]) { S.keys[key] = true; if (ground) S.ground.push(ground); if (air) S.air.push(air); }
   if (w.arenaDraw !== S.g) { const g0 = w.arenaDraw; S.g = w.arenaDraw = (ctx, w2) => { if (g0) g0(ctx, w2); for (const f of S.ground) f(ctx, w2); drawBfx(ctx, w2, 'ground'); }; }
+  if (!w.arenaLow) w.arenaLow = (ctx, w2) => drawBfx(ctx, w2, 'low'); // (round 19, lane physics19: a third place for a boss's effects: what stands out of the floor, over the floor's own effects and under every body. render.js drawScene)
   if (w.arenaAir !== S.a) { const a0 = w.arenaAir; S.a = w.arenaAir = (ctx, w2) => { if (a0) a0(ctx, w2); for (const f of S.air) f(ctx, w2); drawBfx(ctx, w2, 'air'); }; }
 }
 // An effect that lives for f.max seconds from now (boss-draw.js BFX[f.type] draws it by the room's clock).

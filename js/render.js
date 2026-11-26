@@ -265,6 +265,7 @@ function drawScene(ctx, w) {
   drawArena(ctx, w);
   drawDanger(ctx, w);
   drawGroundFx(ctx, w);
+  if (w.arenaLow) w.arenaLow(ctx, w); // (round 19, lane physics19: a boss's things that stand out of the floor: BFX[type].low, boss-kit.js stage)
   for (const f of w.fx) drawSpikeFx(ctx, f); // (round 19, lane physics19: "spikes shouldn't ever render onto of an entity": the Bone King's spikes come up out of the floor, under every body. They were the last thing drawn, over everything; layers.js ORDER)
   drawFoeGround(ctx, w); // round 13 (lane E): snow tracks, burrow mounds
   drawSoilGround(ctx, w); // (round 19, lane boulder19: a rolling boulder's scuffs in the floor)

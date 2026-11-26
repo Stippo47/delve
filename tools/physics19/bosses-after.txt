@@ -1,0 +1,11 @@
+ikSpider      sewers   L25  sewers  won 47/60 lost 13 stuck 0 err 0| avg 157s 1 rooms
+stiltIdol     sewers   L25  sewers  won 56/60 lost 4 stuck 0 err 0| avg 177s 1 rooms
+greatOoze     sewers   L25  sewers  won 46/60 lost 14 stuck 0 err 0| avg 167s 1 rooms
+cinder        ember    L44  ember   won 32/60 lost 28 stuck 0 err 0| avg 150s 1 rooms
+sandWurm      dunes    L51  dunes   won 31/60 lost 29 stuck 0 err 0| avg 147s 1 rooms
+greatEngine   foundry  L56  foundry won 32/60 lost 28 stuck 0 err 0| avg 123s 1 rooms
+boneKing      crypt    L33  crypt   won 8/60 lost 52 stuck 0 err 0| avg 170s 1 rooms
+winterQueen   frost    L36  frost   won 51/60 lost 9 stuck 0 err 0| avg 156s 1 rooms
+gildedSeraph  spire    L48  spire   won 54/60 lost 6 stuck 0 err 0| avg 123s 1 rooms
+chieftain     warren   L13  warren  won 37/60 lost 23 stuck 0 err 0| avg 117s 1 rooms
+elderEnt      wildwood L6   wildwood won 60/60 lost 0 stuck 0 err 0| avg 82s 1 rooms

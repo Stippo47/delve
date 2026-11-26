@@ -77,14 +77,27 @@ const CLIPS = {
     H.forEach((h, i) => put(h, CX - 40, CY - 112 + i * 56, 0));
     const F = foes(); F.forEach((f, i) => { put(f, CX + 260, CY - 150 + i * 28, Math.PI); f.atkT = 999; f.forcedGoal = { x: CX - 330, y: CY - 150 + i * 28 }; });
     w.camAt = { x: CX, y: CY };` },
-  // 6. spikes under units. The Bone King's rows of bone spikes and grave lances, in his own room
-  'spikes-king': { room: 'theme=crypt&bossroom&boss=boneKing', party: 'paladin,berserker,twinfang,tower', level: 33, secs: 18, speed: 1, zoom: 1.0, follow: 'boneKing', stage: `
-    boss.maxHp *= 20; boss.hp = boss.maxHp; tough(heroes(), 12);` },
+  // 6. spikes under units
   // the Earth Mage's spike chain, the spike under one enemy and the heaved slabs; the Frost Mage's nova; the Trapper's
   // caltrops; and two of a room's spike plates under the fight
   'spikes-heroes': { battle: 'rattler*8,brute*2|earthMage,frost,trapper,paladin', arena: 'crypt', q: 'allnodes', secs: 18, speed: 1, zoom: 1.15, stage: `
     tough(heroes(), 20, 0.25); tough(foes(), 14); clearRoom();
     w.hazards.push({ type: 'spikes', x: CX - 30, y: CY - 70, r: 40 }, { type: 'spikes', x: CX + 40, y: CY + 60, r: 40 });` },
+  // every kind of spike brought up under a standing hero, one after another, close: the Bone King's spikes, a bone
+  // strike and a grave lance, an ice strike, the Earth Mage's big spike, her spike run and her heaved slabs, the Frost
+  // Mage's nova; and a spike plate of the room's under the fourth
+  'spikes-under': { battle: 'rattler*1|paladin,berserker,tower,oldguard', arena: 'crypt', secs: 13, speed: 0.7, zoom: 1.5, stage: `
+    clearRoom(); const H = heroes(); tough(H, 99); H.forEach(idle); H.forEach(stay); for (const f of foes()) { tough([f], 99); f.atkT = 999; f.moveMul = 1e-4; put(f, 80, 80, 0); }
+    put(H[0], CX - 20, CY - 105, 0); put(H[1], CX - 20, CY - 35, 0); put(H[2], CX - 20, CY + 35, 0); put(H[3], CX - 20, CY + 105, 0);
+    w.hazards.push({ type: 'spikes', x: H[3].x + 8, y: H[3].y, r: 40 }); w.camAt = { x: CX - 20, y: CY };
+    const fxp = (f) => { f.t = 0; w.fx.push(f); }, zone = (z) => SIM.addDanger(w, { t: 0.45, team: 'enemy', hit: { dmg: 0 }, ...z });
+    const shows = [
+      () => { for (const h of H.slice(0, 3)) fxp({ type: 'spike', x: h.x + 6, y: h.y, r: 30, max: 0.9 }); },
+      () => { zone({ shape: 'circle', x: H[0].x, y: H[0].y, r: 46, kind: 'bone' }); zone({ shape: 'circle', x: H[1].x, y: H[1].y, r: 46, kind: 'ice' }); zone({ shape: 'line', x1: H[2].x - 90, y1: H[2].y, x2: H[2].x + 90, y2: H[2].y, hw: 20, kind: 'bone' }); },
+      () => { fxp({ type: 'k2', draw: 'bigSpike', x: H[0].x, y: H[0].y, r: H[0].vr, max: 1.1 }); fxp({ type: 'k2', draw: 'spikeRun', x: H[1].x - 110, y: H[1].y, x1: H[1].x + 110, y1: H[1].y, max: 1.3, run: 0.5 }); fxp({ type: 'k2', draw: 'heaveUp', x: H[2].x, y: H[2].y, r: 60, max: 1.1 }); },
+      () => { fxp({ type: 'ring', ab: 'frostNova', x: H[1].x, y: H[1].y, r: 90, max: 0.8 }); },
+    ];
+    let nextT = 0.6, si = 0; each = (T) => { if (T >= nextT) { nextT += 1.4; shows[si++ % shows.length](); } };` },
   // the Winter Queen's crystals bursting out of the floor
   'spikes-queen': { room: 'theme=frost&bossroom&boss=winterQueen', party: 'paladin,berserker,twinfang,tower', level: 36, secs: 20, speed: 1, zoom: 0.95, follow: 'winterQueen', stage: `
     boss.maxHp *= 20; boss.hp = boss.maxHp; tough(heroes(), 12);` },

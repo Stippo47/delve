@@ -1,0 +1,135 @@
+tree .
+188 fights, 9879 s simulated, 551371 steps, 4885389 unit-steps, errors 0
+jumps of 6 or more in one step: 35514 (215.7 a minute of fight); pushed out of something: 152; other: 35362; smaller jumps (3 to 6): 107078
+two bodies left in each other (pair-steps; same height, not one animal): more than 8 deep 31411, more than 16 deep 17965, deeper than the smaller one's radius 7764
+-- PUSHED OUT OF SOMETHING (the sim put it somewhere else in one step): 152
+     26  pushed out of a boss body              mean   6.8  worst    7.7   tower 26
+     25  pushed out of a rock                   mean  15.2  worst   38.8   greatOoze 7, oozeHalf 6, boneKing 3, rat 2, twinfang 2, oldguard 1
+     24  pushed out of a boss part              mean   7.7  worst   11.0   paladin 13, tower 7, twinfang 2, samurai 1, cleric 1
+     24  pushed out of a heavier body           mean   7.8  worst   10.4   mobPitchfork 13, leechBlood 5, mob 3, mobDagger 2, tower 1
+     12  pushed in from the room's edge         mean   9.0  worst   16.2   hobgoblin 3, twinfang 3, automaton 2, mummy 1, spiderMomma 1, wolfRider 1
+     10  pushed out of a boulder                mean  14.6  worst   34.2   samurai 3, yeti 2, rockTroll 1, berserker 1, tower 1, paladin 1
+      8  pushed out of a like body              mean   7.1  worst    9.1   mobDagger 4, mobAxe 2, paladin 1, necromancer 1
+      8  pushed out of a chain link             mean   7.4  worst    8.9   tower 5, paladin 2, samurai 1
+      4  pushed out of its own parts            mean   7.8  worst    8.9   mob 4
+      4  pushed out of a wall                   mean  21.7  worst   31.0   twinfang 1, ogre 1, rat 1, spiderHunter 1
+      3  pushed out of a boss foot              mean   6.9  worst    7.2   tower 3
+      3  pushed out of a fixed thing            mean   7.5  worst    8.5   orc 3
+      1  pushed out of a lighter body           mean   6.1  worst    6.1   samurai 1
+-- PARTS A BRAIN PLACES (a snap: its step changed by that much from the step before): 1713
+    483  placed:crawlerPlate                    mean   7.8  worst   15.1   crawlerPlate 483
+    472  placed:serpentCoil                     mean   8.2  worst   28.6   serpentCoil 472
+    236  placed:drakeSegment                    mean  11.0  worst   19.0   drakeSegment 236
+    168  placed:engineClaw                      mean  24.7  worst  123.1   engineClaw 168
+    130  placed:spiderFoot                      mean   7.7  worst   14.4   spiderFoot 130
+    105  placed:stiltFoot                       mean   8.1  worst   15.6   stiltFoot 105
+     65  placed:engineHammer                    mean  20.5  worst   82.3   engineHammer 65
+     35  placed:drakeTail                       mean   9.9  worst   20.2   drakeTail 35
+     15  placed:oozeHalf                        mean  10.1  worst   13.8   oozeHalf 15
+      4  placed:wurmSegment                     mean   9.3  worst   10.3   wurmSegment 4
+-- ITS OWN MOVE OR AN ABILITY'S (dashes, hauls, blinks, a boss's own motion: read, not counted as faults): 33649
+  23934  act:dash                               mean  20.8  worst  350.8   twinfang 11985, paladin 7026, samurai 2026, bee 566, bat 551, goblin 462
+   3436  held/stunned                           mean   9.2  worst   82.1   tower 346, berserker 327, paladin 270, rattler 166, scarab 166, archer 149
+   1000  brain:greatOoze                        mean   9.6  worst   55.2   greatOoze 1000
+    971  act:channel                            mean  13.0  worst   86.1   mobAxe 309, mobDagger 305, mobPitchfork 251, mob 104, necromancer 2
+    698  brain:sandWurm                         mean  10.2  worst   43.3   sandWurm 698
+    553  brain:sunBlade                         mean   9.1  worst    9.3   sunBlade 553
+    345  with its body: sandSerpent (its own lunge, rush or drop) mean  10.8  worst   18.7   serpentCoil 345
+    310  act:windup                             mean  10.3  worst  541.6   automaton 98, rattler 43, brute 28, crab 24, hobgoblin 19, orc 18
+    255  anim:ability(boneKing)                 mean   9.7  worst   23.4   boneKing 255
+    225  hook:lastStandAura                     mean   9.8  worst   63.8   frost 141, samurai 81, bard 3
+    212  brain:stiltIdol                        mean  12.0  worst   14.0   stiltIdol 212
+    202  with its body: cinder (its own lunge, rush or drop) mean  12.5  worst   18.3   drakeSegment 188, drakeTail 14
+    186  anim:thrust(boneKing)                  mean  30.5  worst   60.2   boneKing 186
+    159  with its body: sandWurm (its own lunge, rush or drop) mean  20.9  worst   51.5   wurmSegment 159
+    131  with its body: chainCrawler (held or carried) mean   8.3  worst   22.2   crawlerPlate 131
+     96  brain:ikSpider                         mean   9.4  worst   39.6   ikSpider 96
+     95  brain:minion                           mean   7.0  worst    9.7   minion 95
+     57  act:leap                               mean  11.0  worst   18.4   mobAxe 13, griffon 12, mobDagger 9, harpooner 8, dame 7, mobPitchfork 5
+     47  brain:boneKing                         mean  30.1  worst  102.1   boneKing 47
+     46  with its body: sandSerpent (held or carried) mean   8.8  worst   12.9   serpentCoil 46
+     37  anim:thrust(mobDagger)                 mean   7.0  worst    7.1   mobDagger 37
+     33  brain:winterQueen                      mean 496.7  worst  604.7   winterQueen 33
+     30  anim:swing(warlock)                    mean 174.8  worst  683.7   warlock 30
+     29  brain:slimeSmall                       mean   7.0  worst    7.0   slimeSmall 29
+     28  with its body: chainCrawler (its own lunge, rush or drop) mean  55.7  worst  149.2   crawlerPlate 28
+     26  brain:werewolf                         mean   6.9  worst    7.0   werewolf 26
+     25  hook:chained                           mean   7.0  worst    7.9   automaton 18, rattler 4, lizardman 3
+     24  brain:leechBlood                       mean  27.8  worst   88.0   leechBlood 24
+     21  anim:thrust(mobPitchfork)              mean   6.9  worst    7.0   mobPitchfork 21
+     20  with its body: cinder (held or carried) mean   7.1  worst    7.4   drakeSegment 20
+     20  brain:rattler                          mean   6.8  worst    7.1   rattler 20
+     19  anim:thrust(twinfang)                  mean 414.4  worst  790.1   twinfang 19
+     19  anim:ability(dame)                     mean   7.1  worst    7.8   dame 19
+     19  brain:wisp                             mean 225.0  worst  285.5   wisp 19
+     18  brain:automaton                        mean   6.8  worst    7.0   automaton 18
+     17  anim:swing(werewolf)                   mean   7.0  worst    7.0   werewolf 17
+     16  anim:swing(oldguard)                   mean   9.5  worst   51.1   oldguard 16
+     16  brain:mobPitchfork                     mean   6.9  worst    7.0   mobPitchfork 16
+     15  hook:piled                             mean   6.9  worst    9.0   mummy 12, rattler 3
+     13  brain:dame                             mean   6.9  worst    7.0   dame 13
+     13  anim:swing(mob)                        mean   7.0  worst    7.1   mob 13
+     12  brain:paladin                          mean  17.4  worst   50.4   paladin 12
+     11  anim:swing(mobAxe)                     mean   7.0  worst    7.0   mobAxe 11
+     11  hook:whirled                           mean   8.7  worst    9.0   ghost 6, demon 4, automaton 1
+     10  brain:mobAxe                           mean   6.8  worst    7.0   mobAxe 10
+     10  anim:thrust(drillBot)                  mean   7.0  worst    7.1   drillBot 10
+      9  anim:ability(boar)                     mean   7.0  worst    7.0   boar 9
+      9  brain:mob                              mean   6.9  worst    7.2   mob 9
+      9  brain:turretGun                        mean 243.0  worst  309.0   turretGun 9
+      9  hook:whirled+flung4+chained            mean   6.9  worst    7.0   lizardman 9
+      8  brain:slimeBig                         mean   7.0  worst    7.0   slimeBig 8
+      8  hook:dirty+ironBall+chained            mean   6.9  worst    7.0   lizardman 8
+      7  with its body: sandWurm (held or carried) mean   8.6  worst    9.6   wurmSegment 7
+      7  brain:rattlerSpear                     mean   7.0  worst    7.0   rattlerSpear 7
+      7  brain:mobDagger                        mean   7.7  worst    8.8   mobDagger 7
+      7  brain:snowman                          mean   7.0  worst    7.2   snowman 7
+      7  brain:warlock                          mean  94.9  worst  164.1   warlock 7
+      6  hook:dirty+chained                     mean   7.0  worst    7.0   rattler 6
+      5  brain:wolf                             mean   7.3  worst    8.6   wolf 5
+      5  brain:mummy                            mean   7.0  worst    7.0   mummy 5
+      5  brain:imp                              mean 229.4  worst  277.4   imp 5
+      4  with its body: greatOoze (its own lunge, rush or drop) mean  18.4  worst   32.5   oozeHalf 4
+      4  brain:tower                            mean  17.7  worst   32.1   tower 4
+      4  brain:banditBrute                      mean   7.0  worst    7.0   banditBrute 4
+      4  anim:cast(warlock)                     mean  53.4  worst   66.6   warlock 4
+      3  anim:ability(werewolf)                 mean   6.5  worst    6.8   werewolf 3
+      3  brain:gearSprite                       mean   7.0  worst    7.0   gearSprite 3
+      3  brain:spiderMomma                      mean   7.0  worst    7.0   spiderMomma 3
+      3  hook:tracked                           mean   7.0  worst    9.0   demon 2, automaton 1
+      3  hook:honey                             mean   8.0  worst    9.0   chef 3
+      3  hook:trapped                           mean  60.0  worst   61.4   orc 2, lizardman 1
+      3  brain:twinfang                         mean  20.5  worst   26.8   twinfang 3
+      2  brain:oldguard                         mean  31.9  worst   37.1   oldguard 2
+      2  brain:berserker                        mean   8.0  worst    8.0   berserker 2
+      2  anim:cast(heraldLight)                 mean 352.5  worst  372.0   heraldLight 2
+      2  anim:thrust(bulwark)                   mean   6.8  worst    6.9   bulwark 2
+      2  brain:bulwark                          mean   6.9  worst    6.9   bulwark 2
+      2  hook:whirled+thrown                    mean  19.2  worst   20.2   automaton 2
+      2  hook:chained+nulled                    mean   9.0  worst   11.9   rattler 2
+      1  brain:cleric                           mean  17.7  worst   17.7   cleric 1
+      1  brain:queenImage                       mean  46.9  worst   46.9   queenImage 1
+      1  brain:pyromancer                       mean   9.0  worst    9.0   pyromancer 1
+      1  brain:archer                           mean   8.0  worst    8.0   archer 1
+      1  brain:chieftain                        mean  16.9  worst   16.9   chieftain 1
+      1  brain:rat                              mean   6.7  worst    6.7   rat 1
+      1  anim:cast(necromancer)                 mean   6.1  worst    6.1   necromancer 1
+      1  anim:cast(wisp)                        mean 213.0  worst  213.0   wisp 1
+      1  hook:whirled+flung2                    mean   6.2  worst    6.2   golem 1
+      1  hook:totemCover                        mean 172.3  worst  172.3   warlock 1
+      1  anim:thrust(wolf)                      mean  26.7  worst   26.7   wolf 1
+      1  brain:alchemist                        mean   6.3  worst    6.3   alchemist 1
+      1  brain:necromancer                      mean  16.9  worst   16.9   necromancer 1
+      1  hook:chained+thrown                    mean   7.2  worst    7.2   automaton 1
+      1  brain:croc                             mean  15.7  worst   15.7   croc 1
+      1  act:slip                               mean  10.2  worst   10.2   lizardman 1
+      1  brain:harpooner                        mean   6.5  worst    6.5   harpooner 1
+      1  hook:chained+nulled+thrown             mean   7.0  worst    7.0   rattler 1
+      1  brain:troll                            mean   6.3  worst    6.3   troll 1
+      1  brain:dartTrap                         mean  98.2  worst   98.2   dartTrap 1
+spells of half a second or more with a pair more than 16 deep: 45; the longest 3.3 s
+more than 16 deep, by what the other is: a like body 5950, a heavier body 4582, a boss body 3785, a boss part 1649, a fixed thing 682, a chain link 615, a boss foot 392, its own parts 182, its own boss 128
+  the pairs: paladin x twinfang 539, paladin x tower 466, minion x minion 426, leechBlood x twinfang 419, tower x twinfang 338, rattler x rattler 316, drakeSegment x paladin 311, mobAxe x snowman 289, crawlerPlate x paladin 275, leechBlood x paladin 272, greatOoze x paladin 255, boneKing x paladin 217, frostGiant x paladin 204, mobPitchfork x snowman 181, minion x necromancer 177, greatEngine x paladin 174
+layers (pushes the physics made): pairs on different heights 3; a body against its own boss or its own parts 0; against its own chain 0
+      2  slimeSmall:0 x slimeSmall:1
+      1  cherub:0 x cherub:2

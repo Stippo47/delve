@@ -1,0 +1,16 @@
+bats                             bat*10                                   v paladin,archer                           L19: the foes won 10 of 30, 43s a fight
+ghosts and banshees              ghost*5,banshee*2                        v paladin,berserker,cleric                 L26: the foes won 14 of 30, 86s a fight
+wisps and wolves                 wisp*8,wolf*8                            v paladin,archer                           L1: the foes won 20 of 30, 68s a fight
+cherubs and angels               cherub*6,angel*4                         v tower,twinfang,archer,cleric             L17: the foes won 11 of 30, 71s a fight
+cinder bats and imps             cinderBat*8,imp*8                        v paladin,archer,cleric                    L13: the foes won  0 of 30, 40s a fight
+bees and wasps                   bee*10,wasp*6                            v tower,twinfang,archer,cleric             L18: the foes won  0 of 30, 30s a fight
+spirits                          spiritFrost*4,spiritFire*4,spiritPoison*3 v paladin,berserker,cleric                 L10: the foes won  0 of 30, 15s a fight
+rattlers (a crowd)               rattler*12,rattlerSpear*5                v paladin,berserker,cleric,archer          L24: the foes won 24 of 30, 47s a fight
+goblins and ogres                goblin*10,orc*4,ogre*2                   v paladin,berserker,cleric,archer          L11: the foes won  5 of 30, 88s a fight
+sand serpents                    sandSerpent*3                            v paladin,berserker,twinfang,cleric        L28: the foes won 10 of 30, 52s a fight
+chain crawlers                   chainCrawler*3                           v paladin,berserker,twinfang,cleric        L40: the foes won 30 of 30, 74s a fight
+golems                           golem*3,gildedGolem                      v tower,twinfang,archer,cleric             L40: the foes won  8 of 30, 136s a fight
+slimes                           slime*10,slimeBig*5                      v paladin,archer                           L4: the foes won  2 of 30, 48s a fight
+heroes with things to put down   orc*6,ogre*2,wolfRider*3                 v engineer,beekeeper,quartermaster,shaman  L12: the foes won 20 of 30, 62s a fight
+the Mob                          rattler*10,brute*2                       v mob,cleric,archer                        L26: the foes won 24 of 30, 73s a fight
+all: the foes won 178 of 450

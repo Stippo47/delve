@@ -101,7 +101,8 @@ BFX.fanGather = { air(ctx, f, k) { // five crystals form in a fan over her shoul
 BFX.frostBurst = { // ice bursts out of the floor: a ring of tall crystals, a second ring behind it, snow thrown up
   // (round 19, lane physics19: "spikes shouldn't ever render onto of an entity": the crystals stand out of the floor
   // under every body; they were drawn over them. The snow thrown up is still in the air)
-  ground(ctx, f, k) { ctx.save(); ctx.globalAlpha = (1 - k) * 0.55; ctx.fillStyle = ICE[2]; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (0.4 + 0.6 * easeOut(k)), 0, TAU); ctx.fill(); ctx.restore();
+  ground(ctx, f, k) { ctx.globalAlpha = (1 - k) * 0.55; ctx.fillStyle = ICE[2]; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (0.4 + 0.6 * easeOut(k)), 0, TAU); ctx.fill(); },
+  low(ctx, f, k) { // (over the floor's own effects, her frost sheet too; under the bodies)
     const up2 = k < 0.16 ? easeOut(k / 0.16) : 1 - sm(k01((k - 0.5) / 0.5));
     if (k < 0.15) glow(ctx, f.x, f.y, f.r * 1.1, ICE[3], 0.8 * (1 - k / 0.15));
     const list = [];

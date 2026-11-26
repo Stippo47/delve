@@ -1,0 +1,137 @@
+{
+ "bats": {
+  "foes": "bat*10",
+  "party": "paladin,archer",
+  "level": 19,
+  "fights": 30,
+  "foesWon": 10,
+  "secs": 42.5,
+  "never": 0
+ },
+ "ghosts and banshees": {
+  "foes": "ghost*5,banshee*2",
+  "party": "paladin,berserker,cleric",
+  "level": 26,
+  "fights": 30,
+  "foesWon": 14,
+  "secs": 85.9,
+  "never": 0
+ },
+ "wisps and wolves": {
+  "foes": "wisp*8,wolf*8",
+  "party": "paladin,archer",
+  "level": 1,
+  "fights": 30,
+  "foesWon": 20,
+  "secs": 68.1,
+  "never": 0
+ },
+ "cherubs and angels": {
+  "foes": "cherub*6,angel*4",
+  "party": "tower,twinfang,archer,cleric",
+  "level": 17,
+  "fights": 30,
+  "foesWon": 11,
+  "secs": 71.1,
+  "never": 0
+ },
+ "cinder bats and imps": {
+  "foes": "cinderBat*8,imp*8",
+  "party": "paladin,archer,cleric",
+  "level": 13,
+  "fights": 30,
+  "foesWon": 0,
+  "secs": 40.1,
+  "never": 0
+ },
+ "bees and wasps": {
+  "foes": "bee*10,wasp*6",
+  "party": "tower,twinfang,archer,cleric",
+  "level": 18,
+  "fights": 30,
+  "foesWon": 0,
+  "secs": 30.4,
+  "never": 0
+ },
+ "spirits": {
+  "foes": "spiritFrost*4,spiritFire*4,spiritPoison*3",
+  "party": "paladin,berserker,cleric",
+  "level": 10,
+  "fights": 30,
+  "foesWon": 0,
+  "secs": 14.7,
+  "never": 0
+ },
+ "rattlers (a crowd)": {
+  "foes": "rattler*12,rattlerSpear*5",
+  "party": "paladin,berserker,cleric,archer",
+  "level": 24,
+  "fights": 30,
+  "foesWon": 24,
+  "secs": 46.6,
+  "never": 0
+ },
+ "goblins and ogres": {
+  "foes": "goblin*10,orc*4,ogre*2",
+  "party": "paladin,berserker,cleric,archer",
+  "level": 11,
+  "fights": 30,
+  "foesWon": 5,
+  "secs": 87.5,
+  "never": 0
+ },
+ "sand serpents": {
+  "foes": "sandSerpent*3",
+  "party": "paladin,berserker,twinfang,cleric",
+  "level": 28,
+  "fights": 30,
+  "foesWon": 10,
+  "secs": 51.6,
+  "never": 0
+ },
+ "chain crawlers": {
+  "foes": "chainCrawler*3",
+  "party": "paladin,berserker,twinfang,cleric",
+  "level": 40,
+  "fights": 30,
+  "foesWon": 30,
+  "secs": 74.1,
+  "never": 0
+ },
+ "golems": {
+  "foes": "golem*3,gildedGolem",
+  "party": "tower,twinfang,archer,cleric",
+  "level": 40,
+  "fights": 30,
+  "foesWon": 8,
+  "secs": 135.8,
+  "never": 0
+ },
+ "slimes": {
+  "foes": "slime*10,slimeBig*5",
+  "party": "paladin,archer",
+  "level": 4,
+  "fights": 30,
+  "foesWon": 2,
+  "secs": 48.5,
+  "never": 0
+ },
+ "heroes with things to put down": {
+  "foes": "orc*6,ogre*2,wolfRider*3",
+  "party": "engineer,beekeeper,quartermaster,shaman",
+  "level": 12,
+  "fights": 30,
+  "foesWon": 20,
+  "secs": 62.3,
+  "never": 0
+ },
+ "the Mob": {
+  "foes": "rattler*10,brute*2",
+  "party": "mob,cleric,archer",
+  "level": 26,
+  "fights": 30,
+  "foesWon": 24,
+  "secs": 73,
+  "never": 0
+ }
+}

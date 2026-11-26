@@ -36,11 +36,12 @@
 //   link           h       h       h       -       -       -       -       -       -       mass    -
 //   structure      h       h       h       -       -       -       -       -       -       stops it -
 //   ghost          -       -       -       -       -       -       -       -       stop    mass    stop
-//   corpse         -       -       -       -       -       -       -       -       -       -       -
+//   corpse         -       -       -       -       -       -       -       -       (*)     -       (*)
 //  push: the two ease apart, each by its share of their masses.   h: only when the two are at the same height, and
 //  then the body gives way, never the anchor (a lifted foot is off the floor: it touches no one until it is down).
 //  -: never.   stop: the body is kept out (rocks, pillars, crates, walls and the room's edge stop every height: a
 //  room's walls go to the roof, and nothing in this game goes over a rock).   mass: js/boulders.js.
+//  (*) lane corpses19: nothing moves a body lying still; one still flying from its killing blow stops at what stands.
 //  And always: a body never touches its own animal (a boss and its parts, a part and its boss's other parts, a chain's
 //  head and its links, a link and its chain's other links).
 //  Shots, zones, pools, spikes and traps are not bodies: what they reach is tags.js layerOf / reaches (unchanged).
@@ -60,20 +61,25 @@
 // nobody is ever left in a wall).
 //
 // ---------------------------------------------------------------- 5. the draw order (render.js drawScene; ORDER)
-// One list. Nothing lower in it is ever drawn over something higher:
-//   floor > doors > raised walls > floor hazards (spike plates, pools, snares, webs) > a boss arena's floor > danger
-//   zones > ground effects (zones, cracks, EVERY spike, thorn and stake that stands out of the floor) > tracks, mounds,
-//   scuffs > puddles > shadows > pickups > dust > rocks, crates > side rings > corpses and the downed > floor bodies
-//   (by depth) > hovering bodies > flying bodies > shots > sparks and dust > a boss arena's air > air effects > swings
-//   and bursts > the room's light.
+// One list. Nothing earlier in it is ever drawn over something later:
+//   floor > bodies lying (corpses, the downed and their rings: lane corpses19) > doors > raised walls > floor hazards
+//   (spike plates, pools, snares, webs, fire) > a boss arena's floor > danger zones > ground effects (zones, cracks,
+//   EVERY spike, thorn, vine and crystal that stands out of the floor) > a boss's things that stand out of the floor
+//   (BFX[type].low) > tracks, mounds, scuffs > puddles > shadows > pickups > dust > rocks, crates > side rings > floor
+//   bodies (by depth) > hovering bodies > flying bodies > a body still flying from its killing blow > the wagon
+//   road's canopy > shots > sparks and dust > a boss arena's air > air effects > swings and bursts > the room's light.
 // "Spikes shouldn't ever render on top of an entity": whatever comes up out of the floor is a ground effect, under
 // every body, whatever made it (docs/physics19.md lists each one and where it was drawn before).
 import { airTier } from './height.js';
 
 export const SOFT = { v: 90, rate: 6, max: 330, rigid: 270, cap: 330, rockRigid: 840 };
-export const ORDER = ['floor', 'doors', 'raised walls', 'floor hazards', 'arena floor', 'danger zones', 'ground effects', 'tracks', 'puddles', 'shadows',
-  'pickups', 'dust', 'rocks and crates', 'side rings', 'corpses', 'floor bodies', 'hovering bodies', 'flying bodies', 'shots', 'particles', 'arena air',
-  'air effects', 'swings and bursts', 'light'];
+// ?push=hard in the address: bodies put apart in the one step again, as before this lane, to see the difference (the
+// layers, the anchors and the draw order stay as they are now)
+const HARD = (() => { try { return typeof location !== 'undefined' && new URLSearchParams(location.search).get('push') === 'hard'; } catch { return false; } })();
+export const pushCap = (dt) => (HARD ? Infinity : SOFT.cap * dt);
+export const ORDER = ['floor', 'bodies lying', 'doors', 'raised walls', 'floor hazards', 'arena floor', 'danger zones', 'ground effects',
+  'boss things out of the floor', 'tracks', 'puddles', 'shadows', 'pickups', 'dust', 'rocks and crates', 'side rings', 'floor bodies',
+  'hovering bodies', 'flying bodies', 'bodies in the air', 'canopy', 'shots', 'particles', 'arena air', 'air effects', 'swings and bursts', 'light'];
 
 export const heightOf = airTier;
 // whose animal a unit is a piece of (itself, if it is nobody's). The Mob's bodies are four people, not one animal.
@@ -103,12 +109,14 @@ export function bodiesCollide(a, b) {
 // How far two bodies `over` deep in each other come apart this step. `fresh`: how much of that depth is new this
 // step (0 if they were as deep the step before).
 export function softPush(over, fresh, dt) {
+  if (HARD) return over;
   const f = fresh > 0 ? Math.min(fresh, SOFT.rigid * dt) : 0;
   return Math.min(over, f + Math.min(SOFT.max, SOFT.v + SOFT.rate * (over - f)) * dt);
 }
 // The same out of a rock: what its own walk or a knock carried it in this step, at once (nothing gets through a
 // rock); the rest eased.
 export function softRock(over, fresh, dt) {
+  if (HARD) return over;
   const f = fresh > 0 ? Math.min(fresh, SOFT.rockRigid * dt) : 0;
   return Math.min(over, f + Math.min(SOFT.max, SOFT.v + SOFT.rate * (over - f)) * dt);
 }

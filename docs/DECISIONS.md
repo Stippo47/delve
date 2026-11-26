@@ -1551,3 +1551,51 @@ and majors; the same code in dungeons, battle mode, the Book's previews and the 
 - Round 19b, chat (after 0.41.0), word for word: "Work on the physics overall. I see a lot of jarring jumping of units or segments of entities like the spider and drake. If a spider puts its foot down on an entity either the spider jumps in a spit second or the entity does and it's jarring. Many times when things are on layers where they shouldn't collide they do. Work on collision layers and render order (spikes shouldn't ever render onto of an entity)" and "Also the troll should fight back while going to boulder. And yes they should bowl more often. Boulder should go further and start a bit faster. Should show a charge up animation. Boulder should have hp and can be destroyed and targeted.idk why spikes come out when the boulder is bowled. They should back away from enemies to a min distance before the bowl otherwise they will charge forwards still holding the boulder. Boulder should do heavy knockback. Currently it just barely knocks things to the side. There no strong impact. Rock troll should have a huge boulder and the boulder comes back to them."
   Lanes: physics19 (Fable high): jump detector, smooth capped separation, feet and segments, one collision-layer matrix, one render order (spikes under units). troll19b (Fable high): fights while fetching, bowls more often, further and faster, wind-up tell, boulder health (targetable, breakable), find the bowl "spikes", back off before bowling, heavy knockback with impact, huge returning rock-troll boulder. Merge order: corpses19, then physics19 merges main, then troll19b.
 - Lead, corpses19 merged (0.42.0): bodies lying still are never moved; boulders and balls roll over them; raised walls don't shove downed heroes; a new body layer draws landed bodies and downed heroes (with their rings) right after the floor; a body still flying is drawn over units until it lands. Headless check 998 body pushes before, 0 after. Calls (in deck, my picks taken for now): thrown bodies stop at rocks/crates; downed heroes count as bodies (the wagon still nudges them on the road); puddles and danger marks draw over bodies. I zoomed the boulder film at 5.2 s (the downed ring now under the troll) and loaded a villager/goblin/troll fight in the browser.
+## Round 19, lane physics19 (2026-11-26): jumps, collision layers and the draw order
+The designer: "Work on the physics overall. I see a lot of jarring jumping of units or segments of entities like the
+spider and drake. If a spider puts its foot down on an entity either the spider jumps in a spit second or the entity
+does and it's jarring. Many times when things are on layers where they shouldn't collide they do. Work on collision
+layers and render order (spikes shouldn't ever render onto of an entity)". The audit first (fifteen things found, by
+count and on film), then the fixes; every number, the table and the clips: docs/physics19.md.
+- **One place for it: js/layers.js (new; the game loads it).** What a body is (corpse, ghost, part, link, structure,
+  body), how high it is (floor, hovering, flying: the same answer the renderer draws by), what touches what, how
+  bodies come apart, and the draw order as one list.
+- **Bodies ease apart; they are not put apart in one step.** What two walked into each other this step is taken out at
+  once (up to 270 a second: nobody walks through anybody); what was already there eases out (90 a second plus 6 times
+  what is left, 330 at most, and no body is pushed more than 330 a second in all). A body in a rock the same. Walls and
+  the room's edge are still at once (troll19). Thrown 6 or more in one step, over the same 188 fights: 8,536 times
+  before, 152 after. `?push=hard` puts it back to compare.
+- **Anchors.** A boss's placed parts (feet, hooves, the drake's and wurm's body, the engine's hands), a chain's links
+  and things stood on the floor are never moved by a push, and never push each other; a boss with parts is one too
+  while it is stunned, frozen or asleep. A body never touches its own animal. A body pushed by its own boss or its
+  parts: 26,869 times before, 0 after (the idol's head was shoved by its own lifted hooves).
+- **Height for touching is height for drawing.** Everything off the floor was one height, and the kinds that always
+  fly were on the floor. Now floor, hovering and flying never touch each other, and bats, ghosts, wisps, spirits,
+  cherubs, angels, bees, drones and the Gilded Seraph are flying for bodies too (sys19 had left that for the
+  designer). What a blow or a zone reaches is unchanged (tags.js). Walls and rocks stop every height. Pushes between
+  heights: 25,664 before, 0 after.
+- **Feet.** A foot comes down beside whoever stands on its spot (boss-kit.js footClear), never moves for anybody, and
+  whoever it still lands on is eased out. A stomp is called off if the animal is stunned in the middle of it. The
+  spider comes round to spit at 3 rad/s and the idol to cast at 2.2 (7 before: their feet whipped across the floor);
+  a long step takes longer. A standing hero's worst single step under the spider: 50.5 before, 3.7 after.
+- **The drake.** A joint of its spine bent past its limit comes back at 2.6 rad/s, not in one step: its body went
+  round behind its head as a stiff rod and could flip (its rear 160 to 190 in a step).
+- **Also eased**: a body picked up by a shouldered charge (onto the carrier's front over a few steps), Showboat's ring.
+- **The draw order: whatever comes up out of the floor is under every body.** Moved under: the Bone King's spikes
+  (they were the last thing drawn), a danger circle's bone and ice spikes, the Earth Mage's Spike Chain, big spike and
+  heaved slabs, the Frost Mage's nova, lying caltrops, vine patches, the Winter Queen's crystals (a third place for a
+  boss's effects, BFX.low: over the floor's effects, under the bodies).
+- **Strength**: party wins in each boss's room, 260 fights a tree for the five that moved most: Old Longlegs 85% to
+  80%, Cinder 54% to 55%, the Winter Queen 72% to 71%, the Chieftain 68% to 65%, the Sand Wurm 58% to 54%; the others
+  within 2 of 60. Plain fights: the foes won 168 of 450 before, 178 after. Nothing changed in health or damage.
+- **The price**: bodies are inside each other for longer (a pair more than 16 deep: 1,815 pair-steps before, 17,965
+  after, of 4.9 million unit-steps).
+- **Left**: moves that are fast on purpose (the drake's bite, the wurm's and the Bone King's lunges, the engine's
+  punches), abilities that put somebody somewhere at once (grabs, hooks, blinks), a chain's body snapping when its
+  head strikes, boulders (boulders.js still puts a body out of a boulder in one step: troll19b's file this round), a
+  wall raised on somebody.
+- **The lane's calls** (docs/physics19.md): fliers never bump walkers; a foot beside, never on; walls and rocks stop
+  every height; a stunned boss with parts cannot be shoved; spikes under every body even where that hides most of the
+  effect (the Earth Mage's spike under an enemy); 5.5 a step as the most a body is pushed.
+- Checks: battles 535, 0 problems, 8 out of time (main: 535 too, 8); preview-check 0 / 0 / 0. `sw.js` needs
+  tools/build-sw.py for js/layers.js (not run, as told).
