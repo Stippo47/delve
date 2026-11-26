@@ -1920,7 +1920,7 @@ function physics(w, dt) {
       const into = -(u.kx * c.nx + u.ky * c.ny);
       if (into > 0) { wallHit(w, u, into); u.kx += c.nx * into * 1.25; u.ky += c.ny * into * 1.25; }
     }
-    let thrown = false;
+    let thrown = false; // (round 19, lane troll19: see below)
     for (const p of w.pillars) {
       // (round 19, lane troll19: a troll's boulder or a yeti's snowball is not a rock: it throws nobody out of itself
       // into whatever stands behind them. boulders.js ballPass, below, has them push each other by their masses)
@@ -2154,7 +2154,7 @@ export function step(w, dt) {
     const carrying = u.carryAt === w.time;
     if (u.def.hops) slimeMove(w, u, dt); else if (!carrying) movement(w, u, dt); // (round 16: a slime only moves in hops)
     if (u.rootT > 0) { u.dvx = u.dvy = 0; u.spd = 0; }
-    if (!carrying) updateFacing(u, dt);
+    if (!carrying) updateFacing(u, dt); // (round 19, lane troll19: its face stays to its boulder)
     // confused (round 13; round 14, "Should also make them turn randomly"): now and then it swings round to a random
     // heading and walks off that way for a moment (movement and updateFacing follow u.lurchA while u.lurchT lasts)
     if (u.st.confuse > 5 && !(u.lurchT > 0) && chance(dt * CONFUSE.turn * fillOf(u, 'confuse'))) { u.lurchA = wrapAngle(u.facing + rrange(1.5, 3.1) * (chance(0.5) ? 1 : -1)); u.lurchT = rrange(...CONFUSE.lurchT); }
@@ -2231,5 +2231,5 @@ export function step(w, dt) {
   w.units = w.units.filter((u) => !u.dead);
 }
 
-export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape, fearOf, speedOf };
+export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape, fearOf, speedOf }; // (round 19, lane troll19: speedOf, for foes9.js carry)
 export { useAbility as unitAbility }; // (round 18, lane dash18: a plain unit's own ability, set off by hand: tools/dash18/clips.mjs)

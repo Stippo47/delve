@@ -12,6 +12,6 @@ case $cam in
 esac
 live=""; [ "$scene" = live ] && live=",{fight:true}"
 js="$(cat tools/troll19/stage.js);(()=>{const S=T19.stage('$scene'$live);$C S.w.camAt=c;import('./js/render.js').then((R)=>{if(R.snapCamera)R.snapCamera();});})()"
-node tools/clip.mjs docs/clips/troll19/$out.mp4 --port 8972 --seed ${SEED:-7} --battle "$red|$blue" --arena ${ARENA:-crypt} --skip 3.5 --secs $secs --w 700 --h 640 --zoom $zoom --eval "$js"
+node tools/clip.mjs docs/clips/troll19/$out.mp4 --port ${PORT:-8972} --seed ${SEED:-7} --battle "$red|$blue" --arena ${ARENA:-crypt} --skip 3.5 --secs $secs --w 700 --h 640 --zoom $zoom --eval "$js"
 # the first two frames go (the camera is put on the scene a moment after the staging)
 ffmpeg -y -loglevel error -i docs/clips/troll19/$out.mp4 -vf "trim=start_frame=2,setpts=PTS-STARTPTS" -c:v libx264 -pix_fmt yuv420p -crf 22 -movflags +faststart docs/clips/troll19/.$out.tmp.mp4 && mv docs/clips/troll19/.$out.tmp.mp4 docs/clips/troll19/$out.mp4

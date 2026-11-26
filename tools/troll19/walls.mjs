@@ -65,7 +65,8 @@ function audit(w, C, tag) {
     let rock = 0; for (const p of rocks) rock = Math.max(rock, u.r + p.r - Math.hypot(u.x - p.x, u.y - p.y));
     const inRock = rock > Math.max(10, u.r / 3);
     if (near) { mark('inWall', u, inW, pen); mark('out', u, out, pen); mark('deep', u, deep, pen); mark('inRock', u, inRock, rock); }
-    else { if (inW) C.other.inWall++; if (out) C.other.out++; if (deep) C.other.deep++; if (inRock) C.other.inRock++; }
+    else { if (inW && V && !(u._said > w.time - 2)) { u._said = w.time; console.log('   in a wall, no boulder near:', tag, 't', w.time.toFixed(1), u.kind, Math.round(u.x), Math.round(u.y), 'r', Math.round(u.r), 'act', u.act && u.act.type, 'k', Math.round(Math.hypot(u.kx, u.ky)), 'temp walls', w.walls.filter((r) => r.temp != null).length, 'pen', Math.round(pen), 'pass', u.passUntil > w.time, 'anim', u.anim && u.anim.kind, 'hop', Math.round(u.hop || 0), 'dv', Math.round(Math.hypot(u.vx, u.vy)), 'nearest ball', Math.round(Math.min(9999, ...balls.map((b) => Math.hypot(u.x - b.x, u.y - b.y) - u.r - b.r)))); }
+      if (inW) C.other.inWall++; if (out) C.other.out++; if (deep) C.other.deep++; if (inRock) C.other.inRock++; }
     let ib = 0; for (const b of balls) if (b.owner !== u) ib = Math.max(ib, u.r + b.r - Math.hypot(u.x - b.x, u.y - b.y));
     mark('inBall', u, ib > 14, ib);
   }
