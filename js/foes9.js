@@ -223,10 +223,13 @@ function roundFree(w, u, b, phi, sg, span) {
   }
   return true;
 }
+// Has the boulder room to be swung round the troll that way, a quarter of a radian on?
+const swingFree = (w, u, b, phi, sg) => ballFits(w, b, u.x + Math.cos(phi + sg * 0.25) * b.grip, u.y + Math.sin(phi + sg * 0.25) * b.grip, b.r - 2);
 // Walking with the boulder in its fists (round 19, lane troll19). It wants the boulder to go the way A (at its mark,
 // or round the walls to it). Near that line it pushes, stepping a little to the side as it goes to bring the boulder
 // round; well off it, it stops pushing and walks round the boulder, the short way where its body has room, the long
-// way where it hasn't; with no room either way (the boulder against a wall, in a corner) it drags the boulder back
+// way where it hasn't; with no room either way it heaves the boulder round itself; with no room for that either
+// (the boulder against a wall, in a corner) it pushes on or drags the boulder back
 // out until it has. sim.js skips its own walking and facing for the tick (u.carryAt).
 function carry(w, u, b, t, dt) {
   u.carryAt = w.time;
@@ -242,8 +245,14 @@ function carry(w, u, b, t, dt) {
       if (roundFree(w, u, b, phi, -dir, rem(-dir))) { dir = -dir; C.dir = dir; C.until = w.time + 2.5; } // (the way round holds once picked, a while)
       else dir = 0;
     }
-    if (dir) tan = dir * Math.min(sp * (u.def.rock ? CARRY.orbitRock : CARRY.orbit), rem(dir) * b.grip * (1 - CARRY.roll) * CARRY.gain);
-    else if (ae > CARRY.pushOff) {
+    const pace = sp * (u.def.rock ? CARRY.orbitRock : CARRY.orbit);
+    if (dir) tan = dir * Math.min(pace, rem(dir) * b.grip * (1 - CARRY.roll) * CARRY.gain);
+    // no room for its own body to step round the boulder (a wall at its back or its side), but room for the boulder:
+    // it stands and heaves the boulder round itself instead, at the same turn (the old way of turning, with a solid boulder)
+    else if (swingFree(w, u, b, phi, Math.sign(err) || 1)) {
+      const sg = Math.sign(err) || 1, a2 = phi + sg * Math.min(ae, pace / (b.grip * (1 - CARRY.roll)) * dt, ae * CARRY.gain * dt);
+      ballSweep(w, b, u.x + Math.cos(a2) * b.grip, u.y + Math.sin(a2) * b.grip);
+    } else if (ae > CARRY.pushOff) {
       // no room to get round it here (walls or rocks on both sides of it): on with the boulder, or back out dragging it,
       // whichever way has the more room, until it can step round it (the way holds a moment once picked)
       if (!(C.wayT > w.time)) {
@@ -355,11 +364,11 @@ export function boulderBrain(w, u, dt) {
     // (round 17, lane foes17: bare-handed a while only when it has no line to roll it down: with a hero up against the
     // boulder, or a clear way to them, this is its throw, and it goes straight for the boulder after it, as after any
     // throw; the rest had it standing by its boulder for six seconds, then picking it up and wedging again)
-    // (round 19, lane troll19: the line is the boulder's, from the boulder to its mark; with its mark off to the
-    // boulder's side or behind, where it can't get round to push, it sets the boulder down and uses its fists)
+    // (round 19, lane troll19: with its mark off to its side or behind it, where it can't get the boulder round to push,
+    // it sets the boulder down and uses its fists)
     // (and "at the boulder" only with nothing between them: a mark just past a gap too narrow for the boulder isn't at it.
     // The boulder went through the wall to them before; now the troll leaves it and goes round on foot)
-    const a = angleTo(b.x, b.y, t.x, t.y), atIt = dist(t.x, t.y, b.x, b.y) < b.r + t.r + 40 && lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.45);
+    const a = angleTo(u.x, u.y, t.x, t.y), atIt = dist(t.x, t.y, b.x, b.y) < b.r + t.r + 40 && lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.45);
     jam.t = 0; u.bouldRest = atIt || lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.7) ? 0 : BOULDER_REST;
     // (wedged three times running without getting anywhere: this boulder is no use to it here: a new one, round 17's rule)
     const lined = angleDiff(a, phi) < 1.1;
@@ -369,12 +378,12 @@ export function boulderBrain(w, u, dt) {
     return true;
   }
   if (t && u.aggro && due(u, 'boulder', dt, 2)) {
-    // (round 19, lane troll19: the line is the boulder's own, from it to the mark, and how far off it the troll stands
-    // behind the boulder; it was the troll's facing, which the boulder followed)
-    const a = angleTo(b.x, b.y, t.x, t.y), off = angleDiff(a, phi), d = dist(u.x, u.y, t.x, t.y);
+    // (round 19, lane troll19: as before, the line from the troll to its mark against the line from the troll through
+    // its boulder: its facing, which the boulder used to follow)
+    const a = angleTo(u.x, u.y, t.x, t.y), off = angleDiff(a, phi), d = dist(u.x, u.y, t.x, t.y);
     // a hero pressed up against the boulder gets it rolled into them point blank (else the boulder kept them off for ever)
     const pressed = dist(t.x, t.y, b.x, b.y) < b.r + t.r + 24 && off < 1.0 && lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.45);
-    if (!pressed && (d < 120 || d > 420 || off > 0.45 || !lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.7))) again(u, 'boulder', 0.3);
+    if (!pressed && (d < 120 || d > 420 || off > 0.4 || !lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.7))) again(u, 'boulder', 0.3);
     else {
       again(u, 'boulder', 5, 7);
       if (u.def.rock && chance(0.4)) { // charge behind it

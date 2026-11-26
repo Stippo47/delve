@@ -53,6 +53,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll/corner": {
@@ -105,6 +110,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -163,6 +173,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll/pillar": {
@@ -215,6 +230,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -273,6 +293,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll/door": {
@@ -325,6 +350,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -383,6 +413,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll/wall": {
@@ -435,6 +470,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -493,6 +533,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll/thin": {
@@ -545,6 +590,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -603,6 +653,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll/crate": {
@@ -655,6 +710,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -713,6 +773,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll/friends": {
@@ -765,6 +830,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -823,6 +893,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll@1/corner": {
@@ -875,6 +950,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -933,6 +1013,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll@1/pillar": {
@@ -985,6 +1070,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1043,6 +1133,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll@1/door": {
@@ -1095,6 +1190,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1153,6 +1253,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/wall": {
@@ -1205,6 +1310,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1263,6 +1373,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/thin": {
@@ -1315,6 +1430,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1373,6 +1493,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/crate": {
@@ -1425,6 +1550,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1483,6 +1613,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/friends": {
@@ -1535,6 +1670,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1593,6 +1733,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti/corner": {
@@ -1645,6 +1790,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1703,6 +1853,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti/pillar": {
@@ -1755,6 +1910,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1813,12 +1973,17 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti/door": {
    "runs": 12,
-   "bad": 1,
-   "crossed": 1,
+   "bad": 0,
+   "crossed": 0,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -1865,6 +2030,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1923,6 +2093,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/wall": {
@@ -1975,6 +2150,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -2033,6 +2213,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/thin": {
@@ -2085,6 +2270,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -2143,6 +2333,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/crate": {
@@ -2195,6 +2390,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -2253,6 +2453,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/friends": {
@@ -2308,16 +2513,21 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   }
  },
  "battles": {
   "troll": {
    "fights": 72,
-   "redWins": 9,
+   "redWins": 11,
    "never": 0,
-   "secs": 77.2,
-   "steps": 333536,
+   "secs": 75.7,
+   "steps": 327255,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -2339,9 +2549,9 @@
     "worst": 0
    },
    "inBall": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 5,
+    "times": 2,
+    "worst": 20.060919855323235
    },
    "ballInWall": {
     "steps": 0,
@@ -2364,52 +2574,75 @@
     "worst": 0
    },
    "ownerInBall": {
-    "steps": 32,
+    "steps": 5,
     "times": 5,
     "worst": 49.98844053534869
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "other": {
     "inWall": 0,
     "out": 0,
     "deep": 0,
-    "inRock": 5
+    "inRock": 0
    },
    "ex": [
     {
      "key": "ownerInBall",
-     "tag": "trollx3 v paladin,archer #1",
-     "t": 89.93,
+     "tag": "trollx3 v paladin,archer #2",
+     "t": 7.48,
      "kind": "boulder",
-     "x": 41,
-     "y": 439,
-     "worst": 17
+     "x": 712,
+     "y": 445,
+     "worst": 20
+    },
+    {
+     "key": "inBall",
+     "tag": "trollx3 v paladin,berserker,cleric #4",
+     "t": 49.5,
+     "kind": "paladin",
+     "x": 585,
+     "y": 207,
+     "worst": 20
+    },
+    {
+     "key": "inBall",
+     "tag": "trollx3 v paladin,berserker,cleric #11",
+     "t": 97.65,
+     "kind": "berserker",
+     "x": 925,
+     "y": 445,
+     "worst": 16
     },
     {
      "key": "ownerInBall",
      "tag": "trollx3 v paladin,berserker,cleric #11",
-     "t": 196.33,
+     "t": 130.23,
      "kind": "boulder",
-     "x": 542,
-     "y": 111,
-     "worst": 15
+     "x": 653,
+     "y": 66,
+     "worst": 25
     },
     {
      "key": "ownerInBall",
      "tag": "trollx3 v paladin,berserker,cleric #11",
-     "t": 221.68,
+     "t": 214.82,
      "kind": "boulder",
-     "x": 543,
-     "y": 121,
-     "worst": 26
+     "x": 536,
+     "y": 226,
+     "worst": 16
     },
     {
      "key": "ownerInBall",
-     "tag": "trollx3 v paladin,berserker,cleric #11",
-     "t": 235.85,
+     "tag": "trollx3 v tower,twinfang,archer,cleric #0",
+     "t": 7.92,
      "kind": "boulder",
-     "x": 539,
-     "y": 397,
-     "worst": 26
+     "x": 554,
+     "y": 408,
+     "worst": 16
     },
     {
      "key": "ownerInBall",
@@ -2424,10 +2657,10 @@
   },
   "rockTroll": {
    "fights": 72,
-   "redWins": 2,
+   "redWins": 5,
    "never": 0,
-   "secs": 102.5,
-   "steps": 442788,
+   "secs": 103.1,
+   "steps": 445698,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -2449,9 +2682,9 @@
     "worst": 0
    },
    "inBall": {
-    "steps": 4,
-    "times": 2,
-    "worst": 20.846194013104842
+    "steps": 9,
+    "times": 1,
+    "worst": 41.60470253599066
    },
    "ballInWall": {
     "steps": 0,
@@ -2464,9 +2697,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 131,
-    "times": 1,
-    "worst": 24.400000000000006
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "ballInRock": {
     "steps": 0,
@@ -2474,70 +2707,66 @@
     "worst": 0
    },
    "ownerInBall": {
-    "steps": 27,
-    "times": 4,
+    "steps": 37,
+    "times": 5,
     "worst": 49.98844053534869
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "other": {
     "inWall": 0,
     "out": 0,
-    "deep": 0,
-    "inRock": 3
+    "deep": 154,
+    "inRock": 11
    },
    "ex": [
     {
-     "key": "inBall",
-     "tag": "rockTrollx3 v paladin,archer #3",
-     "t": 33.12,
-     "kind": "rockTroll",
-     "x": 452,
-     "y": 268,
-     "worst": 14
-    },
-    {
-     "key": "ballDeep",
-     "tag": "rockTrollx3 v paladin,archer #7",
-     "t": 84.28,
-     "kind": "boulder",
-     "x": 475,
-     "y": 41,
-     "worst": 24
-    },
-    {
      "key": "ownerInBall",
-     "tag": "rockTrollx3 v paladin,archer #10",
-     "t": 94.35,
+     "tag": "rockTrollx3 v paladin,archer #0",
+     "t": 88.93,
      "kind": "boulder",
-     "x": 111,
-     "y": 104,
+     "x": 41,
+     "y": 105,
      "worst": 15
     },
     {
      "key": "ownerInBall",
-     "tag": "rockTrollx3 v paladin,archer #10",
-     "t": 106.28,
+     "tag": "rockTrollx3 v paladin,archer #6",
+     "t": 30.82,
+     "kind": "boulder",
+     "x": 498,
+     "y": 871,
+     "worst": 33
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTrollx3 v paladin,archer #11",
+     "t": 150.9,
+     "kind": "boulder",
+     "x": 539,
+     "y": 105,
+     "worst": 15
+    },
+    {
+     "key": "inBall",
+     "tag": "rockTrollx3 v paladin,archer #11",
+     "t": 150.95,
+     "kind": "paladin",
+     "x": 529,
+     "y": 37,
+     "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTrollx3 v paladin,berserker,cleric #0",
+     "t": 101,
      "kind": "boulder",
      "x": 41,
      "y": 41,
      "worst": 15
-    },
-    {
-     "key": "inBall",
-     "tag": "rockTrollx3 v tower,twinfang,archer,cleric #5",
-     "t": 7.78,
-     "kind": "tower",
-     "x": 401,
-     "y": 275,
-     "worst": 17
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTrollx3 v tower,twinfang,archer,cleric #5",
-     "t": 7.78,
-     "kind": "boulder",
-     "x": 464,
-     "y": 285,
-     "worst": 32
     },
     {
      "key": "ownerInBall",
@@ -2552,10 +2781,10 @@
   },
   "yeti": {
    "fights": 72,
-   "redWins": 31,
+   "redWins": 32,
    "never": 0,
-   "secs": 65.6,
-   "steps": 283708,
+   "secs": 64.2,
+   "steps": 277702,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -2606,6 +2835,11 @@
     "times": 2,
     "worst": 30.873146586860194
    },
+   "stuck": {
+    "steps": 2574,
+    "times": 4,
+    "worst": 34.53333333333137
+   },
    "other": {
     "inWall": 0,
     "out": 0,
@@ -2613,6 +2847,42 @@
     "inRock": 0
    },
    "ex": [
+    {
+     "key": "stuck",
+     "tag": "yetix3 v paladin,archer #3",
+     "t": 106.78,
+     "kind": "yeti",
+     "x": 455,
+     "y": 199,
+     "worst": 15
+    },
+    {
+     "key": "stuck",
+     "tag": "yetix3 v paladin,archer #3",
+     "t": 124.65,
+     "kind": "yeti",
+     "x": 609,
+     "y": 288,
+     "worst": 15
+    },
+    {
+     "key": "stuck",
+     "tag": "yetix3 v paladin,archer #3",
+     "t": 142.25,
+     "kind": "yeti",
+     "x": 461,
+     "y": 280,
+     "worst": 15
+    },
+    {
+     "key": "stuck",
+     "tag": "yetix3 v paladin,archer #3",
+     "t": 179.8,
+     "kind": "yeti",
+     "x": 443,
+     "y": 198,
+     "worst": 15
+    },
     {
      "key": "ownerInBall",
      "tag": "yetix3 v paladin,archer #9",
@@ -2684,42 +2954,15 @@
      "x": 715,
      "y": 448,
      "worst": 15
-    },
-    {
-     "key": "inBall",
-     "tag": "yetix3 v tower,twinfang,archer,cleric #11",
-     "t": 13.83,
-     "kind": "yeti",
-     "x": 774,
-     "y": 240,
-     "worst": 24
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "yetix3 v tower,twinfang,archer,cleric #11",
-     "t": 18.53,
-     "kind": "snowball",
-     "x": 878,
-     "y": 289,
-     "worst": 31
-    },
-    {
-     "key": "inBall",
-     "tag": "yetix3 v tower,twinfang,archer,cleric #11",
-     "t": 52.82,
-     "kind": "yeti",
-     "x": 691,
-     "y": 301,
-     "worst": 18
     }
    ]
   },
   "troll@1": {
    "fights": 72,
-   "redWins": 42,
+   "redWins": 41,
    "never": 0,
-   "secs": 92.9,
-   "steps": 401470,
+   "secs": 82,
+   "steps": 354539,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -2731,19 +2974,19 @@
     "worst": 0
    },
    "deep": {
-    "steps": 5,
-    "times": 1,
-    "worst": 12.800000000000026
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "inRock": {
-    "steps": 5,
-    "times": 1,
-    "worst": 30.683948021114674
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "inBall": {
-    "steps": 3,
-    "times": 3,
-    "worst": 33.10129117011253
+    "steps": 4,
+    "times": 4,
+    "worst": 73.83636255500856
    },
    "ballInWall": {
     "steps": 0,
@@ -2756,143 +2999,148 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 31,
-    "times": 1,
-    "worst": 11.599999999999966
+    "steps": 8907,
+    "times": 2,
+    "worst": 36
    },
    "ballInRock": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 5,
+    "times": 2,
+    "worst": 22.290720904103132
    },
    "ownerInBall": {
-    "steps": 68,
-    "times": 9,
-    "worst": 61.8981574996877
+    "steps": 203,
+    "times": 16,
+    "worst": 51.10616052632408
+   },
+   "stuck": {
+    "steps": 56,
+    "times": 1,
+    "worst": 15.933333333332435
    },
    "other": {
     "inWall": 0,
     "out": 0,
-    "deep": 54,
-    "inRock": 0
+    "deep": 0,
+    "inRock": 8
    },
    "ex": [
     {
-     "key": "inRock",
-     "tag": "troll@1x3 v paladin,archer #8",
-     "t": 14.12,
-     "kind": "troll",
-     "x": 659,
-     "y": 494,
-     "worst": 27
-    },
-    {
      "key": "ownerInBall",
-     "tag": "troll@1x3 v paladin,archer #8",
-     "t": 14.18,
-     "kind": "boulder",
-     "x": 559,
-     "y": 518,
-     "worst": 23
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@1x3 v paladin,archer #11",
-     "t": 91.28,
+     "tag": "troll@1x3 v paladin,archer #1",
+     "t": 15.57,
      "kind": "boulder",
      "x": 549,
-     "y": 51,
-     "worst": 14
-    },
-    {
-     "key": "inBall",
-     "tag": "troll@1x3 v paladin,berserker,cleric #9",
-     "t": 87.82,
-     "kind": "troll",
-     "x": 745,
-     "y": 216,
-     "worst": 23
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@1x3 v paladin,berserker,cleric #9",
-     "t": 87.82,
-     "kind": "boulder",
-     "x": 818,
-     "y": 223,
-     "worst": 26
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@1x3 v paladin,berserker,cleric #10",
-     "t": 9.13,
-     "kind": "boulder",
-     "x": 523,
-     "y": 603,
-     "worst": 31
-    },
-    {
-     "key": "deep",
-     "tag": "troll@1x3 v paladin,berserker,cleric #11",
-     "t": 9.15,
-     "kind": "berserker",
-     "x": 488,
-     "y": 445,
-     "worst": 13
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@1x3 v paladin,berserker,cleric #11",
-     "t": 226.4,
-     "kind": "boulder",
-     "x": 550,
-     "y": 111,
-     "worst": 14
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@1x3 v paladin,berserker,cleric #11",
-     "t": 228.8,
-     "kind": "boulder",
-     "x": 550,
-     "y": 100,
+     "y": 429,
      "worst": 15
     },
     {
+     "key": "ownerInBall",
+     "tag": "troll@1x3 v paladin,archer #1",
+     "t": 18.65,
+     "kind": "boulder",
+     "x": 549,
+     "y": 429,
+     "worst": 14
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "troll@1x3 v paladin,archer #2",
+     "t": 19.82,
+     "kind": "boulder",
+     "x": 57,
+     "y": 604,
+     "worst": 22
+    },
+    {
      "key": "inBall",
-     "tag": "troll@1x3 v paladin,berserker,cleric #11",
-     "t": 230.25,
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 4.52,
+     "kind": "paladin",
+     "x": 585,
+     "y": 214,
+     "worst": 20
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 10.85,
+     "kind": "boulder",
+     "x": 444,
+     "y": 201,
+     "worst": 15
+    },
+    {
+     "key": "ballInRock",
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 11.17,
+     "kind": "boulder",
+     "x": 435,
+     "y": 197,
+     "worst": 9
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 13.2,
+     "kind": "boulder",
+     "x": 444,
+     "y": 201,
+     "worst": 14
+    },
+    {
+     "key": "inBall",
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 14.63,
+     "kind": "paladin",
+     "x": 397,
+     "y": 129,
+     "worst": 74
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 39.53,
+     "kind": "boulder",
+     "x": 444,
+     "y": 201,
+     "worst": 19
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 40.87,
+     "kind": "boulder",
+     "x": 444,
+     "y": 201,
+     "worst": 14
+    },
+    {
+     "key": "ballInRock",
+     "tag": "troll@1x3 v paladin,archer #3",
+     "t": 41.15,
+     "kind": "boulder",
+     "x": 435,
+     "y": 197,
+     "worst": 9
+    },
+    {
+     "key": "stuck",
+     "tag": "troll@1x3 v paladin,archer #4",
+     "t": 75.12,
      "kind": "troll",
-     "x": 608,
-     "y": 74,
-     "worst": 17
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@1x3 v paladin,berserker,cleric #11",
-     "t": 230.25,
-     "kind": "boulder",
-     "x": 552,
-     "y": 94,
-     "worst": 40
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@1x3 v tower,twinfang,archer,cleric #1",
-     "t": 9.57,
-     "kind": "boulder",
-     "x": 482,
-     "y": 275,
-     "worst": 52
+     "x": 795,
+     "y": 669,
+     "worst": 15
     }
    ]
   },
   "rockTroll@1": {
    "fights": 72,
-   "redWins": 30,
+   "redWins": 38,
    "never": 0,
-   "secs": 155.6,
-   "steps": 672480,
+   "secs": 147.8,
+   "steps": 638730,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -2909,14 +3157,14 @@
     "worst": 0
    },
    "inRock": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 35,
+    "times": 2,
+    "worst": 41.156528447138584
    },
    "inBall": {
-    "steps": 2,
-    "times": 2,
-    "worst": 23.080074276904455
+    "steps": 64,
+    "times": 6,
+    "worst": 86.78211177153364
    },
    "ballInWall": {
     "steps": 0,
@@ -2929,9 +3177,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 1,
+    "times": 1,
+    "worst": 15.953274291346801
    },
    "ballInRock": {
     "steps": 0,
@@ -2939,124 +3187,129 @@
     "worst": 0
    },
    "ownerInBall": {
-    "steps": 117,
-    "times": 10,
-    "worst": 37.13648306799469
+    "steps": 232,
+    "times": 22,
+    "worst": 92.98076160167773
+   },
+   "stuck": {
+    "steps": 458,
+    "times": 1,
+    "worst": 22.616666666684665
    },
    "other": {
     "inWall": 0,
     "out": 0,
-    "deep": 5,
-    "inRock": 4
+    "deep": 0,
+    "inRock": 1536
    },
    "ex": [
     {
      "key": "ownerInBall",
      "tag": "rockTroll@1x3 v paladin,archer #1",
-     "t": 192.85,
+     "t": 31.25,
      "kind": "boulder",
-     "x": 64,
+     "x": 343,
      "y": 64,
-     "worst": 14
+     "worst": 15
     },
     {
      "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v paladin,archer #1",
-     "t": 195.17,
+     "tag": "rockTroll@1x3 v paladin,archer #3",
+     "t": 36.6,
      "kind": "boulder",
-     "x": 64,
-     "y": 64,
-     "worst": 15
+     "x": 455,
+     "y": 217,
+     "worst": 14
+    },
+    {
+     "key": "inRock",
+     "tag": "rockTroll@1x3 v paladin,archer #3",
+     "t": 37.7,
+     "kind": "paladin",
+     "x": 389,
+     "y": 225,
+     "worst": 32
+    },
+    {
+     "key": "inRock",
+     "tag": "rockTroll@1x3 v paladin,archer #3",
+     "t": 39.42,
+     "kind": "paladin",
+     "x": 391,
+     "y": 226,
+     "worst": 30
+    },
+    {
+     "key": "inBall",
+     "tag": "rockTroll@1x3 v paladin,archer #3",
+     "t": 106.15,
+     "kind": "rockTroll",
+     "x": 572,
+     "y": 367,
+     "worst": 25
     },
     {
      "key": "ownerInBall",
      "tag": "rockTroll@1x3 v paladin,archer #5",
-     "t": 57.87,
-     "kind": "boulder",
-     "x": 454,
-     "y": 263,
-     "worst": 15
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v paladin,archer #5",
-     "t": 171.55,
-     "kind": "boulder",
-     "x": 454,
-     "y": 263,
-     "worst": 15
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v paladin,archer #11",
-     "t": 183.5,
-     "kind": "boulder",
-     "x": 540,
-     "y": 278,
-     "worst": 14
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v paladin,archer #11",
-     "t": 231.15,
-     "kind": "boulder",
-     "x": 562,
-     "y": 64,
-     "worst": 19
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v tower,twinfang,archer,cleric #5",
-     "t": 35.25,
+     "t": 43.92,
      "kind": "boulder",
      "x": 562,
      "y": 416,
+     "worst": 56
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@1x3 v paladin,archer #5",
+     "t": 85.03,
+     "kind": "boulder",
+     "x": 454,
+     "y": 263,
+     "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@1x3 v paladin,archer #5",
+     "t": 102.27,
+     "kind": "boulder",
+     "x": 454,
+     "y": 263,
+     "worst": 14
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@1x3 v paladin,archer #5",
+     "t": 144.18,
+     "kind": "boulder",
+     "x": 562,
+     "y": 416,
+     "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@1x3 v paladin,archer #5",
+     "t": 172.87,
+     "kind": "boulder",
+     "x": 454,
+     "y": 263,
      "worst": 16
     },
     {
      "key": "inBall",
-     "tag": "rockTroll@1x3 v tower,twinfang,archer,cleric #5",
-     "t": 35.6,
-     "kind": "tower",
-     "x": 817,
-     "y": 223,
-     "worst": 17
+     "tag": "rockTroll@1x3 v paladin,archer #5",
+     "t": 173.07,
+     "kind": "archer",
+     "x": 400,
+     "y": 371,
+     "worst": 26
     },
     {
      "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v tower,twinfang,archer,cleric #5",
-     "t": 51.4,
+     "tag": "rockTroll@1x3 v paladin,archer #11",
+     "t": 197.55,
      "kind": "boulder",
-     "x": 686,
-     "y": 376,
-     "worst": 14
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v tower,twinfang,archer,cleric #9",
-     "t": 0.02,
-     "kind": "boulder",
-     "x": 716,
-     "y": 296,
-     "worst": 25
-    },
-    {
-     "key": "inBall",
-     "tag": "rockTroll@1x3 v tower,twinfang,archer,cleric #9",
-     "t": 28.98,
-     "kind": "cleric",
-     "x": 767,
-     "y": 34,
-     "worst": 23
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@1x3 v tower,twinfang,archer,cleric #11",
-     "t": 90.33,
-     "kind": "boulder",
-     "x": 530,
-     "y": 271,
-     "worst": 15
+     "x": 579,
+     "y": 74,
+     "worst": 16
     }
    ]
   },
@@ -3064,8 +3317,8 @@
    "fights": 72,
    "redWins": 65,
    "never": 0,
-   "secs": 53.1,
-   "steps": 229512,
+   "secs": 52.3,
+   "steps": 225784,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -3087,8 +3340,8 @@
     "worst": 0
    },
    "inBall": {
-    "steps": 8,
-    "times": 5,
+    "steps": 9,
+    "times": 6,
     "worst": 55.69104122254991
    },
    "ballInWall": {
@@ -3116,6 +3369,11 @@
     "times": 6,
     "worst": 52.01089721441694
    },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
    "other": {
     "inWall": 0,
     "out": 0,
@@ -3123,6 +3381,15 @@
     "inRock": 0
    },
    "ex": [
+    {
+     "key": "inBall",
+     "tag": "yeti@1x3 v paladin,archer #1",
+     "t": 10.15,
+     "kind": "yeti",
+     "x": 593,
+     "y": 256,
+     "worst": 40
+    },
     {
      "key": "inBall",
      "tag": "yeti@1x3 v paladin,archer #3",
@@ -3226,10 +3493,10 @@
   },
   "troll@2": {
    "fights": 72,
-   "redWins": 45,
+   "redWins": 47,
    "never": 0,
-   "secs": 109,
-   "steps": 470944,
+   "secs": 105,
+   "steps": 453638,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -3251,9 +3518,9 @@
     "worst": 0
    },
    "inBall": {
-    "steps": 30,
-    "times": 10,
-    "worst": 61.080636589988316
+    "steps": 260,
+    "times": 9,
+    "worst": 44.143887054338464
    },
    "ballInWall": {
     "steps": 0,
@@ -3266,9 +3533,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 18,
-    "times": 2,
-    "worst": 15.999660648609911
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "ballInRock": {
     "steps": 0,
@@ -3276,15 +3543,20 @@
     "worst": 0
    },
    "ownerInBall": {
-    "steps": 153,
-    "times": 12,
-    "worst": 70.59537500255054
+    "steps": 142,
+    "times": 10,
+    "worst": 45.7998481802489
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "other": {
     "inWall": 0,
     "out": 0,
-    "deep": 0,
-    "inRock": 0
+    "deep": 139,
+    "inRock": 26
    },
    "ex": [
     {
@@ -3298,66 +3570,66 @@
     },
     {
      "key": "inBall",
-     "tag": "troll@2x3 v paladin,archer #1",
-     "t": 85.12,
+     "tag": "troll@2x3 v paladin,archer #3",
+     "t": 0.02,
      "kind": "troll",
-     "x": 814,
-     "y": 243,
-     "worst": 15
+     "x": 685,
+     "y": 388,
+     "worst": 21
     },
     {
      "key": "ownerInBall",
-     "tag": "troll@2x3 v paladin,archer #1",
-     "t": 85.12,
+     "tag": "troll@2x3 v paladin,archer #5",
+     "t": 27.15,
      "kind": "boulder",
-     "x": 826,
-     "y": 163,
-     "worst": 41
+     "x": 454,
+     "y": 263,
+     "worst": 14
     },
     {
      "key": "inBall",
-     "tag": "troll@2x3 v paladin,archer #9",
-     "t": 53.78,
-     "kind": "paladin",
-     "x": 526,
-     "y": 179,
-     "worst": 15
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "troll@2x3 v paladin,archer #9",
-     "t": 98.62,
-     "kind": "boulder",
-     "x": 556,
-     "y": 299,
+     "tag": "troll@2x3 v paladin,archer #5",
+     "t": 137.83,
+     "kind": "troll",
+     "x": 701,
+     "y": 92,
      "worst": 22
     },
     {
      "key": "ownerInBall",
-     "tag": "troll@2x3 v paladin,archer #9",
-     "t": 128.5,
+     "tag": "troll@2x3 v paladin,archer #5",
+     "t": 137.83,
      "kind": "boulder",
-     "x": 554,
-     "y": 295,
-     "worst": 20
+     "x": 723,
+     "y": 165,
+     "worst": 46
     },
     {
-     "key": "ballDeep",
-     "tag": "troll@2x3 v paladin,archer #9",
-     "t": 129.78,
+     "key": "ownerInBall",
+     "tag": "troll@2x3 v paladin,archer #5",
+     "t": 192.35,
      "kind": "boulder",
-     "x": 551,
-     "y": 290,
-     "worst": 8
+     "x": 454,
+     "y": 263,
+     "worst": 14
     },
     {
      "key": "ownerInBall",
      "tag": "troll@2x3 v paladin,archer #9",
-     "t": 156.88,
+     "t": 86.4,
      "kind": "boulder",
-     "x": 556,
-     "y": 299,
-     "worst": 16
+     "x": 562,
+     "y": 416,
+     "worst": 25
+    },
+    {
+     "key": "inBall",
+     "tag": "troll@2x3 v paladin,berserker,cleric #1",
+     "t": 27.62,
+     "kind": "berserker",
+     "x": 336,
+     "y": 212,
+     "worst": 15
     },
     {
      "key": "inBall",
@@ -3369,40 +3641,40 @@
      "worst": 21
     },
     {
-     "key": "ownerInBall",
-     "tag": "troll@2x3 v paladin,berserker,cleric #5",
-     "t": 46.98,
-     "kind": "boulder",
-     "x": 562,
-     "y": 416,
-     "worst": 71
+     "key": "inBall",
+     "tag": "troll@2x3 v paladin,berserker,cleric #11",
+     "t": 161.57,
+     "kind": "troll",
+     "x": 590,
+     "y": 92,
+     "worst": 27
     },
     {
      "key": "inBall",
-     "tag": "troll@2x3 v paladin,berserker,cleric #5",
-     "t": 47.63,
+     "tag": "troll@2x3 v paladin,berserker,cleric #11",
+     "t": 169.08,
      "kind": "troll",
-     "x": 585,
-     "y": 296,
-     "worst": 18
+     "x": 590,
+     "y": 92,
+     "worst": 34
     },
     {
-     "key": "ownerInBall",
-     "tag": "troll@2x3 v paladin,berserker,cleric #5",
-     "t": 199.93,
-     "kind": "boulder",
-     "x": 562,
-     "y": 127,
-     "worst": 25
+     "key": "inBall",
+     "tag": "troll@2x3 v tower,twinfang,archer,cleric #3",
+     "t": 0.02,
+     "kind": "troll",
+     "x": 685,
+     "y": 388,
+     "worst": 21
     }
    ]
   },
   "rockTroll@2": {
    "fights": 72,
-   "redWins": 40,
+   "redWins": 38,
    "never": 0,
-   "secs": 163.6,
-   "steps": 706991,
+   "secs": 155.9,
+   "steps": 673628,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -3419,14 +3691,14 @@
     "worst": 0
    },
    "inRock": {
-    "steps": 6,
-    "times": 1,
-    "worst": 13.476298734849237
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "inBall": {
-    "steps": 716,
-    "times": 43,
-    "worst": 88.90231732106795
+    "steps": 975,
+    "times": 28,
+    "worst": 42.9176592881017
    },
    "ballInWall": {
     "steps": 0,
@@ -3444,22 +3716,36 @@
     "worst": 0
    },
    "ballInRock": {
-    "steps": 3,
-    "times": 2,
-    "worst": 8.96135511311374
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "ownerInBall": {
-    "steps": 545,
-    "times": 56,
-    "worst": 118.23402873978362
+    "steps": 670,
+    "times": 65,
+    "worst": 70.474439637548
+   },
+   "stuck": {
+    "steps": 8997,
+    "times": 12,
+    "worst": 128.58333333339343
    },
    "other": {
     "inWall": 0,
     "out": 0,
-    "deep": 112,
-    "inRock": 11
+    "deep": 0,
+    "inRock": 13
    },
    "ex": [
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@2x3 v paladin,archer #0",
+     "t": 82.13,
+     "kind": "boulder",
+     "x": 543,
+     "y": 794,
+     "worst": 14
+    },
     {
      "key": "inBall",
      "tag": "rockTroll@2x3 v paladin,archer #1",
@@ -3479,40 +3765,22 @@
      "worst": 15
     },
     {
-     "key": "inBall",
-     "tag": "rockTroll@2x3 v paladin,archer #1",
-     "t": 75.97,
-     "kind": "rockTroll",
-     "x": 656,
-     "y": 301,
-     "worst": 33
+     "key": "ownerInBall",
+     "tag": "rockTroll@2x3 v paladin,archer #2",
+     "t": 68.6,
+     "kind": "boulder",
+     "x": 737,
+     "y": 244,
+     "worst": 14
     },
     {
      "key": "ownerInBall",
-     "tag": "rockTroll@2x3 v paladin,archer #1",
-     "t": 75.97,
+     "tag": "rockTroll@2x3 v paladin,archer #2",
+     "t": 81.77,
      "kind": "boulder",
-     "x": 580,
-     "y": 393,
-     "worst": 17
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@2x3 v paladin,archer #1",
-     "t": 108.13,
-     "kind": "boulder",
-     "x": 866,
-     "y": 151,
-     "worst": 47
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@2x3 v paladin,archer #1",
-     "t": 126.87,
-     "kind": "boulder",
-     "x": 869,
-     "y": 140,
-     "worst": 52
+     "x": 1201,
+     "y": 79,
+     "worst": 14
     },
     {
      "key": "ownerInBall",
@@ -3524,13 +3792,49 @@
      "worst": 55
     },
     {
-     "key": "inBall",
+     "key": "stuck",
      "tag": "rockTroll@2x3 v paladin,archer #3",
-     "t": 42.82,
-     "kind": "paladin",
-     "x": 430,
-     "y": 209,
-     "worst": 18
+     "t": 18.67,
+     "kind": "rockTroll",
+     "x": 590,
+     "y": 388,
+     "worst": 15
+    },
+    {
+     "key": "stuck",
+     "tag": "rockTroll@2x3 v paladin,archer #3",
+     "t": 138.52,
+     "kind": "rockTroll",
+     "x": 616,
+     "y": 168,
+     "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@2x3 v paladin,archer #3",
+     "t": 153.8,
+     "kind": "boulder",
+     "x": 472,
+     "y": 234,
+     "worst": 28
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@2x3 v paladin,archer #3",
+     "t": 173.67,
+     "kind": "boulder",
+     "x": 881,
+     "y": 79,
+     "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "rockTroll@2x3 v paladin,archer #4",
+     "t": 88.53,
+     "kind": "boulder",
+     "x": 737,
+     "y": 166,
+     "worst": 14
     },
     {
      "key": "ownerInBall",
@@ -3540,33 +3844,6 @@
      "x": 577,
      "y": 367,
      "worst": 15
-    },
-    {
-     "key": "inBall",
-     "tag": "rockTroll@2x3 v paladin,archer #5",
-     "t": 55.95,
-     "kind": "paladin",
-     "x": 438,
-     "y": 250,
-     "worst": 45
-    },
-    {
-     "key": "ownerInBall",
-     "tag": "rockTroll@2x3 v paladin,archer #5",
-     "t": 55.95,
-     "kind": "boulder",
-     "x": 509,
-     "y": 248,
-     "worst": 18
-    },
-    {
-     "key": "inBall",
-     "tag": "rockTroll@2x3 v paladin,archer #5",
-     "t": 157.65,
-     "kind": "rockTroll",
-     "x": 721,
-     "y": 161,
-     "worst": 15
     }
    ]
   },
@@ -3574,8 +3851,8 @@
    "fights": 72,
    "redWins": 68,
    "never": 0,
-   "secs": 59.6,
-   "steps": 257591,
+   "secs": 59.4,
+   "steps": 256752,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -3597,14 +3874,14 @@
     "worst": 0
    },
    "inBall": {
-    "steps": 94,
-    "times": 18,
+    "steps": 65,
+    "times": 16,
     "worst": 57.599888548515324
    },
    "ballInWall": {
-    "steps": 45,
-    "times": 1,
-    "worst": 59.22260737207591
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "ballOut": {
     "steps": 0,
@@ -3612,9 +3889,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 45,
-    "times": 1,
-    "worst": 59.22260737207591
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "ballInRock": {
     "steps": 1,
@@ -3623,8 +3900,13 @@
    },
    "ownerInBall": {
     "steps": 55,
-    "times": 51,
+    "times": 50,
     "worst": 80.66809036103518
+   },
+   "stuck": {
+    "steps": 170,
+    "times": 1,
+    "worst": 17.833333333332327
    },
    "other": {
     "inWall": 0,
@@ -3747,13 +4029,13 @@
  "dungeon": {
   "warren": {
    "runs": 12,
-   "rooms": 36,
-   "secs": 4182,
+   "rooms": 33,
+   "secs": 4474,
    "ends": {
     "lost": 11,
     "fight": 1
    },
-   "steps": 218137,
+   "steps": 234668,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -3770,14 +4052,14 @@
     "worst": 0
    },
    "inRock": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 2,
+    "times": 1,
+    "worst": 21.161230049256837
    },
    "inBall": {
-    "steps": 3,
-    "times": 3,
-    "worst": 32.6754012895103
+    "steps": 9,
+    "times": 2,
+    "worst": 53.76159883800409
    },
    "ballInWall": {
     "steps": 0,
@@ -3800,6 +4082,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 325,
+    "times": 14,
+    "worst": 32.199355028243005
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -3808,46 +4095,127 @@
     "inWall": 0,
     "out": 0,
     "deep": 0,
-    "inRock": 4
+    "inRock": 1
    },
    "ex": [
     {
-     "key": "inBall",
-     "tag": "warren run 0 room 1",
-     "t": 70.58,
-     "kind": "yeti",
-     "x": 1126,
-     "y": 655,
-     "worst": 33
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 84.33,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 410,
+     "worst": 14
     },
     {
-     "key": "inBall",
-     "tag": "warren run 8 room 25",
-     "t": 34.37,
-     "kind": "twinfang",
-     "x": 1122,
-     "y": 413,
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 86.58,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 410,
+     "worst": 14
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 95.23,
+     "kind": "boulder",
+     "x": 1241,
+     "y": 411,
+     "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 109.45,
+     "kind": "boulder",
+     "x": 1241,
+     "y": 411,
+     "worst": 14
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 119.85,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 411,
      "worst": 16
     },
     {
-     "key": "inBall",
-     "tag": "warren run 11 room 35",
-     "t": 48.18,
-     "kind": "twinfang",
-     "x": 1362,
-     "y": 696,
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 125.7,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 410,
+     "worst": 14
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 130.47,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 411,
      "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 132.72,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 410,
+     "worst": 15
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 152.4,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 410,
+     "worst": 14
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 154.25,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 411,
+     "worst": 16
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 3 room 8",
+     "t": 162.77,
+     "kind": "boulder",
+     "x": 1240,
+     "y": 410,
+     "worst": 14
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "warren run 4 room 10",
+     "t": 65.77,
+     "kind": "boulder",
+     "x": 41,
+     "y": 380,
+     "worst": 16
     }
    ]
   },
   "crypt": {
    "runs": 12,
-   "rooms": 15,
-   "secs": 2528,
+   "rooms": 16,
+   "secs": 2385,
    "ends": {
     "lost": 12
    },
-   "steps": 143961,
+   "steps": 135685,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -3864,14 +4232,14 @@
     "worst": 0
    },
    "inRock": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 3,
+    "times": 1,
+    "worst": 12.839415525199229
    },
    "inBall": {
     "steps": 1,
     "times": 1,
-    "worst": 72.29055043331799
+    "worst": 14.674981810407473
    },
    "ballInWall": {
     "steps": 0,
@@ -3894,45 +4262,60 @@
     "worst": 0
    },
    "ownerInBall": {
-    "steps": 9,
+    "steps": 1,
     "times": 1,
-    "worst": 15.727906774841529
+    "worst": 21.655679412159202
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "other": {
     "inWall": 0,
     "out": 0,
     "deep": 0,
-    "inRock": 15
+    "inRock": 17
    },
    "ex": [
     {
+     "key": "inRock",
+     "tag": "crypt run 0 room 1",
+     "t": 115.8,
+     "kind": "twinfang",
+     "x": 1410,
+     "y": 629,
+     "worst": 13
+    },
+    {
      "key": "ownerInBall",
-     "tag": "crypt run 10 room 14",
-     "t": 23.1,
+     "tag": "crypt run 3 room 6",
+     "t": 122.12,
      "kind": "boulder",
-     "x": 839,
-     "y": 41,
-     "worst": 15
+     "x": 1427,
+     "y": 123,
+     "worst": 22
     },
     {
      "key": "inBall",
-     "tag": "crypt run 11 room 15",
-     "t": 104.15,
-     "kind": "paladin",
-     "x": 1450,
-     "y": 847,
-     "worst": 72
+     "tag": "crypt run 4 room 7",
+     "t": 66.7,
+     "kind": "twinfang",
+     "x": 979,
+     "y": 836,
+     "worst": 15
     }
    ]
   },
   "frost": {
    "runs": 12,
-   "rooms": 17,
-   "secs": 3149,
+   "rooms": 25,
+   "secs": 3868,
    "ends": {
-    "lost": 12
+    "lost": 11,
+    "fight": 1
    },
-   "steps": 177987,
+   "steps": 212429,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -3949,9 +4332,9 @@
     "worst": 0
    },
    "inRock": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 1,
+    "times": 1,
+    "worst": 16.473670233509743
    },
    "inBall": {
     "steps": 0,
@@ -3974,11 +4357,16 @@
     "worst": 0
    },
    "ballInRock": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 5,
+    "times": 1,
+    "worst": 8.990734448271581
    },
    "ownerInBall": {
+    "steps": 1,
+    "times": 1,
+    "worst": 37.86501417010807
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -3987,9 +4375,37 @@
     "inWall": 0,
     "out": 0,
     "deep": 0,
-    "inRock": 25
+    "inRock": 8
    },
-   "ex": []
+   "ex": [
+    {
+     "key": "inRock",
+     "tag": "frost run 4 room 11",
+     "t": 188.37,
+     "kind": "twinfang",
+     "x": 1444,
+     "y": 100,
+     "worst": 16
+    },
+    {
+     "key": "ballInRock",
+     "tag": "frost run 9 room 19",
+     "t": 24.25,
+     "kind": "boulder",
+     "x": 672,
+     "y": 530,
+     "worst": 8
+    },
+    {
+     "key": "ownerInBall",
+     "tag": "frost run 10 room 20",
+     "t": 84.67,
+     "kind": "boulder",
+     "x": 401,
+     "y": 798,
+     "worst": 38
+    }
+   ]
   }
  }
 }

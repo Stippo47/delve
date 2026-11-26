@@ -1,0 +1,92 @@
+{
+ "troll": {
+  "fights": 180,
+  "trollWins": 20,
+  "pct": 11.1,
+  "secs": 69.7,
+  "draws": 0,
+  "never": 0,
+  "trollHealthLeft": 0.49,
+  "heroHealthLeft": 0.79
+ },
+ "rockTroll": {
+  "fights": 180,
+  "trollWins": 10,
+  "pct": 5.6,
+  "secs": 94,
+  "draws": 0,
+  "never": 0,
+  "trollHealthLeft": 0.25,
+  "heroHealthLeft": 0.82
+ },
+ "yeti": {
+  "fights": 180,
+  "trollWins": 94,
+  "pct": 52.2,
+  "secs": 59.9,
+  "draws": 0,
+  "never": 0,
+  "trollHealthLeft": 0.58,
+  "heroHealthLeft": 0.58
+ },
+ "troll@1": {
+  "fights": 180,
+  "trollWins": 111,
+  "pct": 61.7,
+  "secs": 74.1,
+  "draws": 0,
+  "never": 0,
+  "trollHealthLeft": 0.74,
+  "heroHealthLeft": 0.48
+ },
+ "rockTroll@1": {
+  "fights": 180,
+  "trollWins": 86,
+  "pct": 47.8,
+  "secs": 153.3,
+  "draws": 2,
+  "never": 0,
+  "trollHealthLeft": 0.57,
+  "heroHealthLeft": 0.64
+ },
+ "yeti@1": {
+  "fights": 180,
+  "trollWins": 168,
+  "pct": 93.3,
+  "secs": 43.1,
+  "draws": 0,
+  "never": 0,
+  "trollHealthLeft": 0.81,
+  "heroHealthLeft": 0.31
+ },
+ "troll@2": {
+  "fights": 180,
+  "trollWins": 129,
+  "pct": 71.7,
+  "secs": 80.6,
+  "draws": 0,
+  "never": 0,
+  "trollHealthLeft": 0.75,
+  "heroHealthLeft": 0.49
+ },
+ "rockTroll@2": {
+  "fights": 180,
+  "trollWins": 98,
+  "pct": 54.4,
+  "secs": 151.2,
+  "draws": 1,
+  "never": 0,
+  "trollHealthLeft": 0.57,
+  "heroHealthLeft": 0.6
+ },
+ "yeti@2": {
+  "fights": 180,
+  "trollWins": 174,
+  "pct": 96.7,
+  "secs": 40.3,
+  "draws": 0,
+  "never": 0,
+  "trollHealthLeft": 0.86,
+  "heroHealthLeft": 0.22
+ }
+}

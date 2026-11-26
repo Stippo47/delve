@@ -93,6 +93,8 @@ function audit(w, C, tag) {
     }
   }
 }
+// the examples kept in the JSON: walls and the room's edge first, then stuck, then the rest
+const worstFirst = (ex) => { const rank = (e) => (['inWall', 'out', 'deep', 'ballInWall', 'ballOut', 'ballDeep'].includes(e.key) ? 0 : e.key === 'stuck' ? 1 : 2); return ex.slice().sort((p, q) => rank(p) - rank(q)).slice(0, 16); };
 const line = (C) => KEYS.map((k) => `${k} ${C.by[k].times}x/${C.by[k].steps}${C.by[k].worst ? ' (' + Math.round(C.by[k].worst) + ')' : ''}`).join('  ');
 const total = (C) => KEYS.reduce((n, k) => n + C.by[k].steps, 0);
 const out = { staged: {}, battles: {}, dungeon: {} };
@@ -161,7 +163,7 @@ function battles() {
       let t = 0; while (!run.summary && t < 300) { B.updateBattle(run, DT); t += DT; if (run.phase === 'fight') audit(run.world, C, `${kind}x${cnt} v ${party} #${i}`); }
       n++; if (!run.summary) never++; else { if (run.summary.winner === 'b') wins++; time += run.summary.time; }
     }
-    out.battles[kind] = { fights: n, redWins: wins, never, secs: +(time / Math.max(1, n - never)).toFixed(1), steps: C.steps, ...Object.fromEntries(KEYS.map((q) => [q, C.by[q]])), other: C.other, ex: C.ex.slice(0, 12) };
+    out.battles[kind] = { fights: n, redWins: wins, never, secs: +(time / Math.max(1, n - never)).toFixed(1), steps: C.steps, ...Object.fromEntries(KEYS.map((q) => [q, C.by[q]])), other: C.other, ex: worstFirst(C.ex) };
     console.log(`${kind.padEnd(12)} ${n} fights, the trolls' side won ${wins}, ${(time / Math.max(1, n - never)).toFixed(0)}s a fight${never ? ', never ended ' + never : ''}  ${line(C)}  | away from any boulder: in a wall ${C.other.inWall}, out ${C.other.out}, deep ${C.other.deep}`);
     if (V) for (const e of C.ex.slice(0, 8)) console.log('    ', JSON.stringify(e));
     rows.push(C);
@@ -188,7 +190,7 @@ function dungeon(themes) {
       }
       secs += t; ends[run.phase] = (ends[run.phase] || 0) + 1;
     }
-    out.dungeon[theme] = { runs: N, rooms, secs: Math.round(secs), ends, steps: C.steps, ...Object.fromEntries(KEYS.map((q) => [q, C.by[q]])), other: C.other, ex: C.ex.slice(0, 12) };
+    out.dungeon[theme] = { runs: N, rooms, secs: Math.round(secs), ends, steps: C.steps, ...Object.fromEntries(KEYS.map((q) => [q, C.by[q]])), other: C.other, ex: worstFirst(C.ex) };
     console.log(`${theme.padEnd(8)} ${N} runs, ${rooms} rooms, ${Math.round(secs)}s (${JSON.stringify(ends)}), ${C.steps} steps with a boulder about  ${line(C)}  | away from any boulder: in a wall ${C.other.inWall}, out ${C.other.out}, deep ${C.other.deep}`);
     if (V) for (const e of C.ex.slice(0, 8)) console.log('    ', JSON.stringify(e));
   }
@@ -221,7 +223,7 @@ if (opt('convoy') || has('convoy')) {
       trips++; secs += t;
     } catch (e) { errs++; console.log('  ERROR', e.stack.split('\n').slice(0, 4).join('\n')); }
   }
-  out.convoy = { trips, secs: Math.round(secs), errs, steps: C.steps, ...Object.fromEntries(KEYS.map((q) => [q, C.by[q]])), other: C.other, ex: C.ex.slice(0, 12) };
+  out.convoy = { trips, secs: Math.round(secs), errs, steps: C.steps, ...Object.fromEntries(KEYS.map((q) => [q, C.by[q]])), other: C.other, ex: worstFirst(C.ex) };
   console.log(`${trips} trips, ${Math.round(secs)}s, errors ${errs}, ${C.steps} steps with a boulder about  ${line(C)}  | away from any boulder: in a wall ${C.other.inWall}, out ${C.other.out}, deep ${C.other.deep}, in a rock ${C.other.inRock}`);
   if (V) for (const e of C.ex.slice(0, 10)) console.log('    ', JSON.stringify(e));
   if (opt('json')) FS.writeFileSync(opt('json'), JSON.stringify(out, null, 1));
