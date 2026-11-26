@@ -19,6 +19,7 @@
 import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, silence } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear, circleRect } from './path.js';
+import { ballSweep } from './boulders.js'; // (round 19, lane troll19: the snowball is a solid body)
 import { ELITES, MAJOR_MOVES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, pounce, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
 import { slam, courtFalls } from './enemies.js';
 import { FOES } from './foes.js';
@@ -77,7 +78,7 @@ const handsOn = (u, b) => u.r * SNOW.reach + b.r; // the ball against its hands 
 // body the ball's size; the ball itself taken out of the room while it asks)
 function ballWay(w, b, tx, ty) {
   const nav = b.nav || (b.nav = { path: null, pathT: 0, pathGoal: null });
-  nav.x = b.x; nav.y = b.y; nav.r = b.r;
+  nav.x = b.x; nav.y = b.y; nav.r = b.r; nav.def = nav.def || (b.owner && b.owner.def) || {}; // (round 19, lane troll19: the wagon mode's way round the wagon reads u.def, convoy.js roundRig: a yeti on the road threw an error here the first time its ball had no straight way)
   const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
   try { const [gx, gy] = goalVec(w, nav, tx, ty); return Math.atan2(gy, gx); } finally { if (i >= 0) w.pillars.splice(i, 0, b); }
 }
@@ -85,7 +86,8 @@ function newSnow(w, u, r0) {
   const p = { x: u.x + Math.cos(u.facing) * (u.r * SNOW.reach + 4), y: u.y + Math.sin(u.facing) * (u.r * SNOW.reach + 4) };
   const hp = Math.round(SNOW.hp * (r0 / 26) ** 2 * (w.mult || 1) ** 0.7);
   const b = { x: p.x, y: p.y, r: 4, r0, snowball: true, owner: u, team: u.team, vx: 0, vy: 0, roll: 0, rollA: u.facing, held: true, packing: true, big: !!u.elite,
-    hp, maxHp: hp, hits: new Map(), onShot: snowShot, seen: new Set(), lastX: p.x, lastY: p.y };
+    hp, maxHp: hp, hits: new Map(), onShot: snowShot, seen: new Set(), lastX: p.x, lastY: p.y,
+    grip: u.r * SNOW.reach + 4, onPush: snowPush, onBlocked: (w2, b2, sp) => { if (sp >= SNOW.hurtSp && !b2.packing) { b2.rollA = Math.atan2(b2.vy, b2.vx); snowHits(w2, b2, sp); } } }; // (round 19, lane troll19: boulders.js keeps it at its hands, pushed along by them, solid)
   w.pillars.push(b); u.snow = b;
   b.drv = fx(w, { type: 'snowDrive', every: 1 / 60, max: 1e9, tick: () => snowTick(w, b, 1 / 60) });
   return b;
@@ -104,6 +106,15 @@ function burstSnow(w, b, loud = true) {
   w.shake = Math.max(w.shake, 3);
   for (const h of opponents(w, b)) if (dist(h.x, h.y, b.x, b.y) < b.r + h.r + 40) addStatus(w, h, 'chill', 16, by);
   if (b.big && by) shards(w, by, 7, { x: b.x, y: b.y, dmg: 5, chill: 20 }); // (the elite's: into ice)
+}
+// Round 19 (lane troll19): the yeti's hands on the ball. boulders.js ballPass moves the ball out along the line from
+// the yeti's middle through its own, as far as the walls, rocks and bodies in its way let it (it was set there every
+// step whatever stood there, and whoever it reached was thrown out of it on the far side, a wall or not), and calls
+// this: the ball takes the yeti's speed along that line, as before.
+function snowPush(w, b, nx, ny, u) {
+  if (b.packing || b.haul) return;
+  const vn = u.vx * nx + u.vy * ny, bn = b.vx * nx + b.vy * ny;
+  if (bn < vn) { b.vx += nx * (vn - bn); b.vy += ny * (vn - bn); }
 }
 // A shot that hits the ball chips it (sim.js) and knocks it along the shot's way, more the smaller it is.
 function snowShot(w, b, p) {
@@ -133,14 +144,9 @@ function snowTick(w, b, dt) {
     b.vx = b.vy = 0; return;
   } else if (b.haul) b.haul = false;
   // pushed: the yeti's hands press into it, so it goes along the line from the yeti's middle through its own
-  if (b.held && up) {
-    const d = dist(u.x, u.y, b.x, b.y), want = handsOn(u, b);
-    if (d < want && d > 0.01) {
-      const nx = (b.x - u.x) / d, ny = (b.y - u.y) / d, vn = u.vx * nx + u.vy * ny, bn = b.vx * nx + b.vy * ny;
-      b.x = u.x + nx * want; b.y = u.y + ny * want;
-      if (bn < vn) { b.vx += nx * (vn - bn); b.vy += ny * (vn - bn); }
-    }
-  } else if (!up) b.held = false;
+  // (round 19, lane troll19: boulders.js ballPass does the pushing now, solidly: b.grip is how far its hands keep it)
+  if (b.held && up) b.grip = handsOn(u, b);
+  else if (!up) b.held = false;
   let sp = Math.hypot(b.vx, b.vy);
   if (sp > 0) { const s2 = Math.max(0, sp - SNOW.fric * dt); b.vx *= s2 / sp; b.vy *= s2 / sp; sp = s2; }
   if (sp < 1) { b.vx = b.vy = 0; if (!up) { b.melt = (b.melt || 0) + dt; b.r = Math.max(2, b.r - b.r0 * dt / 3.5); if (b.r <= 3) { burstSnow(w, b, false); } } return; }
@@ -165,6 +171,12 @@ function snowTick(w, b, dt) {
   if (sp > 120 && rand() < dt * 30) { const s = rand() < 0.5 ? 1 : -1, a = b.rollA + Math.PI + s * 0.6; w.particles.push({ x: b.x - Math.cos(b.rollA) * b.r * 0.8 + Math.cos(a + s) * b.r * 0.6, y: b.y - Math.sin(b.rollA) * b.r * 0.8 + Math.sin(a + s) * b.r * 0.6, vx: Math.cos(a) * 50, vy: Math.sin(a) * 50, life: 0.45, max: 0.45, size: rrange(3, 6), color: 'rgba(244,250,255,0.9)' }); }
   // bodies in its way: fast, it bowls them over (each once a run); it is slowed and turned a little by each
   if (sp < SNOW.hurtSp) return;
+  snowHits(w, b, sp);
+}
+// (round 19, lane troll19: its own function, so a ball stopped dead by somebody with his back to a wall still strikes
+// him: boulders.js calls b.onBlocked before it bounces it)
+function snowHits(w, b, sp) {
+  const u = b.owner, up = u && alive(u);
   for (const h of opponents(w, b)) {
     const d = dist(h.x, h.y, b.x, b.y); if (d > b.r + h.r + 2) continue;
     if ((b.hits.get(h) || -9) > w.time - 1) continue;
@@ -192,7 +204,8 @@ function packTick(w, u, Y, dt) {
   Y.t += dt; stand(u, dt);
   const k = clamp(Y.t / (SNOW.pack * (u.elite ? 0.8 : 1)), 0, 1);
   b.r = 4 + (b.r0 - 4) * (1 - (1 - k) * (1 - k));
-  const fr = u.r * SNOW.reach + b.r * 0.75; b.x = u.x + Math.cos(u.facing) * fr; b.y = u.y + Math.sin(u.facing) * fr;
+  // (round 19, lane troll19: out from its own middle to its hands as far as there is room, not into a wall it stoops at)
+  const fr = u.r * SNOW.reach + b.r * 0.75; b.grip = fr; b.x = u.x; b.y = u.y; ballSweep(w, b, u.x + Math.cos(u.facing) * fr, u.y + Math.sin(u.facing) * fr);
   // stooped, its hands patting the snow round the ball
   const s = Math.sin(Y.t * 11), c = Math.cos(Y.t * 11);
   u.lean = 0.16; u._force = { 'arm-r': { dy: 4 + 7 * Math.max(0, s), r: 0.3 + 0.2 * s }, 'arm-l': { dy: 4 + 7 * Math.max(0, -s), r: -0.3 + 0.2 * c } };

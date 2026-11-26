@@ -1510,3 +1510,40 @@ Lanes (worktrees ~/Dev/delve-wt/, shared rules in ../COMMON-r19b.md):
 - Lead, bases19 merged (0.39.0): the plain person (the approved base human, sack tunic, no gear) plus layers in js/folk.js: 7 skins (+4 fantasy, off), 20 hair styles, 9 hair colours, 10 facial hair, 11 jewellery pieces in 3 metals, 6 tunics in 9 cloths, 7 builds (average, skinny, fat, brutish, feminine, old, young). The Villager test kind is on battle mode's "No dungeon yet" tab, each one rolled from its id; ?folk=<key> dresses them all alike. I checked the base, fat, long-hair and mix boards and the crowd film: in style, every villager different. Known: tunics subtle at game size, feminine close to skinny, same-coloured hair and beard merge. Report docs/bases19.md, boards and clips docs/clips/bases19.
 - Lead, boulder19 merged (0.40.0): troll boulders and yeti snowballs roll. Method B (default): a repeating tile, cut to the ball's shape, panned by distance with a fish-eye bend. Method A: the ball's own picture turned in 3D. Both match the old boulder at rest pixel for pixel, with light fixed to the room. A dirt trail (dust, clods, scuffs; snow spray for the yeti) scales with speed. The yeti's placeholder was two thin turning bands drawn by snowRoll, plus a blown-up smaller picture while it grew; both gone. Switches: Settings > Dev "Rolling boulders" (?boulder=b|a|old), "Boulder dirt trail" (?dirt=0|1). I wired inkFor into the ball, dust and clod outlines. My first edit put a comment mid-line and swallowed a ctx.restore(), which hid every unit; caught in the browser, fixed before release (the headless checks can't see drawing).
 - Round 19b, chat: "For the troll. Things that are touching the boulder almost get glued to it, in front. Like if he rolls the bolder into someone it kind of holds the target in front." Sent to troll19 to add to its list. "Also corpses should not collide or render ontop of anything": lane corpses19 (Opus xhigh): every dead body (corpses, husks, downed heroes) never pushes, blocks or is pushed, and lies under everything once it has fallen.
+## Round 19, lane troll19 (2026-11-26): the troll walks round its boulder; boulders and snowballs are solid
+The designer: "get a fable agent to fix the troll shaped units. The troll should rotate more around the boulder when
+turning. Many times the boulder just pushes entities through walls and stuff as it supposedly doesnt get pushed back
+when being held." And later: "For the troll. Things that are touching the boulder almost get glued to it, in front.
+Like if he rolls the bolder into someone it kind of holds the target in front." Fourteen problems found first, on film
+and by count, then fixed; every number and clip: docs/troll19.md. Troll-shaped = troll, rock troll, yeti, their elites
+and majors; the same code in dungeons, battle mode, the Book's previews and the wagon mode.
+- **A boulder or snowball is a solid body, not a rock** (js/boulders.js, new; sim.js physics hands them to it). It was
+  a round obstacle set in front of the troll each step with nothing asked, and the sim threw whoever it reached out of
+  it on the far side: into walls, out of the room. Now the room's edge, walls, crates and rocks stop it; bodies and the
+  boulder push each other by their masses (troll and boulder 11, a paladin 2.8); a body with its back to a wall stops
+  the boulder, and a stopped boulder stops the troll. Counted over the same 504 staged runs, 648 fights in walled rooms
+  and 36 dungeon runs: a body's middle inside a wall 859 times before, 0 after; outside the room 4,605 times, 0 after;
+  the boulder's middle in a wall or outside the room 7,789 times, 0 after.
+- **It turns by walking round the boulder** (foes9.js `carry`, CARRY): the boulder is on a rod from the troll's fists,
+  pushed along the line through it and dragged when the troll backs off; to send it another way the troll steps round
+  it, heaving it a little the other way (the two turn about a point three tenths of the rod from the boulder; it was
+  the troll's own middle). A half turn: the troll's feet 66 and the boulder 310 before, 173 and 105 after, in the same
+  1.1 s. No room to walk round: the long way, else the boulder swung round the troll (solid), else pushed on or dragged
+  back out.
+- **Nobody rides on the boulder's front**: with the boulder up against its mark the troll stops pushing and bowls it
+  into them (the point-blank roll); anyone else in a moving boulder's way slips off round its face to the side. A hero
+  standing in its way was carried 4.9 s and 540 far in 10 s; now 0.4 s and 43.
+- **Also**: a new boulder is put down from the troll outwards (never into a wall); the roll tests the round shape and
+  rolls on while its troll is stunned; the yeti's hands push through the same solid pass; a yeti on the wagon road no
+  longer throws an error (its ball's way round the wagon); sim-wide, a body thrown out of a rock or shoved by a bigger
+  body is put out of the walls again in the same step.
+- **Strength**: the trolls' side won 919 of 1,620 fights before and 907 after (no kind moved more than the yeti's 49% to
+  44%). Fights against trolls are a fifth to a quarter shorter: both sides land more now that nobody is shoved about.
+  No health or damage was changed.
+- **Not stuck** (round 17's test): every staged spot as in round 17; in fights its boulder is back in its fists within
+  6 s as before (troll 134 of 134).
+- **The lane's calls** (docs/troll19.md): the boulder's three tenths of the turn; stopping at its mark; slipping off
+  rather than being knocked off; the rock troll turning quicker than it did (1.2 s a half turn, was 1.9 s); no
+  set-down-and-brawl rule; shorter fights left as they are.
+- Checks: battles 532, 0 problems, 8 out of time; preview-check 0 / 0 / 0. `sw.js` needs tools/build-sw.py for
+  js/boulders.js (not run, as told).

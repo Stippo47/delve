@@ -1,0 +1,12 @@
+troll        turn90   boulder on the line in 0.7s (10/10); the troll's feet went 84, the boulder 45
+troll        turn135  boulder on the line in 0.9s (10/10); the troll's feet went 129, the boulder 75
+troll        turn180  boulder on the line in 1.1s (10/10); the troll's feet went 173, the boulder 105
+rockTroll    turn90   boulder on the line in 0.7s (10/10); the troll's feet went 82, the boulder 39
+rockTroll    turn135  boulder on the line in 0.9s (10/10); the troll's feet went 122, the boulder 58
+rockTroll    turn180  boulder on the line in 1.2s (10/10); the troll's feet went 162, the boulder 77
+rockTroll@1  turn90   boulder on the line in 0.8s (10/10); the troll's feet went 119, the boulder 65
+rockTroll@1  turn135  boulder on the line in 1.0s (10/10); the troll's feet went 176, the boulder 102
+rockTroll@1  turn180  boulder on the line in 1.3s (10/10); the troll's feet went 234, the boulder 142
+yeti         turn90   boulder on the line in 1.6s (10/10); the troll's feet went 124, the boulder 5
+yeti         turn135  boulder on the line in 2.2s (10/10); the troll's feet went 178, the boulder 5
+yeti         turn180  boulder on the line in 2.6s (10/10); the troll's feet went 223, the boulder 5

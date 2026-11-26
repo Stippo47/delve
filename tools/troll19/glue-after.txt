@@ -1,0 +1,4 @@
+troll        pushed into a hero standing still (10 s): carried 0.4s, 43 far, longest stretch 0.2s | fights: 2.4s carried a minute, longest stretch 1.7s (median fight's longest 0.4s)
+rockTroll    pushed into a hero standing still (10 s): carried 0.5s, 59 far, longest stretch 0.2s | fights: 2.8s carried a minute, longest stretch 1.7s (median fight's longest 0.4s)
+rockTroll@1  pushed into a hero standing still (10 s): carried 0.7s, 88 far, longest stretch 0.3s | fights: 5.9s carried a minute, longest stretch 2.0s (median fight's longest 1.0s)
+yeti         pushed into a hero standing still (10 s): carried 0.4s, 52 far, longest stretch 0.2s | fights: 1.0s carried a minute, longest stretch 1.2s (median fight's longest 0.3s)

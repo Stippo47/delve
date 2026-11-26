@@ -1,0 +1,66 @@
+{
+  "title": "Trolls and their boulders",
+  "topic": "art",
+  "stack": "r19b",
+  "order": 2,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Trolls, fixed",
+      "text": "The troll walks round its boulder to turn. The boulder is solid: nobody goes through walls or rides on it.",
+      "why": "You said the troll should rotate more around the boulder, that the boulder pushed things through walls, and later that things got glued to its front. Fourteen problems were found on film and by count first, then fixed, for the troll, the rock troll and the yeti. Mark any part that is off.",
+      "videos": ["../../../docs/clips/troll19/before-turn180-troll.mp4", "../../../docs/clips/troll19/after-turn180-troll.mp4"],
+      "parts": [
+        { "id": "turn", "title": "Turning", "text": "It used to stand still and swing the boulder round itself, through whatever was there. Now it steps round the boulder and the boulder shifts about its own width. Just as quick: a half turn still takes about a second.", "videos": ["../../../docs/clips/troll19/before-turn180-troll.mp4", "../../../docs/clips/troll19/after-turn180-troll.mp4", "../../../docs/clips/troll19/before-turn90-troll.mp4", "../../../docs/clips/troll19/after-turn90-troll.mp4"] },
+        { "id": "rockturn", "title": "Rock troll turning", "text": "The same for the rock troll. Its half turn is a little quicker than it was (1.2 seconds, was 1.9).", "videos": ["../../../docs/clips/troll19/before-turn180-rocktroll.mp4", "../../../docs/clips/troll19/after-turn180-rocktroll.mp4", "../../../docs/clips/troll19/before-turn135-rocktroll.mp4", "../../../docs/clips/troll19/after-turn135-rocktroll.mp4"] },
+        { "id": "walls", "title": "Walls and corners", "text": "The boulder used to put heroes into walls and outside the room: about 5,400 times in the test fights. Now never. A hero with his back to a wall stops the boulder, or slides out along the wall.", "videos": ["../../../docs/clips/troll19/before-corner-rocktroll.mp4", "../../../docs/clips/troll19/after-corner-rocktroll.mp4", "../../../docs/clips/troll19/before-wall-troll.mp4", "../../../docs/clips/troll19/after-wall-troll.mp4", "../../../docs/clips/troll19/before-thin-troll.mp4", "../../../docs/clips/troll19/after-thin-troll.mp4"] },
+        { "id": "door", "title": "Doorways and rocks", "text": "The boulder itself went into walls and rocks, and through a doorway too narrow for it. Now they stop it, and a stopped boulder stops the troll.", "videos": ["../../../docs/clips/troll19/before-door-troll.mp4", "../../../docs/clips/troll19/after-door-troll.mp4", "../../../docs/clips/troll19/before-pillar-rocktroll-elite.mp4", "../../../docs/clips/troll19/after-pillar-rocktroll-elite.mp4"] },
+        { "id": "glue", "title": "Stuck to its front", "text": "A hero in its way was walked across the room on the front of the boulder. Now the troll stops when the boulder reaches its target and bowls it into them. Anyone else in the way slips off to the side.", "videos": ["../../../docs/clips/troll19/before-push-troll.mp4", "../../../docs/clips/troll19/after-push-troll.mp4", "../../../docs/clips/troll19/before-push-rocktroll.mp4", "../../../docs/clips/troll19/after-push-rocktroll.mp4"] },
+        { "id": "yeti", "title": "Yeti", "text": "It already walked round its snowball, so its turn is as it was. Its ball had the same wall fault, fixed the same way.", "videos": ["../../../docs/clips/troll19/before-yeti-corner.mp4", "../../../docs/clips/troll19/after-yeti-corner.mp4", "../../../docs/clips/troll19/before-yeti-wall.mp4", "../../../docs/clips/troll19/after-yeti-wall.mp4", "../../../docs/clips/troll19/before-yeti-turn180.mp4", "../../../docs/clips/troll19/after-yeti-turn180.mp4"] },
+        { "id": "fights", "title": "Whole fights", "text": "The same fight against a paladin and an archer, before and after.", "videos": ["../../../docs/clips/troll19/before-live-troll.mp4", "../../../docs/clips/troll19/after-live-troll.mp4", "../../../docs/clips/troll19/before-live-rocktroll.mp4", "../../../docs/clips/troll19/after-live-rocktroll.mp4", "../../../docs/clips/troll19/before-live-yeti.mp4", "../../../docs/clips/troll19/after-live-yeti.mp4"] },
+        { "id": "numbers", "title": "Counted", "text": "Trolls win as often as before (56% of 1,620 test fights, before and after). They still get their boulders back as fast as round 17 made them. A yeti on the wagon road used to stop the game with an error; fixed." }
+      ]
+    },
+    {
+      "id": "stops",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Stops at its target",
+      "text": "With the boulder against its target the troll now stops, then bowls it into them. It can wait 3 seconds.",
+      "why": "This is what stops heroes being carried on the boulder's front. The wait is its usual pause between throws; it used to spend it shoving them along. The other way would be to knock people off the boulder as it moves, which is a new hit.",
+      "pick": "Keep the stop.",
+      "videos": ["../../../docs/clips/troll19/after-push-troll.mp4"]
+    },
+    {
+      "id": "share",
+      "kind": "question",
+      "rarity": "common",
+      "title": "How still the boulder is",
+      "text": "In a turn the troll walks most of the way round, and the boulder shifts about its own width.",
+      "why": "You asked for more around the boulder. With the boulder dead still the troll would turn 40% slower, or have to scuttle. It is one number to change.",
+      "pick": "Keep the small shift.",
+      "videos": ["../../../docs/clips/troll19/after-turn180-troll.mp4"]
+    },
+    {
+      "id": "shorter",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Troll fights are shorter",
+      "text": "Fights with trolls end about a fifth sooner. Who wins is the same.",
+      "why": "Heroes are no longer shoved away from the troll, so both sides land more hits. I did not raise troll health to stretch the fights back out.",
+      "pick": "Leave them shorter."
+    },
+    {
+      "id": "rockpace",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Rock troll turns quicker",
+      "text": "Its half turn takes 1.2 seconds now. It was 1.9.",
+      "why": "With a solid boulder it lost more fights at its old slow turn. At this pace it wins as often as it did.",
+      "pick": "Keep the quicker turn."
+    }
+  ]
+}
