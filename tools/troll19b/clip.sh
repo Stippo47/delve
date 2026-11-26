@@ -1,6 +1,6 @@
 #!/bin/bash
 # Lane troll19b: one staged clip (needs a server on the lane's port: node tools/serve.mjs 8976 <root>).
-#   bash tools/troll19b/clip.sh <out name> <kind[@rank]> <scene> [secs=10] [zoom=1] [cam: room|hero|troll|mid|x,y] [blue units]
+#   bash tools/troll19b/clip.sh <out name> <kind[@rank]> <scene> [secs=10] [zoom=1] [cam: room|follow|hero|troll|mid|x,y] (follow: the camera goes with the troll) [blue units]
 # Scenes: tools/troll19b/stage.js (bowl, near, stand, fetch, break) and tools/troll19/stage.js's own (live, push, wall, ...).
 out=$1; kind=$2; scene=$3; secs=${4:-10}; zoom=${5:-1}; cam=${6:-room}; blue=${7:-paladin}
 case $cam in
@@ -8,6 +8,7 @@ case $cam in
   troll) C='const c={x:S.u.x,y:S.u.y};' ;;
   mid) C='const c={x:(S.h.x+S.u.x)/2,y:(S.h.y+S.u.y)/2};' ;;
   room) C='const c={x:S.w.W/2,y:S.w.H/2};' ;;
+  follow) C='const c={get x(){return S.u.x},get y(){return S.u.y}};' ;;
   *) C="const c={x:${cam%,*},y:${cam#*,}};" ;;
 esac
 case $scene in

@@ -1612,7 +1612,7 @@ js/foes9.js `BOWL`.
   its ball, the same.
 - **Bowls more often**: 1.4 to 2 s after it has the boulder again (it was 5 to 7 s from the last bowl, plus troll19's
   3 s stand at its mark, which is gone), and it hurries after its boulder at twice its walk. Staged, bowls a minute:
-  troll 7.3 to 8.3 before, 9.2 to 13.0 after; rock troll 5.5 to 7.0, then 8.2 to 10.5.
+  troll 7.3 to 8.3 before, 9.3 to 13.2 after; rock troll 5.5 to 7.0, then 8.2 to 10.7.
 - **Further and faster**: let go at 400 (was 320; rock troll 420, was 360), slowing at 0.6 a second (was 0.9): about
   650 with nobody in its way (was 350). Each body it strikes takes a tenth to three tenths of its speed and it rolls on.
 - **A wind-up, 0.7 s** (was a 0.45 s shuffle): the troll steps back and rears, the boulder drawn in against its chest,
@@ -1630,28 +1630,29 @@ js/foes9.js `BOWL`.
   (cancelled, as the yeti's). The rock troll's charge line the same.
 - **Backs off before it bowls**: in range it stands off instead of walking the boulder in; nearer than 120 it backs
   away first (1.5 times its walk, 1.3 s at most, or until its back is against something). Seconds a minute holding the
-  boulder against a hero: 14 to 18 before, 0.3 to 6 after.
+  boulder against a hero: 14 to 18 before, 0.3 to 5.6 after.
 - **A heavy blow**: thrown on down its way, by weight (`knock` 900 times mass to the three quarters: an archer about
   210, was 130; a paladin 140, was 70; a shield takes a fifth of it), off their feet 0.2 s, a burst of dust, sparks,
   shake, a hair of hit-stop, the game's boom.
 - **The rock troll**: a boulder of 54 (the troll's 41; elite 66, major 80), and it rolls home to the rock troll after
-  every bowl, wherever the troll is; the troll fights with its fists meanwhile. Back in its fists in 2.0 to 2.3 s (was
+  every bowl, wherever the troll is; the troll fights with its fists meanwhile. Back in its fists in 2.0 to 2.2 s (was
   4.1 to 4.6 on foot). Its run behind the boulder is rarer (15%, was 40%) and ends with the boulder let go.
 - **The yeti**: its ball has the same health-as-a-unit, the same thrown blow, and it hits back on its way to its ball.
   Its heave, its pace and its packing are as they were.
-- **Strength** (the same 1,620 fights): the trolls' side won 907 at 0.41.0, 935 now. Troll 8% to 12%, rock troll 7% to
-  12%, yeti 44% to 48%, elite troll 62% to 68%, elite rock troll 57% to 59%, majors 74% to 71% and 65% to 66%. To get
+- **Strength** (the same 1,620 fights): the trolls' side won 907 at 0.41.0, 941 now. Troll 8% to 13%, rock troll 7% to
+  11%, yeti 44% to 48%, elite troll 62% to 68%, elite rock troll 57% to 63%, majors 74% to 71% and 65% to 64%. To get
   there: the bowl's own damage 14 / 18 to 6 / 7 (walls do the rest to a thrown body) and its stagger 50 to 30; the
   troll's health 170 to 155 and fists 16 to 13; the rock troll's health 190 to 172. With the bowl changes alone the
   elite troll won 82%.
 - **Kept from troll19**: nobody's middle in a wall or outside the room, by a boulder or not, in the same staged runs,
-  walled fights, dungeon runs and wagon trips; carried on a boulder's front 0.6 s a minute (was 2.4); its boulder
+  walled fights, dungeon runs and wagon trips; carried on a boulder's front 0.7 s a minute (was 2.4); its boulder
   back within 6 s in fights 179 of 180. Two faults the tests found, fixed: a troll snatching at a boulder from further
   than it can hold it, for a minute; a big boulder dragged into a slot too narrow and left in the wall (it crumbles
   now, round 17's rule).
 - **After lane physics19** (main merged in, 0.43.0): a body found deep in a ball at the start of a step eases out of
   it (layers.js softRock) instead of jumping a boulder's width; what is new of an overlap each step is still put
-  right at once.
+  right at once. The cost: a hero under a boulder torn up where he stands is inside it for half a second (a body
+  inside a boulder 690 times in the 648 walled test fights, 134 at 0.41.0; about a fifth of that with the easing off).
 - **The lane's calls** (docs/troll19b.md): the troll's broken boulder stays broken; who goes for a boulder; how far a
   body is thrown; the rock troll's run kept, rare; the troll's hurry; a boulder rolls on through whoever it strikes;
   in battle mode a boulder carries a bar and a side ring like every unit there.

@@ -57,7 +57,7 @@
     {
      "id": "health",
      "title": "Boulder health",
-     "text": "\"Boulder should have hp and can be destroyed and targeted\": every boulder has a health bar, cracks as it is hurt and bursts. Heroes go for it when it stands between them and the troll. Then the troll is bare-handed.",
+     "text": "\"Boulder should have hp and can be destroyed and targeted\": every boulder has a health bar, cracks as it is hurt and bursts. Heroes go for it when it stands between them and the troll. Then the troll is bare-handed. (The boulder starts this film already hurt, so the break fits: it bursts at 0:10.)",
      "videos": [
       "../../../docs/clips/troll19b/before-break-troll.mp4",
       "../../../docs/clips/troll19b/after-break-troll.mp4"
@@ -105,7 +105,7 @@
     {
      "id": "rockbreak",
      "title": "Rock boulder broken",
-     "text": "Its boulder has much more health than the troll's. When it breaks the rock troll fights bare-handed for 7 seconds, then tears a new one out of the floor. (The boulder starts this film at half health.)",
+     "text": "Its boulder has much more health than the troll's. When it breaks (0:14) the rock troll fights bare-handed for 7 seconds, then tears a new one out of the floor (0:22). The boulder starts this film at half health.",
      "videos": [
       "../../../docs/clips/troll19b/before-break-rocktroll.mp4",
       "../../../docs/clips/troll19b/after-break-rocktroll.mp4"
@@ -123,14 +123,16 @@
     {
      "id": "fights",
      "title": "Whole fights",
-     "text": "A troll, a rock troll and a yeti against a paladin and an archer, 20 seconds each, nothing staged.",
+     "text": "A troll, a rock troll and a yeti against a paladin and an archer, 20 seconds each, nothing staged. Last, a dungeon room of trolls at phone size.",
      "videos": [
       "../../../docs/clips/troll19b/before-live-troll.mp4",
       "../../../docs/clips/troll19b/after-live-troll.mp4",
       "../../../docs/clips/troll19b/before-live-rocktroll.mp4",
       "../../../docs/clips/troll19b/after-live-rocktroll.mp4",
       "../../../docs/clips/troll19b/before-live-yeti.mp4",
-      "../../../docs/clips/troll19b/after-live-yeti.mp4"
+      "../../../docs/clips/troll19b/after-live-yeti.mp4",
+      "../../../docs/clips/troll19b/before-dungeon.mp4",
+      "../../../docs/clips/troll19b/after-dungeon.mp4"
      ]
     },
     {

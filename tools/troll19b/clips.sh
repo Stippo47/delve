@@ -8,10 +8,10 @@ run near-troll troll near 10 0.85 room
 run stand-troll troll stand 12 0.85 room
 run stand-archer troll stand 10 0.85 room archer
 run fetch-troll troll fetch 9 0.85 room
-run break-troll troll break 16 0.85 room paladin,archer,berserker
+run break-troll troll break 16 0.85 follow paladin,archer,berserker
 run bowl-rocktroll rockTroll bowl 16 0.85 room
 run stand-rocktroll rockTroll stand 14 0.85 room
-run break-rocktroll rockTroll break 26 0.85 room paladin,archer,berserker
+run break-rocktroll rockTroll break 26 0.85 follow paladin,archer,berserker
 run bowl-yeti yeti bowl 16 0.85 room
 run live-troll troll live 20 0.9 room paladin,archer
 run live-rocktroll rockTroll live 20 0.9 room paladin,archer

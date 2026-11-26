@@ -21,7 +21,7 @@
     if (name === 'stand') { at(u, W / 2 + 230, H / 2); at(h, W / 2 - 230, H / 2); h.rootT = 1e9; if (b) hold(); }
     if (name === 'fetch') { at(u, W / 2 + 260, H / 2); if (b) ball(W / 2 - 160, H / 2, false); at(h, W / 2 + 60, H / 2 - u.r - h.r - 6); h.rootT = 1e9; u.facing = u.mvA = Math.PI; }
     if (name === 'break') { at(u, W / 2 + 200, H / 2); if (b) hold(); at(h, W / 2 - 160, H / 2 - 40); if (hs[1]) at(hs[1], W / 2 - 300, H / 2 + 60); if (hs[2]) at(hs[2], W / 2 - 180, H / 2 + 110);
-      if (b && b.body && u.def.rock) b.body.hp = b.body.maxHp * 0.5; } // (the rock troll's boulder starts the scene at half its health, so its breaking and the new one fit in one clip)
+      if (b && b.body && !b.snowball) b.body.hp = b.body.maxHp * (u.def.rock ? 0.5 : 0.4); } // (a boulder starts this scene part broken, the troll's at two fifths of its health and the rock troll's at half, so its breaking, and the rock troll's new one, fit in one clip)
     for (const q of hs) q.facing = Math.atan2(u.y - q.y, u.x - q.x);
     return S;
   };

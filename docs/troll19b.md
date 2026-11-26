@@ -29,13 +29,12 @@ clips and numbers are with it; "before" is 0.41.0.
 2. **"And yes they should bowl more often."** The wait is 1.4 to 2 s from the moment it has the boulder in its fists
    again (it was 5 to 7 s from the last bowl, and troll19's 3 s standing with the boulder against its mark is gone: it
    never stands there now). And it gets its boulder back sooner: it hurries after it (twice its walking pace). Bowls a
-   minute, staged: troll 7.3 to 8.3 before, 9.2 to 13.0 after; rock troll 5.5 to 7.0 before, 8.2 to 10.5 after.
+   minute, staged: troll 7.3 to 8.3 before, 9.3 to 13.2 after; rock troll 5.5 to 7.0 before, 8.2 to 10.7 after.
    `after-bowl-troll.mp4` (three bowls: 0:01, 0:07, 0:13) against `before-bowl-troll.mp4` (two: 0:01, 0:12).
 3. **"Boulder should go further and start a bit faster."** It leaves at 400 (was 320; the rock troll's 420, was 360) and
    slows more slowly: with nobody in its way it rolls about 650 before it lies still (was 350), and it still hurts for
-   the first 480 of that (was 230). Through a hero it goes on about 320 to 390 (was 330, with far less of a blow).
-   `after-stand-troll.mp4` 0:01-0:03 against `before-stand-troll.mp4`; a miss rolling right across the room:
-   `after-live-troll.mp4`.
+   the first 480 of that (was 230). Through a hero it goes on about 330 to 390 (was 330, with far less of a blow).
+   `after-stand-troll.mp4` 0:01-0:03 against `before-stand-troll.mp4` 0:01-0:02.
 4. **"Should show a charge up animation."** 0.7 s before every bowl (it was a 0.45 s shuffle): the line shows on the
    floor, the troll steps back and rears, its fists drawn in, the boulder hauled against its chest, shaking, swelling a
    tenth and paling, grit flying up from under it; then it lunges after the boulder and the floor behind goes up in
@@ -49,11 +48,11 @@ clips and numbers are with it; "before" is 0.41.0.
    fight comes first. (A swing or a blast meant for somebody else still hurts it if it is in the way.) Health: a
    troll's boulder a quarter of the troll's own (so it grows with the troll); the rock troll's seven tenths of the rock
    troll's. Broken: the troll fights bare-handed for the rest of the fight, as before; the rock troll, bare-handed for
-   7 s, then tears a new one out of the floor (the stoop it already had). `after-break-troll.mp4` (three heroes that do
-   hurt: the paladin and the berserker go at the boulder between them and the troll, it cracks, breaks at about 0:1x,
-   and the troll goes on with its fists) against `before-break-troll.mp4` (only the archer's arrows chip it).
-   `after-break-rocktroll.mp4`: the rock troll's (it starts the clip at half health so the whole thing fits): it
-   breaks, the rock troll fights bare-handed, stoops and comes up with a new one.
+   7 s, then tears a new one out of the floor (the stoop it already had). With two heroes on a troll its boulder
+   lasts half a minute or more; with three, about a quarter of one. `after-break-troll.mp4` (three heroes that do hurt;
+   the boulder starts the clip at two fifths of its health so the break fits; the camera goes with the troll):
+   the boulder starts cracked, its bar part empty; the paladin and the berserker strike it at 0:03 and 0:04 where it lies between them and the troll; bowled again at 0:10, it bursts into rock and dust on them at 0:10.5; from 0:11 the troll fights with its fists; against `before-break-troll.mp4` (only the archer's arrows chip it). `after-break-rocktroll.mp4` (its
+   boulder starts at half health): bowls at 0:01.5 and 0:07.5 (the boulder home again each time); at 0:14 it breaks on the third; 0:14.5-0:21.5 the rock troll fights bare-handed; at 0:22 it stoops, at 0:23 it has a new one.
 6. **"idk why spikes come out when the boulder is bowled."** Found by filming a bowl and going through it frame by
    frame: `before-near-troll.mp4` 0:01 (and `before-bowl-troll.mp4` 0:01 and 0:12). The red line on the floor before a
    bowl was a danger zone of the game's "bone" kind with no blow of its own, and every danger zone "strikes" when its
@@ -65,9 +64,9 @@ clips and numbers are with it; "before" is 0.41.0.
    holding the boulder."** With an enemy in bowling range it no longer walks the boulder on into them. It stands off,
    turning the boulder at them; if they are nearer than 120 (boulder to body) it backs away first, dragging the
    boulder, at one and a half times its walk, for at most 1.3 s (or until something at its back stops it), and then
-   bowls. Room at the moment it lets go, staged: 0 before in every scene; after, 158 against a hero who stays put, 71
+   bowls. Room at the moment it lets go, staged: 0 before in every scene; after, 157 against a hero who stays put, 71
    against one who keeps coming at it (he walks faster than it backs). Seconds a minute spent holding the boulder
-   against the hero: 14 to 18 before, 0.3 to 6 after. `after-near-troll.mp4` 0:00-0:01 against `before-near-troll.mp4`
+   against the hero: 14 to 18 before, 0.3 to 5.6 after. `after-near-troll.mp4` 0:00-0:01 against `before-near-troll.mp4`
    (0:06 to the end: it stands with the boulder pressed to him).
 8. **"Boulder should do heavy knockback. Currently it just barely knocks things to the side. There no strong impact."**
    It knocked everybody 420, half of it sideways: a paladin went about 50. Now it throws them on down its way (a
@@ -75,13 +74,13 @@ clips and numbers are with it; "before" is 0.41.0.
    about 140 (was 70; a raised shield takes a fifth of it, not two fifths). A hero who cannot be shoved at that moment
    (the Berserker in his rage) still isn't. They are off their feet for a fifth
    of a second. The impact: a burst of dust and grit where it struck, sparks, the room shakes, a hair of hit-stop, and
-   the game's boom. Walls stop a thrown body like any knocked body (and hurt it, as they always have). `after-stand-archer.mp4` (an archer, rooted, 0:0x) against
-   `before-stand-archer.mp4`; `after-stand-troll.mp4` 0:02.
+   the game's boom. Walls stop a thrown body like any knocked body (and hurt it, as they always have). `after-stand-archer.mp4` (an archer, rooted: 0:02.5 and 0:07.5) against
+   `before-stand-archer.mp4`; `after-stand-troll.mp4` 0:02.5.
 9. **"Rock troll should have a huge boulder and the boulder comes back to them."** Its boulder is 54 across the half
    (the troll's is 41): a third wider, three quarters more of it, about as wide as the rock troll itself. After every
    bowl it rolls back to the rock troll by itself, wherever the troll has got to (once it has slowed, 1.3 s after it
    struck somebody, or 2.4 s out); the rock troll does not walk after it, it fights with its fists until the boulder
-   is back in them. Back in its fists 2.0 to 2.3 s after it let go (4.1 to 4.6 s before, on foot). If something keeps
+   is back in them. Back in its fists 2.0 to 2.2 s after it let go (4.1 to 4.6 s before, on foot). If something keeps
    it from coming back for 5 s (a wall between them) the troll fetches it on foot as a troll does. On its way home it
    only shoulders people aside; the elite's hurts them again (less). `after-stand-rocktroll.mp4`,
    `after-bowl-rocktroll.mp4` against the `before-` pair.
@@ -90,12 +89,12 @@ clips and numbers are with it; "before" is 0.41.0.
 
 - **Applied**: its ball has health and a body like the boulders (swings and abilities hurt it now, not only shots and
   blasts; 70 where it had 50; the same rule for who goes for it; it already cracked and burst). The ball's blow throws
-  people the same way (a paladin 58 to 67 before, 95 to 100 after), with a burst of snow and a shake. It hits back on
+  people the same way (a paladin about 60 before, 100 after), with a burst of snow and a shake. It hits back on
   its way to its ball. `after-bowl-yeti.mp4` against `before-bowl-yeti.mp4`; `after-live-yeti.mp4`.
 - **Left as it was**: how often it heaves, how fast and how far (it already runs up behind the ball before it lets go,
   which is its wind-up; its ball bursts on walls, so "further" is the wrong way for it); it packs a new ball itself,
   so nothing comes back to it; it already left its ball to fight whoever is at its side.
-- It heaves a little less often than it did when a hero stands right by it (4.7 to 5.7 a minute, was 5.2 to 8.7),
+- It heaves a little less often than it did when a hero stands right by it (4.5 to 5.8 a minute, was 5.2 to 8.7),
   because it now stops to hit him.
 
 ## What else was done
@@ -127,17 +126,17 @@ standing right in front of it, standing by its way to its boulder).
 
 | | troll, before | troll, after | rock troll, before | rock troll, after |
 |---|---|---|---|---|
-| bowls a minute | 7.3 to 8.3 | 9.2 to 13.0 | 5.5 to 7.0 | 8.2 to 10.5 |
+| bowls a minute | 7.3 to 8.3 | 9.3 to 13.2 | 5.5 to 7.0 | 8.2 to 10.7 |
 | speed as it leaves | 315 | 396 | 355 | 414 to 424 |
 | rolls, nobody in its way | about 350 | about 650 | about 390 | about 500, then home |
-| rolls, through the hero | 330 to 336 | 322 to 393 | 379 to 383 | 261 to 334, then home |
-| room when it lets go (hero staying put) | 0 | 158 | 0 | 199 to 233 |
+| rolls, through the hero | 330 to 336 | 328 to 393 | 379 to 383 | 261 to 328, then home |
+| room when it lets go (hero staying put) | 0 | 156 to 158 | 0 | 200 to 226 |
 | room when it lets go (hero coming at it) | 0 | 71 | 0 | 47 |
-| seconds a minute holding the boulder against him | 14.0 to 17.7 | 0.3 to 5.8 | 13.5 to 21.3 | 0.8 to 6.5 |
+| seconds a minute holding the boulder against him | 14.0 to 17.7 | 0.3 to 5.6 | 13.5 to 21.3 | 0.9 to 5.0 |
 | a paladin struck is thrown (the first blow of a run) | 68 | 138 | 75 | 143 |
 | an archer struck is thrown (the same) | 127 | 210 | 133 | 217 |
-| back in its fists after | 3.4 to 4.0 s | 2.2 to 4.4 s | 4.1 to 4.6 s | 2.0 to 2.3 s |
-| fist blows a minute while it has no boulder | 0 (6 with heroes hitting it) | 9 to 23 | 0 | 1.5 to 12 |
+| back in its fists after | 3.4 to 4.0 s | 2.2 to 4.4 s | 4.1 to 4.6 s | 2.0 to 2.2 s |
+| fist blows a minute while it has no boulder | 0 (6 with heroes hitting it) | 9 to 23 | 0 | 2.5 to 12 |
 
 **Strength (tools/troll19/winrate.mjs; tools/troll19b/winrate-after.txt against tools/troll19/winrate-after.txt, which
 is 0.41.0).** Plain battle rooms, no staging: each kind, one, two and three of it, against three hero parties
@@ -145,16 +144,16 @@ is 0.41.0).** Plain battle rooms, no staging: each kind, one, two and three of i
 
 | the trolls' side won | 0.41.0 | this branch | a fight lasted, 0.41.0 | this branch |
 |---|---|---|---|---|
-| troll | 14 (8%) | 22 (12%) | 70 s | 61 s |
-| rock troll | 12 (7%) | 21 (12%) | 93 s | 108 s |
-| yeti | 79 (44%) | 87 (48%) | 61 s | 63 s |
-| elite troll | 112 (62%) | 123 (68%) | 72 s | 71 s |
-| elite rock troll | 103 (57%) | 106 (59%) | 133 s | 146 s |
-| elite yeti | 164 (91%) | 164 (91%) | 50 s | 48 s |
-| major troll | 133 (74%) | 127 (71%) | 71 s | 90 s |
-| major rock troll | 117 (65%) | 119 (66%) | 122 s | 142 s |
-| major yeti | 173 (96%) | 166 (92%) | 44 s | 50 s |
-| all | 907 of 1,620 (56.0%) | 935 (57.7%) | | |
+| troll | 14 (8%) | 23 (13%) | 70 s | 61 s |
+| rock troll | 12 (7%) | 20 (11%) | 93 s | 109 s |
+| yeti | 79 (44%) | 87 (48%) | 61 s | 62 s |
+| elite troll | 112 (62%) | 122 (68%) | 72 s | 72 s |
+| elite rock troll | 103 (57%) | 113 (63%) | 133 s | 144 s |
+| elite yeti | 164 (91%) | 164 (91%) | 50 s | 47 s |
+| major troll | 133 (74%) | 128 (71%) | 71 s | 92 s |
+| major rock troll | 117 (65%) | 116 (64%) | 122 s | 145 s |
+| major yeti | 173 (96%) | 168 (93%) | 44 s | 50 s |
+| all | 907 of 1,620 (56.0%) | 941 (58.1%) | | |
 
 How it got there. With the bowl changes alone (and the old health, fists and 14 / 18 bowl damage) the trolls' side won
 far more: troll 24%, elite troll 82%, elite rock troll 69%, major rock troll 80%. Turning single things off showed no
@@ -163,7 +162,9 @@ about 3, heroes spending blows on the boulder a few; even with the bowl doing no
 76%. So the trim is spread: the bowl's own damage down (it is a shove now, and walls do the rest), its stagger down
 (50 to 30: three bowls in a row no longer stun for seconds), the boulder's health kept modest, and the two trolls a
 little down in health and fists. The plain troll and rock troll still win a little more often than they did
-(12%, were 8% and 7%): left there, they were the weakest of the nine.
+(13% and 11%, were 8% and 7%): left there, they were the weakest of the nine. Fights against the rock trolls and the
+major troll are longer than they were (the rock troll 93 s to 109 s, its major 122 s to 145 s, the major troll 71 s
+to 92 s): heroes are thrown about more and spend blows on boulders.
 
 **Walls, the room's edge (tools/troll19/walls.mjs; tools/troll19b/walls-after.txt).** The same 504 staged runs, 648
 fights in walled rooms, 36 dungeon runs and the wagon mode as lane troll19.
@@ -186,13 +187,13 @@ torn up where he stands, where he used to be thrown clear in one step.
 
 **Carried on the boulder's front (tools/troll19/glue.mjs; glue-after.txt).** A hero standing still in its way, 10 s:
 carried 0.4 s and 43 far at 0.41.0 (troll), 0.1 s and 9 now; rock troll 0.5 s and 59, now 0.0 s and 3; elite rock
-troll 0.7 s and 88, now 0.1 s and 11; yeti 0.4 s and 52, now 0.4 s and 67. In fights, seconds carried a minute: troll
-2.4 then, 0.6 now; rock troll 2.8, 0.6; elite rock troll 5.9, 1.1; yeti 1.0, 0.7. Longest stretch anywhere 2.0 s
+troll 0.7 s and 88, now 0.0 s and 6; yeti 0.4 s and 52, now 0.4 s and 72. In fights, seconds carried a minute: troll
+2.4 then, 0.7 now; rock troll 2.8, 0.7; elite rock troll 5.9, 1.1; yeti 1.0, 0.7. Longest stretch anywhere 2.0 s
 then, 0.8 s now.
 
 **Getting its boulder back (round 17's test, tools/foes17/boulders.mjs; fetch-after.txt).** Staged: every spot back
 within 6 s for the trolls, as before (the ring of rocks: a new boulder, as before). In fights: troll, taken up again
-within 6 s 179 of 180 (134 of 134 at 0.41.0; it rolls further now), mean 3.8 s; rock troll 193 of 193, mean 2.2 s
+within 6 s 179 of 180 (134 of 134 at 0.41.0; it rolls further now), mean 3.8 s; rock troll 194 of 194, mean 2.2 s
 (was 4.1 s); elite rock troll 204 of 205, mean 1.9 s; yeti 119 of 141 (was 155 of 196).
 
 **Checks.** `node --check` on every js file: clean (it does not see a name declared twice in a module; the tools,
@@ -206,15 +207,16 @@ which load the modules, do). `node tools/preview-check.mjs`: threw 0 / never fir
 |---|---|---|
 | **A hero walking at it**, 16 s | `before-bowl-troll.mp4`: two bowls (0:01, 0:12, spikes both times); 0:05-0:11 it holds the boulder against him | `after-bowl-troll.mp4`: three bowls (0:01, 0:07, 0:13), each with its wind-up and a thrown paladin; fists at 0:03 and 0:09 on its way to the boulder |
 | **A hero right in front of it** | `before-near-troll.mp4`: 0:01 the bowl and the spikes; 0:06 on, pressed against him | `after-near-troll.mp4`: 0:00-0:01 it backs off, 0:01 winds up, 0:02 the blow; again at 0:06 |
-| **A hero standing 460 off** | `before-stand-troll.mp4` | `after-stand-troll.mp4`: STAND_NOTE |
-| **An archer struck** (light, no shield) | `before-stand-archer.mp4` | `after-stand-archer.mp4`: ARCHER_NOTE |
+| **A hero standing 460 off** | `before-stand-troll.mp4`: 0:01 the bowl and the spikes, the boulder dies at his feet; 0:05-0:09 it stands with the boulder against him | `after-stand-troll.mp4`: 0:01 the wind-up, 0:01.5 it goes, 0:02.5 the blow from across the room, the paladin thrown and the boulder rolling on; again at 0:06.5 |
+| **An archer struck** (light, no shield) | `before-stand-archer.mp4`: 0:01 the bowl (and the spikes); he is hardly moved, and from 0:05 the boulder is held against him | `after-stand-archer.mp4`: 0:01 the wind-up, 0:02.5 the blow: he lands about three body widths on; again at 0:07.5; 0:09.5 its fists as it goes past him for its boulder |
 | **Fists on the way to its boulder** | `before-fetch-troll.mp4`: walks past the paladin | `after-fetch-troll.mp4`: 0:01 and 0:03, then the boulder at 0:04 |
-| **The boulder's health** (three heroes that hurt) | `before-break-troll.mp4` | `after-break-troll.mp4`: BREAK_NOTE |
-| **Rock troll**, a hero walking at it | `before-bowl-rocktroll.mp4` | `after-bowl-rocktroll.mp4`: ROCKBOWL_NOTE |
-| **Rock troll**, a hero standing off | `before-stand-rocktroll.mp4` | `after-stand-rocktroll.mp4`: ROCKSTAND_NOTE |
-| **Rock troll's boulder broken, and the new one** | `before-break-rocktroll.mp4` (it can't be hurt) | `after-break-rocktroll.mp4`: ROCKBREAK_NOTE |
-| **Yeti** | `before-bowl-yeti.mp4` | `after-bowl-yeti.mp4`: YETI_NOTE |
-| **Whole fights** against a paladin and an archer, 20 s | `before-live-troll.mp4`, `before-live-rocktroll.mp4`, `before-live-yeti.mp4` | `after-live-troll.mp4`, `after-live-rocktroll.mp4`, `after-live-yeti.mp4` |
+| **The boulder's health** (three heroes that hurt; the camera goes with the troll) | `before-break-troll.mp4` | `after-break-troll.mp4`: the boulder starts cracked, its bar part empty; the paladin and the berserker strike it at 0:03 and 0:04 where it lies between them and the troll; bowled again at 0:10, it bursts into rock and dust on them at 0:10.5; from 0:11 the troll fights with its fists |
+| **Rock troll**, a hero walking at it | `before-bowl-rocktroll.mp4` | `after-bowl-rocktroll.mp4`: three bowls (0:02, 0:07, 0:13); each time the boulder rolls home (0:04, 0:10, 0:15) while the rock troll stands and fights |
+| **Rock troll**, a hero standing off | `before-stand-rocktroll.mp4` | `after-stand-rocktroll.mp4`: 0:01 the wind-up and the bowl, 0:02.5 the blow, 0:03.5-0:04.5 the boulder rolls home into its fists; again at 0:07 (home by 0:10) and 0:13 |
+| **Rock troll's boulder broken, and the new one** (the camera goes with the troll) | `before-break-rocktroll.mp4` (it can't be hurt) | `after-break-rocktroll.mp4`: bowls at 0:01.5 and 0:07.5 (the boulder home again each time); at 0:14 it breaks on the third; 0:14.5-0:21.5 the rock troll fights bare-handed; at 0:22 it stoops, at 0:23 it has a new one |
+| **Yeti** | `before-bowl-yeti.mp4` | `after-bowl-yeti.mp4`: 0:02 the ball's blow (a burst of snow, the paladin thrown), again at 0:07 and 0:15; 0:12 its fists on him as it goes round its ball; the ball's own health bar |
+| **Whole fights** against a paladin and an archer, 20 s (the rock troll's with the camera going with it) | `before-live-troll.mp4`, `before-live-rocktroll.mp4`, `before-live-yeti.mp4` | `after-live-troll.mp4` (bowls at 0:04.5, 0:11.5, 0:18.5; fists at 0:06.5 and 0:08.5), `after-live-rocktroll.mp4`, `after-live-yeti.mp4` (heaves at 0:07 and 0:19, the ball's bar, fists at 0:13) |
+| **A dungeon room** (the Warren, trolls and rock trolls only, a paladin, an archer and a cleric at level 5, phone size) | `before-dungeon.mp4` | `after-dungeon.mp4`: DUNGEON_NOTE |
 
 ## Calls made (say if any is wrong)
 
@@ -244,6 +246,9 @@ which load the modules, do). `node tools/preview-check.mjs`: threw 0 / never fir
 
 - **Against a hero who keeps walking at it the troll never gets its full room**: it backs at 69 a second and a paladin
   walks at 48 into it, so it gains little in 1.3 s and bowls from about 70. The blow then makes the room.
+- **With two fighters on it the troll is slow to its boulder**: every blow it takes breaks its stride (as any foe's)
+  and it stops for its own. In the first take of the break clip it took 3 s to cover 40. In fights it still has its
+  boulder back within 6 s 179 times in 180.
 - **A paladin behind his shield** is thrown the least of anyone (about 140); most of the staged clips use him.
   `after-stand-archer.mp4` shows a light body.
 - **The wind-up is carried by the boulder** (it pales, swells, shakes) and the troll's step back; the troll's own lean
