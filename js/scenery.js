@@ -2,7 +2,7 @@
 // (bones, candles, moss, straw...), the theme hazards (grave mist, hidden snares), sewer water, a boss's arena
 // (throne, graves), the danger-zone telegraphs, and the light/fog mood over the room. render.js calls in here.
 // The look is the game's: warm, chunky, one heavy ink outline (OUTLINE), soft gradients lit from the left.
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINES } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { paintRoom, drawBlock, envVoid, envFogK } from './env.js';
 
@@ -15,8 +15,8 @@ function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w
 let soft = false; // floor dressing: a faint outline instead of the heavy ink one
 function inked(g, pathFn, fill) {
   const o = soft ? 'rgba(30,20,30,0.28)' : INK;
-  g.save(); g.fillStyle = o; g.strokeStyle = o; g.lineWidth = OUTLINE * (soft ? 1 : 2); g.lineJoin = 'round'; g.lineCap = 'round';
-  pathFn(); g.fill(); g.stroke(); g.restore();
+  if (OUTLINES) { g.save(); g.fillStyle = o; g.strokeStyle = o; g.lineWidth = OUTLINE * (soft ? 1 : 2); g.lineJoin = 'round'; g.lineCap = 'round';
+  pathFn(); g.fill(); g.stroke(); g.restore(); } // (round 19, lane toggles19: outlines off, the colour alone)
   g.fillStyle = fill; pathFn(); g.fill();
 }
 const hash = (a, b) => { const s = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return s - Math.floor(s); };
@@ -41,7 +41,7 @@ function shade(hex, k) {
 
 function water(g, c, w) {
   // a channel of murky water between two stone banks
-  g.fillStyle = INK; g.fillRect(c.x - OUTLINE * 2 - 3, c.y, c.w + OUTLINE * 4 + 6, c.h);
+  if (OUTLINES) { g.fillStyle = INK; g.fillRect(c.x - OUTLINE * 2 - 3, c.y, c.w + OUTLINE * 4 + 6, c.h); }
   g.fillStyle = '#7E8A6C'; g.fillRect(c.x - 3, c.y, c.w + 6, c.h); // the bank's lip
   const wg = lin(g, c.x, 0, c.x + c.w, 0, '#4F8C8A', '#2E5E63');
   g.fillStyle = wg; g.fillRect(c.x + 3, c.y, c.w - 6, c.h);
@@ -242,7 +242,7 @@ export function drawThemeHazard(ctx, h, t) {
     // round 9, the Wildwood: a low tangle of thorny stems (slows, scratches)
     ctx.save(); ctx.translate(h.x, h.y); ctx.lineCap = 'round';
     const n = 9;
-    for (const [col, lw] of [[INK, 5.5], ['#5E7432', 2.6]]) {
+    for (const [col, lw] of OUTLINES ? [[INK, 5.5], ['#5E7432', 2.6]] : [['#5E7432', 2.6]]) {
       ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
       for (let i = 0; i < n; i++) { const b = i / n * TAU + h.x * 0.013, r1 = h.r * (0.55 + 0.4 * ((i * 7) % 5) / 5);
         ctx.moveTo(Math.cos(b) * h.r * 0.15, Math.sin(b) * h.r * 0.15); ctx.quadraticCurveTo(Math.cos(b + 0.5) * r1 * 0.7, Math.sin(b + 0.5) * r1 * 0.7, Math.cos(b + 0.2) * r1, Math.sin(b + 0.2) * r1); }
@@ -257,7 +257,7 @@ export function drawThemeHazard(ctx, h, t) {
     ctx.save(); ctx.translate(h.x, h.y); ctx.lineCap = 'round';
     ctx.globalAlpha = 0.3; ctx.fillStyle = '#3E4A22'; ctx.beginPath(); ctx.arc(0, 0, h.r * 0.95, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
     const n = 6, wig = Math.sin(t * 2 + h.x) * 0.08;
-    for (const [col, lw] of [[INK, 8], ['#7A5A3A', 4.5]]) {
+    for (const [col, lw] of OUTLINES ? [[INK, 8], ['#7A5A3A', 4.5]] : [['#7A5A3A', 4.5]]) {
       ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
       for (let i = 0; i < n; i++) { const b = i / n * TAU + h.y * 0.01; ctx.moveTo(Math.cos(b) * h.r * 0.95, Math.sin(b) * h.r * 0.95);
         ctx.quadraticCurveTo(Math.cos(b + 0.6 + wig) * h.r * 0.5, Math.sin(b + 0.6 + wig) * h.r * 0.5, Math.cos(b + 1.1) * h.r * 0.18, Math.sin(b + 1.1) * h.r * 0.18); }

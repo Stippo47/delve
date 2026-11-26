@@ -6,7 +6,7 @@
 //   figure(ctx, { flash, wash, alpha, ol }, (F) => { F.shape(path, fill); F.line(path, color, width); F.detail(fn); })
 // Also: gradients (lin, rad), paths (ell, rrect, capsule, poly, ribbon), two-bone arms (ik2), boss effects that live
 // for a moment (bfx: pushed by the fight, drawn under or over the units by time, no state of their own).
-import { INK, TAU, clamp, OUTLINE } from './util.js';
+import { INK, TAU, clamp, OUTLINE, OUTLINES } from './util.js';
 import { view } from './render.js';
 import { inked, upright } from './fx.js';
 
@@ -19,7 +19,7 @@ export function figure(ctx, o, body) {
     shape(path, fill, so) {
       if (F.pass === 0) { ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = F.ol * 2; ctx.lineJoin = 'round'; path(); ctx.fill(); ctx.stroke(); return; }
       if (F.pass === 2) { ctx.fillStyle = F.wash; path(); ctx.fill(); return; }
-      if (!(so && so.seam === false)) { ctx.strokeStyle = SEAM; ctx.lineWidth = 2.6; ctx.lineJoin = 'round'; path(); ctx.stroke(); }
+      if (OUTLINES && !(so && so.seam === false)) { ctx.strokeStyle = SEAM; ctx.lineWidth = 2.6; ctx.lineJoin = 'round'; path(); ctx.stroke(); }
       ctx.fillStyle = typeof fill === 'function' ? fill() : fill; path(); ctx.fill();
       // struck: a white wash over the shape for a frame (a big body gone solid white every blow was too much)
       if (F.flash || (so && so.flash)) { ctx.save(); ctx.globalAlpha *= 0.6; ctx.fillStyle = '#FFFFFF'; path(); ctx.fill(); ctx.restore(); }
@@ -29,7 +29,7 @@ export function figure(ctx, o, body) {
       ctx.lineCap = cap; ctx.lineJoin = 'round';
       if (F.pass === 0) { ctx.strokeStyle = INK; ctx.lineWidth = width + F.ol * 2; path(); ctx.stroke(); return; }
       if (F.pass === 2) { ctx.strokeStyle = F.wash; ctx.lineWidth = width; path(); ctx.stroke(); return; }
-      ctx.strokeStyle = SEAM; ctx.lineWidth = width + 2.4; path(); ctx.stroke();
+      if (OUTLINES) { ctx.strokeStyle = SEAM; ctx.lineWidth = width + 2.4; path(); ctx.stroke(); }
       ctx.strokeStyle = typeof color === 'function' ? color() : color; ctx.lineWidth = width; path(); ctx.stroke();
     },
     // paint that sits on the shapes (highlights, rivets, glows): only in the paint pass
@@ -39,7 +39,9 @@ export function figure(ctx, o, body) {
   };
   ctx.save();
   if (o.alpha != null && o.alpha < 1) ctx.globalAlpha *= o.alpha;
-  F.pass = 0; body(F);
+  // (round 19, lane toggles19: outlines off, no ink pass; nor the seams, whose outer half would ring the figure in a
+  // faint line where the ink used to cover it)
+  if (OUTLINES) { F.pass = 0; body(F); }
   F.pass = 1; body(F);
   for (const [col, a] of o.wash || []) { F.pass = 2; F.wash = col; ctx.save(); ctx.globalAlpha *= a; body(F); ctx.restore(); }
   ctx.restore();

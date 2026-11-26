@@ -42,3 +42,18 @@ export const INK = '#2B2230';
 // thickness is consistent everywhere"). The renderer draws it round every unit, summon, prop and thrown thing at this
 // width whatever its size (parts.js, sprites.js getProp); code drawings stroke OUTLINE * 2 (half of it outside).
 export const OUTLINE = 2.4;
+// Round 19 (lane toggles19; the designer: "Give me an option to turn off outlines and hp bars completely in settings"):
+// whether the ink outline is drawn at all (Settings, Outlines; ?outlines=0 / 1 for testing, not saved). A live binding:
+// every ink pass reads it (if (OUTLINES) ...), so a flip shows on the next frame. Cached pictures that bake an outline
+// in (the floor, the camp's still background, props, the procedural sprites) put OUTLINES in their cache key, so they
+// are painted again once when it changes; the parts' rigs keep their ink copies and simply don't draw them.
+// (canvas ignores lineWidth = 0, so an ink pass is skipped, never drawn at width 0)
+const OL_KEY = 'delve.outlines';
+const readFlag = (q, key) => {
+  try { const v = new URLSearchParams(location.search).get(q); if (v === '0' || v === '1') return v === '1'; } catch {}
+  try { const v = localStorage.getItem(key); if (v === '0' || v === '1') return v === '1'; } catch {}
+  return true;
+};
+export let OUTLINES = readFlag('outlines', OL_KEY);
+export function setOutlines(on) { OUTLINES = !!on; try { localStorage.setItem(OL_KEY, OUTLINES ? '1' : '0'); } catch {} return OUTLINES; }
+export { readFlag };

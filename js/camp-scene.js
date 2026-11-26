@@ -12,7 +12,7 @@ import { HEROES, HERO_IDS } from './heroes.js';
 import { DEFS } from './units.js';
 import { getRig, drawRig, poseFor, LIMP } from './parts.js';
 import { headR } from './sprites.js';
-import { INK, OUTLINE } from './util.js';
+import { INK, OUTLINE, OUTLINES } from './util.js';
 import * as P from './progress.js';
 import * as M from './meta.js';
 import { paintWagon } from './convoy.js'; // lane C (convoy): the wagon parked at the camp's edge
@@ -233,7 +233,7 @@ export function makeScene(canvas, api) {
   let bg = null, bgKey = '';
   function background() {
     const save = api.save(), resting = HERO_IDS.filter((h) => save.heroes[h].owned && P.recoverLeft(save, h) > 0 && !save.party.includes(h)).length;
-    const key = [W, H, dpr, resting].join('|');
+    const key = [W, H, dpr, resting, OUTLINES].join('|'); // (round 19, lane toggles19: painted again when the outlines are switched)
     if (bg && bgKey === key) return bg;
     const BX = halfW + 150, BY = halfH + 150;
     let q = s0 * dpr * 1.3; // a little finer than the screen, so zooming in on a hero doesn't blur it much
@@ -294,7 +294,7 @@ export function makeScene(canvas, api) {
     g.fillStyle = 'rgba(80,120,100,0.18)'; g.beginPath(); g.arc(x - r * 0.3, y - r * 0.32, r * 0.28, 0, TAU); g.fill();
   }
   function ink(path, fill) { // (a third argument, the width each call once asked for, is no longer read: CAMP_LINE)
-    path(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = CAMP_LINE * 2; g.stroke(); g.fillStyle = fill; g.fill();
+    path(); if (OUTLINES) { g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = CAMP_LINE * 2; g.stroke(); } g.fillStyle = fill; g.fill(); // (round 19, lane toggles19: outlines off, the colour alone)
   }
 
   // the fire: a ring of stones, crossed logs, flames that never sit still
@@ -385,7 +385,7 @@ export function makeScene(canvas, api) {
       ink(() => { g.beginPath(); g.roundRect ? g.roundRect(-42, -32, 84, 62, 8) : g.rect(-42, -32, 84, 62); }, '#7A5232', 1.6);
       for (let k = 0; k < 5; k++) { g.fillStyle = k % 2 ? '#E9DCC0' : '#B8423A'; g.fillRect(-38 + k * 15.2, -28, 15.2, 50); }
       g.strokeStyle = 'rgba(43,34,48,0.5)'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(-38, -3); g.lineTo(38, -3); g.stroke();
-      g.strokeStyle = INK; g.lineWidth = CAMP_LINE * 2; g.strokeRect(-38, -28, 76, 50);
+      if (OUTLINES) { g.strokeStyle = INK; g.lineWidth = CAMP_LINE * 2; g.strokeRect(-38, -28, 76, 50); }
       ink(() => { g.beginPath(); g.rect(-30, 26, 18, 16); g.rect(-8, 30, 14, 12); }, '#9A6B40', 1.3);
       g.strokeStyle = '#5A3A22'; g.lineWidth = 2; g.beginPath(); g.moveTo(-30, 34); g.lineTo(-12, 34); g.moveTo(-21, 26); g.lineTo(-21, 42); g.stroke();
       ink(() => { g.beginPath(); g.moveTo(-44, -6); g.lineTo(-64, -10); g.moveTo(-44, 6); g.lineTo(-64, 10); }, '#6E4A30', 1.2);

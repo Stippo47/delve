@@ -9,7 +9,7 @@
 // a hero's and a bee's half; the gaper's data-line made up for it by hand). The art files carry no outline of their own.
 //
 // Coordinates: everything here is in SVG units, the sprite's own frame (220 box, centre 100,100, front = +y).
-import { INK, OUTLINE, clamp, wrapAngle } from './util.js';
+import { INK, OUTLINE, OUTLINES, clamp, wrapAngle } from './util.js';
 import { parseVariantUrl, recolorSvgText } from './recolor.js';
 
 const LINE = 6;            // outline radius in SVG units when the caller doesn't say how big it draws the figure (about OUTLINE at hero size)
@@ -260,6 +260,14 @@ function bordered(L, k, color, line) {
     return { c: grow(src, line * k * 0.85, color), pad };
   });
 }
+// the part's own silhouette (no outline grown round it) in one colour: a flash while outlines are off (lane toggles19)
+function flatFilled(L, color) {
+  return colored(L, 'F' + color, () => {
+    const c = canvas(L.img.width, L.img.height), g = c.getContext('2d');
+    g.drawImage(L.img, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
+    return c;
+  });
+}
 function filled(L, color) {
   return colored(L, 'f' + color, () => {
     const c = canvas(L.ink.width, L.ink.height), g = c.getContext('2d');
@@ -311,7 +319,13 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
       g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L)); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
     g.globalAlpha = ga;
   }
-  if (mode !== 'sil') {
+  // (round 19, lane toggles19: outlines off, no ink pass: 'ink' (the outline alone) draws nothing, and 'flash' is the
+  // parts' own silhouette in white, not the grown one)
+  if (mode !== 'sil' && !OUTLINES) {
+    if (mode === 'ink') return;
+    if (mode === 'flash') { for (const L of Ls) { if (hidden(pose, L)) continue; g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L)); g.drawImage(flatFilled(L, '#FFFFFF'), L.x, L.y, L.w, L.h); g.restore(); }
+      if (str) strokeString(g, str, '#FFFFFF', set.string.w); return; }
+  } else if (mode !== 'sil') {
     for (const L of Ls) {
       if (hidden(pose, L)) continue;
       g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L));

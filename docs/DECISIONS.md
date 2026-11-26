@@ -1465,3 +1465,20 @@ stands), three phases, its fire the game's fire.
   the body bends in curves, legs and tail move, the rush gallops. The body often reads pale peach in the zoomed fight:
   that is the shared status wash (washOf, same code as before the lane), left as is and noted. Merged, battles 532 / 0,
   preview-check 0 / 0 / 0, sw built. Riffle deck r19-drake (art, stack r19): report + numbers + no-spin calls.
+
+## Round 19, lane toggles19 (2026-11-25): "Give me an option to turn off outlines and hp bars completely in settings"
+- **Two switches** in Settings, a new group "Outlines and health bars" above "Enemy health, once hurt": **Outlines**
+  and **Health bars**, both on by default (on = the look as it was). Saved (`delve.outlines`, `delve.hpbars`); a flip
+  shows at once, no reload. Test flags `?outlines=0|1`, `?hpbars=0|1` (not saved). Audit and how: docs/toggles19.md.
+- **Outlines off** takes the ink line off everything in the fight and the camp: the SVG figures (heroes, monsters,
+  summons), the code-drawn bosses, props, walls and floor dressing, projectiles, thrown weapons, effects, puddles,
+  status looks (the ice block), the convoy's road and trees, the camp's things. Each ink pass is skipped (never drawn
+  at width 0); pictures cached with their ink are painted once more on a flip. A code-drawn boss also loses its
+  seams (their outer half would ring it). Kept: ink-coloured eyes, mouths, cracks and other drawing inside a figure;
+  text outlines (damage numbers); protective borders (Guard's gold sits right against the body now); telegraphs; the
+  HUD's rings and marks (battle sides, bleed-out timers, wave arrows, the selection ring); UI pictures and icons.
+- **Health bars off** takes every bar over a unit (all five styles, style 4's wash, battle mode's bars on both sides,
+  the bars on boss parts) and the boss's bar at the top of the arena. **Kept: the hero cards' bars in the bottom HUD**
+  (that's the party panel, not over the fight), and battle mode's side totals in its bottom strip. While bars are off
+  the "Enemy health, once hurt" picker is greyed and says so.
+- With outlines off and bars on, the bars drop their ink rims too (they sit in the arena).

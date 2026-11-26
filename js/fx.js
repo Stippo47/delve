@@ -1,7 +1,7 @@
 // Effects drawing: w.fx (ring, zone, beam, wall, wave, pillar), projectiles of every kind, the looks of the newer
 // statuses, and the renderer's own small touches (impact stars, coin sparkles). Everything is drawn in room units
 // with the one outline thickness (OUTLINE) where a thing has an outline. Show, don't tell: no words, no bars.
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINES } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { STYLE } from './parts.js';
 import { drawStatusBurst, drawBloodGround } from './fx-status.js'; // round 13 (lane S); round 14: blood on the floor
@@ -17,15 +17,15 @@ export function hash(a, b = 0, c = 0) { let h = (a * 374761393 + b * 668265263 +
 export function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
 export function upright(ctx, x, y, fn) { ctx.save(); ctx.translate(x, y); if (view.rot) ctx.rotate(Math.PI / 2); fn(); ctx.restore(); }
 export function upVec() { return view.rot ? [1, 0] : [0, -1]; }
-export function inked(ctx, pathFn, fill) {
-  ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round';
-  pathFn(); ctx.fill(); ctx.stroke(); ctx.restore();
+export function inked(ctx, pathFn, fill) { // (round 19, lane toggles19: outlines off, the colour alone)
+  if (OUTLINES) { ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round';
+  pathFn(); ctx.fill(); ctx.stroke(); ctx.restore(); }
   ctx.fillStyle = fill; pathFn(); ctx.fill();
 }
 // a stroke with an ink border: the same path stroked twice
 export function inkLine(ctx, pathFn, color, width, cap = 'round') {
   ctx.save(); ctx.lineCap = cap; ctx.lineJoin = 'round';
-  ctx.strokeStyle = INK; ctx.lineWidth = width + OUTLINE * 2; pathFn(); ctx.stroke();
+  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = width + OUTLINE * 2; pathFn(); ctx.stroke(); }
   ctx.strokeStyle = color; ctx.lineWidth = width; pathFn(); ctx.stroke();
   ctx.restore();
 }
@@ -402,7 +402,7 @@ function boltTree(ctx, x1, y1, x2, y2, T, seed, width, arms, color = '#FFF3A0', 
   const path = (pts) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); };
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba(color, glowA); for (const [pts, wd] of lines) { ctx.lineWidth = wd * 5; path(pts); ctx.stroke(); } ctx.restore();
-  ctx.strokeStyle = INK; for (const [pts, wd] of lines) { ctx.lineWidth = wd + OUTLINE * 2; path(pts); ctx.stroke(); }
+  if (OUTLINES) { ctx.strokeStyle = INK; for (const [pts, wd] of lines) { ctx.lineWidth = wd + OUTLINE * 2; path(pts); ctx.stroke(); } }
   ctx.strokeStyle = color; for (const [pts, wd] of lines) { ctx.lineWidth = wd; path(pts); ctx.stroke(); }
   ctx.strokeStyle = '#FFFFFF'; for (const [pts, wd] of lines) { ctx.lineWidth = wd * 0.4; path(pts); ctx.stroke(); }
   ctx.restore();
@@ -434,7 +434,7 @@ function chainBolt(ctx, f, T, seed) {
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba('#FFF3A0', 0.22); for (const [l, wd] of lines) { ctx.lineWidth = wd * 5; path(l); ctx.stroke(); }
   for (let s = 1; s <= shown; s++) glowDisc(ctx, pts[s].x, pts[s].y, 34, '#FFF3A0', 0.7 * clamp(1 - (f.t - (s - 1) * 0.035) / 0.3, 0.25, 1));
   ctx.restore();
-  ctx.strokeStyle = INK; for (const [l, wd] of lines) { ctx.lineWidth = wd + OUTLINE * 2; path(l); ctx.stroke(); }
+  if (OUTLINES) { ctx.strokeStyle = INK; for (const [l, wd] of lines) { ctx.lineWidth = wd + OUTLINE * 2; path(l); ctx.stroke(); } }
   ctx.strokeStyle = '#FFF3A0'; for (const [l, wd] of lines) { ctx.lineWidth = wd; path(l); ctx.stroke(); }
   ctx.strokeStyle = '#FFFFFF'; for (const [l, wd] of lines) { ctx.lineWidth = wd * 0.4; path(l); ctx.stroke(); }
   ctx.restore();
@@ -626,7 +626,7 @@ function stormCloud(ctx, f, T) {
   const lumps = [];
   for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + T * 0.3 + seed; lumps.push([cx + Math.cos(b) * R * 1.3, cy + Math.sin(b) * R * 0.9, R * (0.85 + 0.12 * Math.sin(T * 1.6 + i))]); }
   lumps.push([cx, cy, R * 1.15]);
-  ctx.fillStyle = INK; for (const [x, y, r] of lumps) { ctx.beginPath(); ctx.arc(x, y, r + OUTLINE, 0, TAU); ctx.fill(); }
+  if (OUTLINES) { ctx.fillStyle = INK; for (const [x, y, r] of lumps) { ctx.beginPath(); ctx.arc(x, y, r + OUTLINE, 0, TAU); ctx.fill(); } }
   ctx.fillStyle = '#5B6C9A'; for (const [x, y, r] of lumps) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
   ctx.fillStyle = '#7E8DB8'; for (const [x, y, r] of lumps) { ctx.beginPath(); ctx.arc(x + ux * r * 0.25 - r * 0.15, y + uy * r * 0.25 - r * 0.15, r * 0.55, 0, TAU); ctx.fill(); }
   const f8 = Math.floor(T / 0.12);
@@ -803,7 +803,7 @@ export function drawProjectile(ctx, p, T) {
       const r = p.r, seed = Math.round(p._seed || (p._seed = p.x * 7 + p.y));
       const bl = []; for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + T * 3, d = r * 0.6; bl.push([Math.cos(b) * d, Math.sin(b) * d, r * (0.55 + 0.15 * Math.sin(T * 9 + i * 2))]); } bl.push([0, 0, r * 0.75]);
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, r * 2.2, '#9BCB3C', 0.45); ctx.restore();
-      ctx.fillStyle = INK; ctx.beginPath(); for (const [x, y, rr] of bl) { ctx.moveTo(x + rr + OUTLINE, y); ctx.arc(x, y, rr + OUTLINE, 0, TAU); } ctx.fill();
+      if (OUTLINES) { ctx.fillStyle = INK; ctx.beginPath(); for (const [x, y, rr] of bl) { ctx.moveTo(x + rr + OUTLINE, y); ctx.arc(x, y, rr + OUTLINE, 0, TAU); } ctx.fill(); }
       ctx.fillStyle = '#82B23A'; ctx.beginPath(); for (const [x, y, rr] of bl) { ctx.moveTo(x + rr, y); ctx.arc(x, y, rr, 0, TAU); } ctx.fill();
       ctx.fillStyle = '#BCE070'; ctx.beginPath(); for (const [x, y, rr] of bl) { ctx.moveTo(x - rr * 0.2 + rr * 0.45, y - rr * 0.25); ctx.arc(x - rr * 0.2, y - rr * 0.25, rr * 0.45, 0, TAU); } ctx.fill();
       ctx.fillStyle = '#FFFFFF'; for (const [x, y, rr] of bl) { ctx.beginPath(); ctx.arc(x - rr * 0.35, y - rr * 0.4, Math.max(0.8, rr * 0.18), 0, TAU); ctx.fill(); }

@@ -6,7 +6,7 @@
 // World units: CSS pixels; wy runs upward from the bottom of the clearing.
 import * as M from './meta.js';
 import { themeColors } from './ui-kit.js';
-import { INK } from './util.js';
+import { INK, OUTLINES } from './util.js';
 
 const TAU = Math.PI * 2;
 const GAP = 30, HEAD = 150, CLEAR = 300, TOP = 220;
@@ -119,13 +119,13 @@ export function makeMap(api) {
         if (x < -30 || x > W + 30) continue;
         const y = sy(wy);
         g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.arc(x + 3, y + 5, r, 0, TAU); g.fill();
-        g.fillStyle = INK; g.beginPath(); g.arc(x, y, r + 2, 0, TAU); g.fill();
+        if (OUTLINES) { g.fillStyle = INK; g.beginPath(); g.arc(x, y, r + 2, 0, TAU); g.fill(); } // (round 19, lane toggles19)
         g.fillStyle = dark; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
         g.fillStyle = lite; g.globalAlpha = 0.55; g.beginPath(); g.arc(x - r * 0.25, y - r * 0.28, r * 0.5, 0, TAU); g.fill(); g.globalAlpha = 1;
         if (accent && hash(seed + i * 5 + s) < 0.12) { g.fillStyle = accent; g.globalAlpha = 0.7; g.beginPath(); g.arc(x + side * (r + 8), y + 4, 3, 0, TAU); g.fill(); g.globalAlpha = 1; }
       }
       // the far edges: fill them so no gaps show
-      for (const x of [8, W - 8]) { const r = 22 + hash(seed + i * 9 + x) * 10, y = sy(wy); g.fillStyle = INK; g.beginPath(); g.arc(x, y, r + 2, 0, TAU); g.fill(); g.fillStyle = dark; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
+      for (const x of [8, W - 8]) { const r = 22 + hash(seed + i * 9 + x) * 10, y = sy(wy); if (OUTLINES) { g.fillStyle = INK; g.beginPath(); g.arc(x, y, r + 2, 0, TAU); g.fill(); } g.fillStyle = dark; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
     }
   }
   function clearing(g, time) {

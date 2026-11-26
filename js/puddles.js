@@ -18,7 +18,7 @@
 //   5 Rimmed      ink outline, a bright rim just inside it, a dark middle: wet and glossy
 //   6 Pixel       chunky low-resolution bodies, hard pixel edges, like an old game
 //   7 Silhouette  one flat colour and a thin outline, nothing else: the quietest
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINES } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, flame, glowDisc } from './fx.js';
 
@@ -160,7 +160,7 @@ function pass(g, bs, col, k, grow, st, dx = 0, dy = 0) {
 function paintLayer(g, bs, st, c, type) {
   const fire = type === 'fire', cloud = !!CLOUD[type], web = type === 'web';
   if (st === 1 || st === 6) { // Inked (and Pixel, drawn small)
-    pass(g, bs, INK, 1, OUTLINE, st);
+    if (OUTLINES) pass(g, bs, INK, 1, OUTLINE, st); // (round 19, lane toggles19)
     pass(g, bs, c[1], 1, 0, st);
     pass(g, bs, c[2], cloud ? 0.62 : 0.64, 0, st, -0.08, -0.1);
     if (fire) pass(g, bs, c[3], 0.32, 0, st, -0.04, -0.04);
@@ -182,13 +182,13 @@ function paintLayer(g, bs, st, c, type) {
     pass(g, bs, fire ? '#4A3328' : c[1], 0.84, 0, st);
     if (!fire) pass(g, bs, c[2], 0.4, 0, st, -0.12, -0.12);
   } else if (st === 5) { // Rimmed: ink, a bright rim, the dark middle
-    pass(g, bs, INK, 1, OUTLINE, st);
+    if (OUTLINES) pass(g, bs, INK, 1, OUTLINE, st); // (round 19, lane toggles19)
     pass(g, bs, c[2], 1, 0, st);
     pass(g, bs, c[0], 1, -Math.max(3, 0) - 2, st, 0.03, 0.04);
     if (fire) pass(g, bs, c[1], 0.55, 0, st);
     else pass(g, bs, c[1], 0.5, 0, st, 0.05, 0.06);
   } else { // Silhouette
-    pass(g, bs, INK, 1, OUTLINE * 0.5, st);
+    if (OUTLINES) pass(g, bs, INK, 1, OUTLINE * 0.5, st);
     pass(g, bs, c[1], 1, 0, st);
   }
 }
@@ -231,7 +231,7 @@ function details(ctx, q, st, c) {
       for (const kk of rings) for (let i = 0; i <= n; i++) { const b = i / n * TAU + rot, rr = r * kk * (i % 2 ? 0.9 : 1), px = x + Math.cos(b) * rr, py = y + Math.sin(b) * rr;
         if (i) { const pb = (i - 0.5) / n * TAU + rot, sag = r * kk * 0.82; ctx.quadraticCurveTo(x + Math.cos(pb) * sag, y + Math.sin(pb) * sag, px, py); } else ctx.moveTo(px, py); } };
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    if (st === 1 || st === 5 || st === 6) { ctx.strokeStyle = INK; ctx.lineWidth = 1.6 + OUTLINE * 2; path(); ctx.stroke(); }
+    if (OUTLINES && (st === 1 || st === 5 || st === 6)) { ctx.strokeStyle = INK; ctx.lineWidth = 1.6 + OUTLINE * 2; path(); ctx.stroke(); }
     ctx.strokeStyle = st === 3 ? c[3] : c[2]; ctx.lineWidth = st === 2 ? 1.2 : 1.8; path(); ctx.stroke();
   } else if (type === 'frost') { // snowflakes settling
     for (let i = 0; i < 4; i++) { const b = hash(seed, i) * TAU, d = r * 0.7 * Math.sqrt(hash(i, seed)), tw = 0.5 + 0.5 * Math.sin(T * 3 + i * 2);
@@ -245,7 +245,7 @@ function details(ctx, q, st, c) {
 export function snowflake(ctx, x, y, s, rot = 0, col = '#FFFFFF') {
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.lineCap = 'round';
   const arms = () => { ctx.beginPath(); for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI; ctx.moveTo(Math.cos(a) * s, Math.sin(a) * s); ctx.lineTo(-Math.cos(a) * s, -Math.sin(a) * s); } };
-  ctx.strokeStyle = INK; ctx.lineWidth = 1.4 + OUTLINE * 1.2; arms(); ctx.stroke();
+  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = 1.4 + OUTLINE * 1.2; arms(); ctx.stroke(); }
   ctx.strokeStyle = col; ctx.lineWidth = 1.6; arms(); ctx.stroke();
   ctx.restore();
 }

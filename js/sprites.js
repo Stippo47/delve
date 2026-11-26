@@ -1,7 +1,7 @@
 // Sprite cache. Every unit is one sprite drawn front-down in a 220x220 box centred on (100,100),
 // then rotated whole in-game. SVG art is rasterised once per pixel size; rats and slimes are drawn
 // procedurally in the same space so they match the outline/gradient rendering.
-import { INK, OUTLINE } from './util.js';
+import { INK, OUTLINE, OUTLINES } from './util.js';
 import { DEFS } from './units.js';
 import { loadArt, growInk } from './parts.js';
 import { recolorCanvas } from './recolor.js';
@@ -100,7 +100,7 @@ function drawRat(g, lw) {
   const tail = new Path2D('M100 50 C98 30 112 18 126 14 C136 12 140 4 136 -2');
   g.lineJoin = 'round'; g.lineCap = 'round';
   // the tail is drawn by the renderer as its own springy part
-  for (const p of [earL, earR, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.fill(p); g.stroke(p); }
+  if (lw > 0) for (const p of [earL, earR, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.fill(p); g.stroke(p); }
   g.fillStyle = grad(g, 60, 100, '#E9B7AE', '#C98E86'); g.fill(earL); g.fill(earR);
   g.fillStyle = grad(g, 44, 176, '#9C8676', '#6F5A4D'); g.fill(body);
   g.save(); g.clip(body); g.fillStyle = 'rgba(43,34,48,0.18)'; g.fillRect(100, 0, 120, 220); g.restore();
@@ -110,7 +110,7 @@ function drawRat(g, lw) {
 function drawSlime(g, tint, lw) {
   const body = new Path2D('M100 42 C140 42 156 72 156 104 C156 138 134 158 100 160 C66 158 44 138 44 104 C44 72 60 42 100 42 Z');
   const drip = new Path2D('M86 152 C90 170 96 180 100 184 C104 180 110 170 114 152 Z');
-  for (const p of [drip, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.lineJoin = 'round'; g.fill(p); g.stroke(p); }
+  if (lw > 0) for (const p of [drip, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.lineJoin = 'round'; g.fill(p); g.stroke(p); }
   g.fillStyle = grad(g, 42, 184, tint[0], tint[1]); g.fill(body); g.fill(drip);
   g.save(); g.clip(body);
   g.fillStyle = 'rgba(20,70,60,0.22)'; g.beginPath(); g.arc(108, 112, 30, 0, Math.PI * 2); g.fill();
@@ -128,9 +128,10 @@ function proceduralCanvas(kind, px, lw0) {
   // The ink is stroked twice the outline wide (half of it outside): lw0, from the size it's drawn at (round 19, lane
   // outline19: OUTLINE whatever the size, a mouse's too), else the widths once chosen to match the heroes'.
   // Round 9: "The base slime is blue".
-  if (base === 'rat') drawRat(g, lw0 || 16);
-  else if (base === 'slime') drawSlime(g, ['#8EC2F2', '#3F7AC4'], lw0 || 12);
-  else if (base === 'slimeSmall') drawSlime(g, ['#B4D6F6', '#5C92D2'], lw0 || 18);
+  // (round 19, lane toggles19: lw0 < 0, outlines off: no ink)
+  if (base === 'rat') drawRat(g, lw0 < 0 ? 0 : lw0 || 16);
+  else if (base === 'slime') drawSlime(g, ['#8EC2F2', '#3F7AC4'], lw0 < 0 ? 0 : lw0 || 12);
+  else if (base === 'slimeSmall') drawSlime(g, ['#B4D6F6', '#5C92D2'], lw0 < 0 ? 0 : lw0 || 18);
   if (d && d.recolor && base !== kind) { g.setTransform(1, 0, 0, 1, 0, 0); recolorCanvas(c, d.recolor); }
   return c;
 }
@@ -139,7 +140,7 @@ function proceduralCanvas(kind, px, lw0) {
 // it is drawn (room units per 220 box), so a procedural one's ink comes out OUTLINE wide (round 19, lane outline19).
 export function getSprite(kind, px, sizeU) {
   const size = Math.max(16, Math.min(512, Math.round(px / 8) * 8));
-  const lw = sizeU > 0 ? Math.round(OUTLINE * 2 * 220 / sizeU * 4) / 4 : 0;
+  const lw = !OUTLINES ? -1 : sizeU > 0 ? Math.round(OUTLINE * 2 * 220 / sizeU * 4) / 4 : 0; // (-1: outlines off, lane toggles19)
   const key = kind + ':' + size + ':' + lw;
   let e = cache.get(key);
   if (e) return e.ready ? e : null;
@@ -228,7 +229,7 @@ function inkProp(layers, px, line) {
 export function getProp(name, px, linePx) {
   const src = propText[name]; if (!src) return null;
   const size = Math.max(16, Math.min(1024, Math.ceil(px / 16) * 16));
-  const line = src.ink ? Math.round((linePx > 0 ? linePx * size / px : size * 6 / 220) * 4) / 4 : 0;
+  const line = src.ink && OUTLINES ? Math.round((linePx > 0 ? linePx * size / px : size * 6 / 220) * 4) / 4 : 0;
   const key = name + ':' + size + ':' + line;
   let e = propCache.get(key);
   if (!e) {
@@ -239,6 +240,6 @@ export function getProp(name, px, linePx) {
     });
   }
   if (e.ready) { e.used = 1; return e; }
-  for (const [k, o] of propCache) if (o.ready && k.startsWith(name + ':')) return o; // another size stands in meanwhile
+  for (const [k, o] of propCache) if (o.ready && k.startsWith(name + ':') && (k.endsWith(':0') === !line)) return o; // another size stands in meanwhile (one with or without an outline as asked: lane toggles19)
   return null;
 }

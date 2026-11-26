@@ -9,7 +9,7 @@
 //   Warhelm     SLAM2.splitter (Skull Splitter's landing)
 //   Bearskin    clawSwipe, bearBite (Bear Claws), hibernate, bearWake (Hibernate), SLAM2.maul (Maul)
 //   Haymaker    hayTrail, hayBurst (Hay Bale)
-import { TAU, clamp, INK } from './util.js';
+import { TAU, clamp, INK, OUTLINES } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut } from './fx.js';
 import { DRAW2, SLAM2, SIG2, crater } from './fx2.js';
 // (round 19: these draw their own cast; the kit's default cast star, a white four-point star at the hand, was the "weird
@@ -116,7 +116,7 @@ const WING_TIP = Math.atan2(-48, -68); // the way the tip points in the helm's o
 // one wing at (x, y), its tip turned to point along `toward`, s room units per helm unit, mirrored (side -1)
 function wing(ctx, x, y, toward, s, side) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(toward - (side > 0 ? WING_TIP : Math.PI - WING_TIP)); ctx.scale(s * side, s);
-  ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2 / s; ctx.lineJoin = 'round'; WING(ctx); ctx.fill(); ctx.stroke(); ctx.restore();
+  if (OUTLINES) { ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2 / s; ctx.lineJoin = 'round'; WING(ctx); ctx.fill(); ctx.stroke(); ctx.restore(); } // (round 19, lane toggles19)
   const g = ctx.createLinearGradient(-60, -70, -10, 4); g.addColorStop(0, '#FBD46E'); g.addColorStop(1, '#E09A2E'); ctx.fillStyle = g; WING(ctx); ctx.fill();
   ctx.save(); WING(ctx); ctx.clip();
   ctx.fillStyle = 'rgba(248,238,216,0.92)'; ctx.beginPath(); ctx.moveTo(2, 4); ctx.bezierCurveTo(-22, -2, -46, -20, -62, -48); ctx.lineTo(-52, -50); ctx.bezierCurveTo(-38, -26, -20, -12, 4, -6); ctx.closePath(); ctx.fill();

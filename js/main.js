@@ -4,6 +4,7 @@ import { newRun, update, retreat, summarize, FLOORS } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { setSeed } from './util.js';
+import { HPBARS } from './hpstyle.js'; // (round 19, lane toggles19)
 import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES } from './camp.js';
 import { applySummary, applyLoadout, MERCS } from './progress.js';
 import { buildCards, updateCards } from './hud.js';
@@ -169,7 +170,7 @@ function updateHud() {
     $('speedBtn').textContent = save.speed + '×';
     const rb = $('retreatBtn'); if (rb.dataset.on !== 'convoy') { rb.dataset.on = 'convoy'; rb.innerHTML = I.flag; rb.classList.remove('leaving'); }
     const chief = w.units.find((u) => u.chief && !u.dead && u.aggro);
-    $('bossBar').classList.toggle('hidden', !chief);
+    $('bossBar').classList.toggle('hidden', !chief || !HPBARS); // (round 19, lane toggles19: health bars off hides the boss's too)
     if (chief) { $('bossName').textContent = chief.def.name; $('bossBar').querySelector('i').style.width = Math.max(0, 100 * chief.hp / chief.maxHp) + '%'; }
     const b = $('banner'); if (run.banner) { b.textContent = run.banner.s; b.classList.remove('hidden', 'soft'); } else b.classList.add('hidden');
     return;
@@ -183,7 +184,7 @@ function updateHud() {
   if (rb.dataset.on !== String(leaving)) { rb.dataset.on = String(leaving); rb.innerHTML = leaving ? 'Stay' : I.door; rb.classList.toggle('leaving', leaving); }
   $('speedBtn').textContent = save.speed + '×';
   const boss = w.units.find((u) => (u.def.boss || u.floorFoe) && !u.dead); // (a floor's last foe can be a major now: round 9)
-  $('bossBar').classList.toggle('hidden', !boss);
+  $('bossBar').classList.toggle('hidden', !boss || !HPBARS); // (round 19, lane toggles19: health bars off hides the boss's too)
   if (boss) { $('bossName').textContent = boss.def.name; $('bossBar').querySelector('i').style.width = Math.max(0, 100 * boss.hp / boss.maxHp) + '%'; }
   const b = $('banner');
   const msg = run.banner ? run.banner.s : run.leaving && (run.phase === 'fight' || run.phase === 'loot') ? 'Leaving after this room' : null;

@@ -312,3 +312,7 @@
   .rt-face .face { width: 46px !important; height: 46px !important; }
   #campPanel.p-fire { height: 55%; }
 }
+/* round 19 (lane toggles19): the health-bar style picker greys out while health bars are off */
+.settings .group.inactive .looks { opacity: .38; filter: grayscale(.8); pointer-events: none; }
+.settings .off-note { margin-left: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0; text-transform: none; color: var(--quiet); }
+.settings .draw-opts .rowbtn + .rowbtn { margin-top: 8px; }

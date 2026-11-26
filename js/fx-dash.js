@@ -12,7 +12,7 @@
 //   dashFling   the heave at the end of a charge (a slam if there was a wall)
 //   dashClaws   the pounce's rake: three long claw lines dragged back through the one landed on
 //   dashLand    the landing: a low ring of dust
-import { TAU, clamp } from './util.js';
+import { TAU, clamp, OUTLINES } from './util.js';
 import { inked, glowDisc, star, hash, easeOut } from './fx.js';
 import { DRAW2 } from './fx2.js';
 import { dustPuffs } from './fxkit.js';
@@ -113,7 +113,7 @@ DRAW2.dashMark = (ctx, f, w, layer) => {
     const q = k01(f.t / 0.08), sh = (hash(Math.floor(f.t * 50), 3) - 0.5) * 1.6;
     if (f.lance) { ctx.save(); ctx.globalAlpha *= q; inked(ctx, () => star(ctx, x + sh, y, 4.5, 4, 0.3, 0.6), core); ctx.restore(); return; }
     const L = r * 2.5 * q, nx = -Math.sin(f.a) * sh, ny = Math.cos(f.a) * sh;
-    ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 5.2; ctx.beginPath(); ctx.moveTo(x + nx - Math.cos(f.a) * L / 2, y + ny - Math.sin(f.a) * L / 2); ctx.lineTo(x + nx + Math.cos(f.a) * L / 2, y + ny + Math.sin(f.a) * L / 2); ctx.stroke();
+    ctx.save(); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x + nx - Math.cos(f.a) * L / 2, y + ny - Math.sin(f.a) * L / 2); ctx.lineTo(x + nx + Math.cos(f.a) * L / 2, y + ny + Math.sin(f.a) * L / 2); if (OUTLINES) { ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 5.2; ctx.stroke(); } // (round 19, lane toggles19)
     ctx.strokeStyle = core; ctx.lineWidth = 2.6; ctx.stroke(); ctx.restore();
     // a glint running down the line as the moment comes
     const g = k01(f.t / f.at); lit(ctx, () => glowDisc(ctx, x + Math.cos(f.a) * L * (g - 0.5), y + Math.sin(f.a) * L * (g - 0.5), 8, '#FFFFFF', 0.7));

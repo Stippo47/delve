@@ -4,7 +4,7 @@
 // wall shows a bevelled face on the side towards the floor, lit from the screen's top left; free-standing walls
 // show four faces sloping out from a flat top. Shadows are top-down: a soft darkening at the foot of every wall,
 // even all round, never cast to one side. Everything here is painted once per room into the floor cache.
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINES } from './util.js';
 import { view, OUTLINE } from './render.js';
 
 export const ENV_STYLES = [
@@ -171,7 +171,7 @@ export function paintRoom(g, w, pad, hooks) {
   // the walls round the room: a face sloping up from the floor, then the flat top
   for (const e of edges) face(g, edgeQuad(e, 0, L.D), -e.o[0], -e.o[1], L);
   for (const e of edges) top(g, edgeQuad(e, L.D, L.D + L.T), L);
-  if (L.ink) {
+  if (L.ink && OUTLINES) { // (round 19, lane toggles19: outlines off, no ink round the walls)
     g.save(); g.strokeStyle = INK; g.lineJoin = 'round'; g.lineCap = 'round';
     g.lineWidth = OUTLINE * 1.6; for (const e of edges) { g.beginPath(); g.moveTo(...e.p0); g.lineTo(...e.p1); g.stroke(); }
     g.lineWidth = OUTLINE; for (const e of edges) { const q = edgeQuad(e, L.D + L.T, L.D + L.T); g.beginPath(); g.moveTo(...q[0]); g.lineTo(...q[1]); g.stroke(); }
@@ -219,7 +219,7 @@ function top(g, q, L) {
 }
 function block(g, b, L) {
   const D = Math.min(L.D, b.box[2] / 2 - 6, b.box[3] / 2 - 6);
-  if (L.ink) { g.save(); g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = OUTLINE * 1.6; g.lineJoin = 'round'; g.beginPath(); g.rect(...b.box); g.fill(); g.stroke(); g.restore(); }
+  if (L.ink && OUTLINES) { g.save(); g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = OUTLINE * 1.6; g.lineJoin = 'round'; g.beginPath(); g.rect(...b.box); g.fill(); g.stroke(); g.restore(); }
   for (const e of b.sides) face(g, edgeQuad(e, 0, D), e.n[0], e.n[1], L);
   // the flat top, inset by the faces
   const at = b.sides.reduce((a, e) => { a[e.n.join()] = 1; return a; }, {});
@@ -282,7 +282,7 @@ function torch(g, t, L) {
   const gl = g.createRadialGradient(t.x, t.y, 1, t.x, t.y, 26);
   gl.addColorStop(0, `rgba(${L.light},0.75)`); gl.addColorStop(1, `rgba(${L.light},0)`);
   g.fillStyle = gl; g.beginPath(); g.arc(t.x, t.y, 26, 0, TAU); g.fill();
-  g.fillStyle = INK; g.beginPath(); g.arc(t.x, t.y, 7.5, 0, TAU); g.fill();
+  if (OUTLINES) { g.fillStyle = INK; g.beginPath(); g.arc(t.x, t.y, 7.5, 0, TAU); g.fill(); }
   g.fillStyle = '#4A3F3A'; g.beginPath(); g.arc(t.x, t.y, 5.2, 0, TAU); g.fill();
   g.fillStyle = '#FFB347'; g.beginPath(); g.arc(t.x, t.y, 4, 0, TAU); g.fill();
   g.fillStyle = '#FFF0B8'; g.beginPath(); g.arc(t.x - 0.8, t.y - 0.8, 2, 0, TAU); g.fill();

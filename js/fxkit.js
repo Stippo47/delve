@@ -4,7 +4,7 @@
 //   - body effects read off a unit's state (Rage's steam, Whirl's flail, Guard's tether, leeches, leaves...)
 //   - impacts where shots stop, the burst when an enemy's danger zone strikes, blasts
 // Everything here is drawn by the renderer from what the sim leaves in the world; nothing here changes the game.
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINES } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf, snowBurst } from './fx.js';
 import { drawPuddle } from './puddles.js';
@@ -874,7 +874,7 @@ export function drawSigAir(ctx, f, w) {
 function snowflakeK(ctx, x, y, s, rot) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.lineCap = 'round';
   const arms = () => { ctx.beginPath(); for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI; ctx.moveTo(Math.cos(a) * s, Math.sin(a) * s); ctx.lineTo(-Math.cos(a) * s, -Math.sin(a) * s); } };
-  ctx.strokeStyle = INK; ctx.lineWidth = 1.4 + OUTLINE * 1.2; arms(); ctx.stroke(); ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.6; arms(); ctx.stroke();
+  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = 1.4 + OUTLINE * 1.2; arms(); ctx.stroke(); } ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.6; arms(); ctx.stroke();
   ctx.restore();
 }
 

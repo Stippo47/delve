@@ -2,7 +2,7 @@
 // jelly, lit from one corner to the other, a paler gloss on its lit shoulder, a darker band along its low edge, and
 // in it what it has swallowed (bones, a skull, a shield), turning slowly. It is alive: it wobbles as it stands,
 // squashes before a hop and stretches in the air, pulls itself round to roll. Its other half is drawn the same, smaller.
-import { TAU, clamp } from './util.js';
+import { TAU, clamp, OUTLINES } from './util.js';
 import { inked } from './fx.js';
 import { figure, washOf, flashing, lin, glow, shade, ell, rrect, up, BFX, easeOut, sm, k01, hash, inkDisc, rgbaOf } from './boss-draw.js';
 
@@ -64,7 +64,7 @@ BFX.oozeHeave = { ground(ctx, f, k) { // a heave: a ripple of itself rolling out
 BFX.oozeBounce = { air(ctx, f, k) { const [ux, uy] = up(); for (let i = 0; i < 7; i++) { const a = f.a + Math.PI + (i - 3) * 0.4, d = 70 * easeOut(k), hop = Math.sin(k * Math.PI) * 24; ctx.save(); ctx.globalAlpha = 1 - k; gob(ctx, f.x + Math.cos(a) * d + ux * hop, f.y + Math.sin(a) * d + uy * hop, 7 * (1 - 0.5 * k)); ctx.restore(); } } };
 BFX.oozeTear = { air(ctx, f, k) { // it tears in two: strings of itself stretched between the halves, snapping
   ctx.globalAlpha = 1 - k; ctx.lineCap = 'round'; for (let i = -1; i <= 1; i++) { const off = i * 16, sag = 14 * Math.sin(k * Math.PI), L = 30 + 90 * easeOut(k), nx = Math.cos(f.a), ny = Math.sin(f.a), px = -ny * off, py = nx * off;
-    ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 9 * (1 - k) + 2; ctx.beginPath(); ctx.moveTo(f.x + px - nx * L, f.y + py - ny * L); ctx.quadraticCurveTo(f.x + px, f.y + py + sag, f.x + px + nx * L, f.y + py + ny * L); ctx.stroke();
+    if (OUTLINES) { ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 9 * (1 - k) + 2; ctx.beginPath(); ctx.moveTo(f.x + px - nx * L, f.y + py - ny * L); ctx.quadraticCurveTo(f.x + px, f.y + py + sag, f.x + px + nx * L, f.y + py + ny * L); ctx.stroke(); } // (round 19, lane toggles19)
     ctx.strokeStyle = GREEN[1]; ctx.lineWidth = 5 * (1 - k) + 1; ctx.beginPath(); ctx.moveTo(f.x + px - nx * L, f.y + py - ny * L); ctx.quadraticCurveTo(f.x + px, f.y + py + sag, f.x + px + nx * L, f.y + py + ny * L); ctx.stroke(); }
 } };
 BFX.oozeDrink = { air(ctx, f, k) { const u = f.u; if (!u) return; const e = sm(k); gob(ctx, f.x + (u.x - f.x) * e, f.y + (u.y - f.y) * e, 12 * (1 - 0.6 * k)); } };

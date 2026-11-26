@@ -4,7 +4,7 @@ import { getSprite, headR, tinted, getProp } from './sprites.js';
 import { getRig, drawRig, poseFor, LIMP, composeRig, drawComposed, bowNock } from './parts.js';
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal, drawBeam, hash } from './fx.js';
-import { INK, TAU, clamp, OUTLINE } from './util.js';
+import { INK, TAU, clamp, OUTLINE, OUTLINES } from './util.js';
 import { envId, obstacleFor } from './env.js';
 import { drawBodyFx, drawBodyGround, drawIceWall, HIT_OWN } from './fxkit.js';
 import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
@@ -87,7 +87,7 @@ function upVec() { return view.rot ? [1, 0] : [0, -1]; }
 let floorCache = null;
 // The room's floor, rock and dressing, drawn once into a canvas (scenery.js paints it in the dungeon type's look).
 function floor(w) {
-  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr + ':' + view.rot + ':env' + envId();
+  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr + ':' + view.rot + ':env' + envId() + ':ol' + OUTLINES; // (lane toggles19: the walls' ink is in it)
   if (floorCache && floorCache.key === key && floorCache.w === w) return floorCache.c;
   const pad = 48; // the walls round the room and a little rock past them
   const c = document.createElement('canvas');
@@ -106,9 +106,10 @@ function floor(w) {
 
 function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
 // Fill a path twice: ink grown by the outline, then the colour. Keeps every outline the same thickness.
+// (round 19, lane toggles19: outlines off, the colour alone)
 function inked(ctx, pathFn, fill) {
-  ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round';
-  pathFn(); ctx.fill(); ctx.stroke(); ctx.restore();
+  if (OUTLINES) { ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round';
+  pathFn(); ctx.fill(); ctx.stroke(); ctx.restore(); }
   ctx.fillStyle = fill; pathFn(); ctx.fill();
 }
 
@@ -379,7 +380,7 @@ function drawHazard(ctx, h, t) {
     for (let i = 0; i < ring; i++) { const a = i / ring * TAU + 0.3; tips.push([Math.cos(a) * h.r * 0.58, Math.sin(a) * h.r * 0.58]); }
     if (h.up !== false) for (const [dx, dy] of tips) { // sunk (no tips) once the room is won
       const x = h.x + dx, y = h.y + dy, r = 4.6;
-      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x + 0.8, y + 0.8, r + 1.4, 0, TAU); ctx.fill();
+      if (OUTLINES) { ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x + 0.8, y + 0.8, r + 1.4, 0, TAU); ctx.fill(); }
       ctx.fillStyle = '#8D949C'; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
       ctx.fillStyle = '#D9DEE4'; ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, r, Math.PI * 0.55, Math.PI * 1.55); ctx.closePath(); ctx.fill();
       ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(x - 0.4, y - 0.4, 1.1, 0, TAU); ctx.fill();
@@ -681,7 +682,7 @@ export function drawHeldWeapon(ctx, u, k = 1) {
   if (!L) return false;
   const s = sizeU / 220 * k * bigOf(u);
   ctx.save(); ctx.scale(s, s); ctx.translate(-(L.x + L.w / 2), -(L.y + L.h / 2));
-  ctx.drawImage(L.ink, L.x, L.y, L.w, L.h); ctx.drawImage(L.img, L.x, L.y, L.w, L.h);
+  if (OUTLINES) ctx.drawImage(L.ink, L.x, L.y, L.w, L.h); ctx.drawImage(L.img, L.x, L.y, L.w, L.h);
   ctx.restore();
   return true;
 }
@@ -780,7 +781,7 @@ function nockedArrow(ctx, u, set, pose, sizeU) {
   const head = () => { ctx.beginPath(); ctx.moveTo(x, y + L); ctx.lineTo(x - 4.5 * s, y + L - 10 * s); ctx.lineTo(x + 4.5 * s, y + L - 10 * s); ctx.closePath(); };
   const fl = () => { ctx.beginPath(); for (const sd of [-1, 1]) { ctx.moveTo(x, y + 7 * s); ctx.lineTo(x + sd * 4.5 * s, y - 1 * s); ctx.lineTo(x + sd * 3 * s, y + 9 * s); ctx.closePath(); } };
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = INK; ctx.fillStyle = INK;
-  ctx.lineWidth = wd + O * 2; shaft(); ctx.stroke(); ctx.lineWidth = O * 2; head(); ctx.fill(); ctx.stroke(); fl(); ctx.fill(); ctx.stroke();
+  if (OUTLINES) { ctx.lineWidth = wd + O * 2; shaft(); ctx.stroke(); ctx.lineWidth = O * 2; head(); ctx.fill(); ctx.stroke(); fl(); ctx.fill(); ctx.stroke(); }
   ctx.strokeStyle = u.aimCol || '#C99A6A'; ctx.lineWidth = wd; shaft(); ctx.stroke();
   ctx.fillStyle = u.aimHead || '#DCE0E6'; head(); ctx.fill(); ctx.fillStyle = '#F1E8DA'; fl(); ctx.fill();
   ctx.restore();
@@ -818,7 +819,7 @@ function drawTail(ctx, u, dt) {
   }
   const path = () => { ctx.beginPath(); ctx.moveTo(ax, ay); for (const p of u.tail) ctx.lineTo(p.x, p.y); };
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.strokeStyle = INK; ctx.lineWidth = 2.2 + OUTLINE * 2; path(); ctx.stroke();
+  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = 2.2 + OUTLINE * 2; path(); ctx.stroke(); }
   ctx.strokeStyle = '#D8A39A'; ctx.lineWidth = 2.2; path(); ctx.stroke();
   ctx.restore();
 }
@@ -828,7 +829,7 @@ function drawIce(ctx, u, w) {
   const r = u.vr * 1.35;
   ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.id);
   const path = () => { ctx.beginPath(); for (let i = 0; i < 7; i++) { const a = i / 7 * TAU, rr = r * (i % 2 ? 0.92 : 1.05); i ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); } ctx.closePath(); };
-  ctx.globalAlpha = 0.85; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; path(); ctx.stroke();
+  if (OUTLINES) { ctx.globalAlpha = 0.85; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; path(); ctx.stroke(); }
   ctx.globalAlpha = 0.45; ctx.fillStyle = '#CFF3FF'; path(); ctx.fill();
   ctx.globalAlpha = 0.7; ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(-r * 0.6, -r * 0.2); ctx.lineTo(-r * 0.2, -r * 0.65); ctx.lineTo(-r * 0.05, -r * 0.5); ctx.lineTo(-r * 0.45, -r * 0.05); ctx.closePath(); ctx.fill();
   ctx.restore();
@@ -840,7 +841,7 @@ function drawIce(ctx, u, w) {
 // A body lies in one pose, so its look is composed once per art and size and then drawn as one image.
 const DEAD_A = 0.42, DEAD_WASH = 'rgba(96,90,106,0.6)';
 function bodyLook(set, dead) {
-  const key = dead ? '_deadLook' : '_bodyLook';
+  const key = (dead ? '_deadLook' : '_bodyLook') + (OUTLINES ? '' : '0'); // (lane toggles19: composed with or without its ink)
   if (set[key]) return set[key];
   const k = composeRig(set, LIMP, 'normal');
   const c = document.createElement('canvas'); c.width = c.height = k.sx;
@@ -925,23 +926,23 @@ function drawParticle(ctx, p) {
     const [ux, uy] = upVec(), s = p.size * (0.6 + 0.4 * Math.min(1, (1 - k) * 5)), t = s * 0.36;
     ctx.save(); ctx.globalAlpha = Math.min(1, k * 2.2); ctx.translate(p.x + ux * (p.up || 0), p.y + uy * (p.up || 0));
     const cross = () => { ctx.beginPath(); ctx.rect(-s, -t, s * 2, t * 2); ctx.rect(-t, -s, t * 2, s * 2); };
-    ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; cross(); ctx.stroke();
+    if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; cross(); ctx.stroke(); }
     ctx.fillStyle = p.color; cross(); ctx.fill(); ctx.restore(); ctx.globalAlpha = 1;
   } else if (p.shape === 'heart') { // round 13: a little inked heart rising (charm)
     const [ux, uy] = upVec(), s = p.size * (0.7 + 0.3 * Math.min(1, (1 - k) * 5));
     upright(ctx, p.x + ux * (p.up || 0), p.y + uy * (p.up || 0), () => { ctx.globalAlpha = Math.min(1, k * 2.2); heartPath(ctx, s);
-      ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = p.color; ctx.fill(); });
+      if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; ctx.stroke(); } ctx.fillStyle = p.color; ctx.fill(); });
     ctx.globalAlpha = 1;
   } else if (p.shape === 'drip') { // round 13: a drop of blood falling off the body (bleeding)
     const [ux, uy] = upVec();
     upright(ctx, p.x + ux * (p.up || 0), p.y + uy * (p.up || 0), () => { ctx.globalAlpha = Math.min(1, k * 2);
       const s = p.size; ctx.beginPath(); ctx.moveTo(0, -s * 1.5); ctx.quadraticCurveTo(s, 0, s * 0.9, s * 0.5); ctx.arc(0, s * 0.5, s * 0.9, 0, Math.PI); ctx.quadraticCurveTo(-s, 0, 0, -s * 1.5); ctx.closePath();
-      ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 1.6; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = p.color; ctx.fill(); });
+      if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 1.6; ctx.lineJoin = 'round'; ctx.stroke(); } ctx.fillStyle = p.color; ctx.fill(); });
     ctx.globalAlpha = 1;
   } else if (p.shape === 'spark') {
     const a = Math.atan2(p.vy, p.vx), len = 6 + 10 * k;
     ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(a); ctx.globalAlpha = Math.min(1, k * 1.6);
-    ctx.strokeStyle = INK; ctx.lineCap = 'round'; ctx.lineWidth = p.size + OUTLINE * 2; ctx.beginPath(); ctx.moveTo(-len, 0); ctx.lineTo(0, 0); ctx.stroke();
+    ctx.lineCap = 'round'; if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = p.size + OUTLINE * 2; ctx.beginPath(); ctx.moveTo(-len, 0); ctx.lineTo(0, 0); ctx.stroke(); }
     ctx.strokeStyle = p.color; ctx.lineWidth = p.size; ctx.beginPath(); ctx.moveTo(-len, 0); ctx.lineTo(0, 0); ctx.stroke();
     ctx.restore(); ctx.globalAlpha = 1;
   } else {

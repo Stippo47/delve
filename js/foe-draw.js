@@ -3,7 +3,7 @@
 //   drawFoeGround   under everything that stands: a yeti's snowball track, a burrower's mound
 //   snowRoll        over a yeti's snowball: it turns as it rolls (two bands round it, moving with the roll)
 //   drawFoe         a chain as one body; the sun blade with its point in a wall; a spirit's tail
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINES } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { getRig, paintRig, composeRig, drawComposed, poseFor } from './parts.js';
 
@@ -119,7 +119,7 @@ function drawChain(ctx, h, w, dt, R) {
   const frame = (s) => { ctx.save(); R.unitFrame(ctx, s.p, w); const k = s.sizeU / 220; ctx.scale(k, k); ctx.translate(-100, -100); };
   const poses = sets.map((s) => pose(s.p));
   const shape = (s) => (s.p.tail && s.p.def.tailShape) || null;
-  const ink = (s, i) => { frame(s); const sh = shape(s);
+  const ink = (s, i) => { if (!OUTLINES) return; frame(s); const sh = shape(s); // (round 19, lane toggles19: outlines off, no ink pass)
     if (sh) { taperPath(ctx, sh); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.lineWidth = 10; ctx.fill(); ctx.stroke(); } // (the tail: its own outline round the taper)
     else paintRig(ctx, s.set, poses[i], 'ink');
     ctx.restore(); };
@@ -173,7 +173,7 @@ export function drawSpiritTail(ctx, u, dt, T) {
   const side = (P) => { for (let i = 1; i < P.length - 1; i++) ctx.quadraticCurveTo(P[i][0], P[i][1], (P[i][0] + P[i + 1][0]) / 2, (P[i][1] + P[i + 1][1]) / 2); ctx.lineTo(P[P.length - 1][0], P[P.length - 1][1]); };
   const path = () => { ctx.beginPath(); ctx.moveTo(left[0][0], left[0][1]); side(left); side(right.slice().reverse()); ctx.closePath(); };
   ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; path(); ctx.stroke();
+  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; path(); ctx.stroke(); }
   const g = ctx.createLinearGradient(ax, ay, pts[n].x, pts[n].y); g.addColorStop(0, u.def.tail[0]); g.addColorStop(1, u.def.tail[1]);
   ctx.fillStyle = g; path(); ctx.fill();
   ctx.restore();
