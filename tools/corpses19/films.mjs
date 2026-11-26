@@ -84,6 +84,16 @@ const FILMS = {
       at(T, 0.4, 'down', () => { die(pal, S[0], 0); pal.bleedT = 99; });
       at(T, 5.0, 'raise', () => { nec.kit.cd.raiseDead = 0; });
     };` },
+  // A Necromancer raising from bodies: four skeletons struck down in front of a knight, then the Necromancer of his side
+  // raises minions where two of them lie (raising works off where a body lies, as before).
+  raise: { battle: 'rattler*4,villager|necromancer,paladin', arena: 'crypt', secs: 6, zoom: 1.5, stage: `
+    const nec = of('a', 'necromancer'), pal = of('a', 'paladin'), S = side('b').filter((u) => u.kind === 'rattler'), vil = of('b', 'villager');
+    tier(nec, 2); quiet(nec); tough(nec, 6, 0); put(nec, CX - 170, CY + 10, 0); quiet(pal); tough(pal, 6, 0); put(pal, CX - 50, CY, 0);
+    S.forEach((u, i) => { put(u, CX + 10, CY - 75 + i * 50, Math.PI); hold(u); tough(u, 50, 0); });
+    put(vil, CX + 170, CY + 60, Math.PI); hold(vil); tough(vil, 80, 0);
+    cam(CX + 10, CY + 40);
+    each = (T) => { S.forEach((u, i) => at(T, 0.4 + i * 0.3, 'k' + i, () => { u.stunT = 0; SIM.hurt(w, u, u.hp + 99999, pal, { noDodge: true, knock: 150, kAngle: 0 }); }));
+      at(T, 2.6, 'raise', () => { nec.kit.cd.raiseDead = 0; }); };` },
   // Bodies and what lies on the floor: villagers struck down into an oil slick, a burning patch, a gas cloud and a pool
   // of blood. Before: each body lay over them; after: on the bare floor, under them (it lies in the puddle).
   puddles: { battle: 'villager*5|villager*5', arena: 'crypt', secs: 6, zoom: 1.7, stage: `

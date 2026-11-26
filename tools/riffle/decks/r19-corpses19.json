@@ -27,8 +27,8 @@
         },
         {
           "id": "crowd",
-          "title": "Under rocks and crates",
-          "text": "Bodies lay over rocks, crates and the living's shadows and rings. Now all of those draw over them.",
+          "title": "In a plain brawl",
+          "text": "Small change: bodies were already under the fighters. Now also under their shadows, rings, rocks, crates.",
           "videos": [
             "../../../docs/clips/corpses19/crowd-before.mp4",
             "../../../docs/clips/corpses19/crowd-after.mp4"
@@ -54,9 +54,10 @@
         {
           "id": "raise",
           "title": "Necromancer still raises",
-          "text": "The Necromancer still raises the fallen skeletons from where they lie.",
+          "text": "The Necromancer still raises minions from where the bodies lie.",
           "videos": [
-            "../../../docs/clips/corpses19/necro-after.mp4"
+            "../../../docs/clips/corpses19/raise-before.mp4",
+            "../../../docs/clips/corpses19/raise-after.mp4"
           ]
         },
         {
@@ -82,6 +83,7 @@
           "title": "Drake's husk",
           "text": "Already lay under everything; filmed to show it still does with the heroes standing on it.",
           "videos": [
+            "../../../docs/clips/corpses19/drake-before.mp4",
             "../../../docs/clips/corpses19/drake-after.mp4"
           ]
         },

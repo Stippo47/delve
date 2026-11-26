@@ -57,7 +57,8 @@ rolls over where they fell (convoy.js rigTick), because under the wagon nobody c
 
 `js/render.js` drawScene, a new layer `drawBodies`, right after the floor picture, before anything else:
 1. every body that has landed (a body still in the air from its killing blow is drawn **after the units**, over what
-   stands on the floor, until it lands: "a death animation in progress may stay on top until it lands");
+   stands on the floor, until it lands: the designer's own round-19 rule for anything in the air, and the lead's "a
+   death animation in progress may stay on top until it lands"; before, a flying body slid under the living);
 2. the downed, each with its side's thin ring under it in a battle, nearest the top of the screen first;
 3. the ring round the downed (the battle's bleed-out ring, battle.js; the wagon road's left-behind ring, convoy.js),
    through a new hook `w.drawBodies`. Both rings used to be drawn over everything.
@@ -78,7 +79,18 @@ putting bodies over danger marks too; I didn't, and ask instead.
 
 ## Clips (docs/clips/corpses19/)
 
-CLIPS-TABLE
+Each scene twice, `-before` and `-after`, the same seed and staging (the fights play out the same; only the bodies differ).
+
+| Clip | What to look at |
+|---|---|
+| `boulder-*` (6 s) | A rock troll lets its boulder go at 1.2 s through two bodies and a downed knight. **1.6 s**: before, the ball shoves the bodies aside and along; after, it rolls over them. **2.3 s**: before, the knight is drawn over the ball; after, the ball over him. **5.2 s**: the troll walks back over the knight: before, the knight's ring is drawn over the troll; after, under it. At the end the two bodies still lie where they were (after). |
+| `necro-*` (10 s) | A knight goes down at 0.4 s between a rock and a crate, skeletons on him. **1.5 s and on**: before, he and his ring lie over the rock and the crate; after, the rock and crate stand over them, and the skeletons over his ring. |
+| `raise-*` (6 s) | Four skeletons struck down in front of a knight (0.4-1.3 s), the Necromancer raises minions where two of them lie at **~3 s**: raising from bodies works as before. |
+| `wurm-*` (6 s) | The Sand Wurm killed with its rings out at ~2.9 s. **3.4 s**: a knight walking where a ring lies: before, hidden under the ring (only his bar shows); after, on top of it. The rings are over everything only while they drop. |
+| `engine-*` (5 s) | The Great Engine falls at 2.0 s among four heroes. **2.3-3.0 s**: before, its dome and cog lie over the heroes; after, under them (plates and bolts still fly over). |
+| `drake-*` (9 s) | The Cinder Drake dies at ~1.2 s and cools to a husk; the heroes come and stand on it from ~6 s. Unchanged: it already lay under everything. |
+| `crowd-*` (11 s) | A plain villager brawl round two rocks, a barrel and a crate. The change is small here, as bodies were already drawn under the fighters: **2.6 s**, a body still flying from its blow is drawn over the villager beside it (before, under); **6.0 s**, top right, the blue villager standing on a body: before, the body covers his shadow and side ring; after, they're over it. |
+| `puddles-*` (6 s) | Villagers struck down into oil (0.6 s), fire (1.1 s), gas (1.6 s), blood (2.1 s). Before, a body lies faint over the black oil and over the fire; after, under them: **from ~1.5 s the body in the oil is hidden** (the open call below). The others bounced out of their puddles. |
 
 ## Checks
 
@@ -100,6 +112,10 @@ CLIPS-TABLE
 - A dead Villager's body shows the plain base (bald, sack tunic), not its own rolled look: render.js drawCorpse draws
   the kind's picture (`def.art`), and the look is rolled per unit (folk-kind.js). Faint and grey once lying, but the
   first moment of the throw is in full colour. A small fix (the body keeps its unit's look) if wanted; not asked.
+- Drawing changes a fight: `js/boss-wurm-fx.js` counts down the wurm's `u.stuck` in its floor drawing, by `w._dt`. My
+  first cut set `w._dt` earlier in the frame (the downed are drawn earlier now) and the wurm fight in the films came out
+  different. `w._dt` is set where it always was now, and the before/after films play out the same. Worth moving that
+  count into the sim some day; not mine to change here.
 - No new files the game loads. No version bump.
 
 ## Switches
