@@ -1,5 +1,5 @@
 # Lane physics19: the five logging lines tools/physics19/detect.mjs reads (w.physLog), put into a copy of the game as
-# it was (scratch/before, `git archive 085fcc6`), so the same detector measures before and after. Nothing else in the
+# it was (scratch/before, `git archive e6fe7a2, main at 0.42.0`), so the same detector measures before and after. Nothing else in the
 # copy is changed.   python tools/physics19/log-hook.py scratch/before/js/sim.js
 import sys
 p = sys.argv[1]

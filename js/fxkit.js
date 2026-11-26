@@ -159,17 +159,21 @@ export function noteWorld(w) {
   }
 }
 
+// (round 19, lane physics19: "spikes shouldn't ever render onto of an entity") a danger zone's strike that is drawn as
+// spikes standing out of the floor: bone (the grave lance, a row's step, a grave bursting; not the cleave's crescent),
+// ice, and a ring of blade. Drawn on the ground layer, under every body; it was drawn over them.
+const spiky = (m) => m.type === 'strike' && m.z && ((m.kind === 'bone' && m.z.shape !== 'cone') || m.kind === 'ice' || (m.kind === 'blade' && m.z.shape === 'ring'));
 export function drawMarks(ctx, dt, layer) {
   for (const m of marks) {
     if (layer === 'air') m.t += dt;
     const k = k01(m.t / m.max);
     ctx.save();
-    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); else if (m.type === 'oldBones') oldBonesGround(ctx, m, k); else if (m.type === 'blast' && HIT_OWN.blastGround) HIT_OWN.blastGround(ctx, m, k); }
+    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') { strikeGround(ctx, m, k); if (spiky(m)) { ctx.restore(); ctx.save(); strike(ctx, m, k); } /* (round 19, lane physics19: spikes come up under the bodies) */ } else if (m.type === 'slam') slamGround(ctx, m, k); else if (m.type === 'oldBones') oldBonesGround(ctx, m, k); else if (m.type === 'blast' && HIT_OWN.blastGround) HIT_OWN.blastGround(ctx, m, k); }
     else switch (m.type) {
       case 'slash': slash(ctx, m, k); break;
       case 'slam': slamAir(ctx, m, k); break;
       case 'impact': impact(ctx, m, k); break;
-      case 'strike': strike(ctx, m, k); break;
+      case 'strike': if (!spiky(m)) strike(ctx, m, k); break; // (round 19, lane physics19: a strike that is spikes is drawn on the ground layer, above)
       case 'blast': blast(ctx, m, k); break;
       case 'oldBones': oldBones(ctx, m, k); break;
     }
@@ -1053,16 +1057,7 @@ export function abilityRing(ctx, f) {
       for (let i = 0; i < n; i++) { const b = i / n * TAU; upright(ctx, f.x + Math.cos(b) * r, f.y + Math.sin(b) * r, () => flame(ctx, 0, 0, (9 + 4 * hash(i, seed)) * (1 - 0.6 * k))); }
       ctx.restore(); return true;
     }
-    case 'frostNova': case 'frostArrow': { // ice spikes bursting outward along the floor
-      const r = f.r * (0.2 + 0.8 * easeOut(k01(k / 0.5))), n = Math.max(10, Math.round(f.r / 11));
-      if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.1, '#DDF6FF', 0.75 * (1 - k / 0.25)));
-      ctx.save(); ctx.globalAlpha *= 1 - sm(k01((k - 0.5) / 0.5));
-      for (let i = 0; i < n; i++) { const b = (i + 0.5 * (i % 2)) / n * TAU, rr = r * (i % 2 ? 0.72 : 1), s = 9 + 4 * hash(i, seed);
-        ctx.save(); ctx.translate(f.x + Math.cos(b) * rr, f.y + Math.sin(b) * rr); ctx.rotate(b);
-        inked(ctx, () => { ctx.beginPath(); ctx.moveTo(s * 1.6, 0); ctx.lineTo(0, -s * 0.5); ctx.lineTo(-s * 0.7, 0); ctx.lineTo(0, s * 0.5); ctx.closePath(); }, '#BFE9F8');
-        ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(s * 1.4, 0); ctx.lineTo(0, -s * 0.38); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill(); ctx.restore(); }
-      ctx.restore(); return true;
-    }
+    case 'frostNova': case 'frostArrow': return true; // on the ground layer (abilityRingGround) (round 19, lane physics19: ice spikes come up under the bodies)
     case 'thunderclap': { // a jagged ring of lightning rolling out
       const r = f.r * (0.3 + 0.7 * e), n = 8;
       ctx.save(); ctx.globalAlpha *= 1 - k;
@@ -1073,7 +1068,21 @@ export function abilityRing(ctx, f) {
   return false;
 }
 // The ground-layer half: Ground Pound, Leap's landing, Old Bones III (round 9: under the units, no cracks)
+// the Frost Mage's nova and arrow: ice spikes bursting outward along the floor (round 19, lane physics19: on the ground
+// layer, under every body; it was drawn over them)
+function frostSpikes(ctx, f) {
+  const k = k01(f.t / f.max), seed = Math.round(f.x * 3 + f.y);
+      const r = f.r * (0.2 + 0.8 * easeOut(k01(k / 0.5))), n = Math.max(10, Math.round(f.r / 11));
+      if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.1, '#DDF6FF', 0.75 * (1 - k / 0.25)));
+      ctx.save(); ctx.globalAlpha *= 1 - sm(k01((k - 0.5) / 0.5));
+      for (let i = 0; i < n; i++) { const b = (i + 0.5 * (i % 2)) / n * TAU, rr = r * (i % 2 ? 0.72 : 1), s = 9 + 4 * hash(i, seed);
+        ctx.save(); ctx.translate(f.x + Math.cos(b) * rr, f.y + Math.sin(b) * rr); ctx.rotate(b);
+        inked(ctx, () => { ctx.beginPath(); ctx.moveTo(s * 1.6, 0); ctx.lineTo(0, -s * 0.5); ctx.lineTo(-s * 0.7, 0); ctx.lineTo(0, s * 0.5); ctx.closePath(); }, '#BFE9F8');
+        ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(s * 1.4, 0); ctx.lineTo(0, -s * 0.38); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill(); ctx.restore(); }
+      ctx.restore();
+}
 export function abilityRingGround(ctx, f) {
+  if (f.ab === 'frostNova' || f.ab === 'frostArrow') { ctx.save(); frostSpikes(ctx, f); ctx.restore(); return true; }
   if (f.ab !== 'groundPound' && f.ab !== 'leap' && f.ab !== 'oldBones') return false;
   quake(ctx, f.x, f.y, f.r, k01(f.t / f.max), Math.round(f.x * 3 + f.y));
   return true;

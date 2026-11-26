@@ -9,7 +9,7 @@ import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul, resTo } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
-import { bodiesCollide, anchored, softPush, softRock, SOFT } from './layers.js'; // (round 19, lane physics19: collision layers and soft separation in one place; it was height.js bodiesMeet)
+import { bodiesCollide, anchored, heldFast, softPush, softRock, SOFT } from './layers.js'; // (round 19, lane physics19: collision layers and soft separation in one place; it was height.js bodiesMeet)
 import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
 import { isBall, ballPass, bodyOutOfWalls } from './boulders.js'; // (round 19, lane troll19: a troll's boulder and a yeti's snowball are solid bodies)
 import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf, isArmed, isDisarmed, FOE_WEAPON_ABILITY } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
@@ -1897,6 +1897,18 @@ function wallHit(w, u, speed) {
   }
 }
 
+// (round 19, lane physics19: a push on a body from something that gives no way, an anchor: kept apart from the rest so a
+// body pinched between two of them can be found; see where the pushes are made, in physics)
+// (round 19, lane physics19: a body moved by a push, now; u.sepX / sepY: all its pushes this step so far, kept to `cap`)
+function shove(u, dx, dy, by, cap) {
+  const ox = u.sepBy ? u.sepX : 0, oy = u.sepBy ? u.sepY : 0; let tx = ox + dx, ty = oy + dy; const tm = Math.hypot(tx, ty);
+  if (tm > cap) { tx *= cap / tm; ty *= cap / tm; }
+  u.x += tx - ox; u.y += ty - oy; u.sepX = tx; u.sepY = ty; u.sepBy = by;
+}
+function pinch(u, nx, ny, c, over) {
+  if (!(u.pinN > 0)) { u.pinN = 0; u.pinSum = 0; u.pinDeep = 0; }
+  u.pinN++; u.pinSum += c; if (over > u.pinDeep) { u.pinDeep = over; u.pinNx = nx; u.pinNy = ny; }
+}
 function physics(w, dt) {
   const LOG = w.physLog || null; // (round 19, lane physics19: tools/physics19/detect.mjs asks what the physics moved, and why)
   const us = w.units, time = w.time;
@@ -1905,7 +1917,7 @@ function physics(w, dt) {
     // (round 19, lane physics19: a boss's placed part is an anchor like a fixed thing, layers.js: where its brain put it
     // this step is where it is. It was walked through the walls-and-rocks rule and shoved by bodies, then put back by
     // its brain the step after: a foot or a ring of a body drawn somewhere else every other frame)
-    if (anchored(u)) { u.vx = u.vy = u.kx = u.ky = 0; continue; } // round 10: set in place by its brain (a turret on a wall, a chain's segment)
+    if (anchored(u) || heldFast(u)) { u.vx = u.vy = u.kx = u.ky = 0; continue; } // round 10: set in place by its brain (a turret on a wall, a chain's segment)
     const frozen = u.frozenT > 0;
     const acc = Math.min(1, dt * 20);
     if (frozen) { u.vx *= 0.8; u.vy *= 0.8; }
@@ -1948,22 +1960,24 @@ function physics(w, dt) {
   // unit-unit
   // (round 19, lane physics19: who touches whom is layers.js bodiesCollide: the same height, not two anchors, never
   // its own animal; and they ease apart (layers.js softPush) instead of being put apart in the one step)
+  const cap = SOFT.cap * dt, walled = w.walls.length > 0;
   for (let i = 0; i < us.length; i++) {
     const a = us[i]; if (a.dead || a.downed || a.ethereal || a.passUntil > time || a.def.pass) continue; // (round 18, lane dash18: passUntil, a dash going through bodies: dashes.js) (round 10: def.pass, things that roll through: gear sprites)
-    const fa = anchored(a);
+    const fa = anchored(a) || heldFast(a);
     for (let j = i + 1; j < us.length; j++) {
       const b = us[j]; if (b.dead || b.downed || b.ethereal || b.passUntil > time || b.def.pass) continue;
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
       if (!bodiesCollide(a, b)) continue; // (layers.js: one up in the air and one on the floor don't touch until it lands; a chain's head and its own links, a boss and its own parts, never)
-      const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d, fb = anchored(b);
+      const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d, fb = anchored(b) || heldFast(b);
       const was = m - Math.hypot((b.wasX ?? b.x) - (a.wasX ?? a.x), (b.wasY ?? b.y) - (a.wasY ?? a.y));
       const c = softPush(over, over - Math.max(0, was), dt);
       const ta = fa ? 0 : fb ? 1 : b.mass / (a.mass + b.mass), tb = 1 - ta;
-      // (round 19, lane physics19: every push on a body this step is added up and made once, below, and never more
-      // than SOFT.cap a second in all: a hero inside two of a drake's hit boxes was pushed by each)
-      if (ta) { a.sepX = (a.sepX || 0) - nx * c * ta; a.sepY = (a.sepY || 0) - ny * c * ta; a.sepBy = b; }
-      if (tb) { b.sepX = (b.sepX || 0) + nx * c * tb; b.sepY = (b.sepY || 0) + ny * c * tb; b.sepBy = a; }
+      // (round 19, lane physics19: made at once, as it always was, so a push runs on through a crowd in the one step;
+      // but all the pushes on one body in a step never come to more than SOFT.cap a second: a hero inside two of a
+      // drake's hit boxes was pushed by each. shove() keeps the count)
+      if (ta) { shove(a, -nx * c * ta, -ny * c * ta, b, cap); if (fb) pinch(a, -nx, -ny, c, over); }
+      if (tb) { shove(b, nx * c * tb, ny * c * tb, a, cap); if (fa) pinch(b, nx, ny, c, over); }
       // bowling: a fast knocked body transfers momentum
       const ka = Math.hypot(a.kx, a.ky), kb = Math.hypot(b.kx, b.ky);
       if (ka > 200 && a.kx * nx + a.ky * ny > 0) { b.kx += nx * ka * 0.6 * a.mass / b.mass; b.ky += ny * ka * 0.6 * a.mass / b.mass; a.kx *= 0.5; a.ky *= 0.5;
@@ -1972,14 +1986,18 @@ function physics(w, dt) {
         if (a.team !== b.team || b.team === 'enemy') hurt(w, a, 3 + kb * 0.02, null, { noDodge: true }); }
     }
   }
-  const cap = SOFT.cap * dt, walled = w.walls.length > 0;
   for (const u of us) {
     if (!u.sepBy) continue;
-    let sx = u.sepX, sy = u.sepY; const sm = Math.hypot(sx, sy), by = u.sepBy;
-    u.sepX = u.sepY = 0; u.sepBy = null;
-    if (sm > cap) { sx *= cap / sm; sy *= cap / sm; }
-    u.x += sx; u.y += sy;
-    if (LOG) LOG(u, sx, sy, by, 'body');
+    const by = u.sepBy;
+    // (round 19, lane physics19: between two things that give no way (two links of a chain, two of a drake's hit
+    // boxes, a foot and a turret) the pushes are nearly opposite and cancel, and it would lie inside the animal until
+    // the animal moved off: there it slips out sideways, across the deepest push, to the side the pushes lean)
+    if (u.pinN > 1 && Math.hypot(u.sepX, u.sepY) < 0.4 * u.pinSum && u.pinDeep > 6) {
+      const px = -u.pinNy, py = u.pinNx, side = px * u.sepX + py * u.sepY, sg = Math.abs(side) > 0.02 ? Math.sign(side) : (u.id & 1 ? 1 : -1), go = softPush(u.pinDeep, 0, dt);
+      shove(u, px * sg * go, py * sg * go, by, cap);
+    }
+    if (LOG) LOG(u, u.sepX, u.sepY, by, 'body');
+    u.sepX = u.sepY = 0; u.sepBy = null; u.pinN = 0;
     if (walled || u.x < u.r || u.y < u.r || u.x > w.W - u.r || u.y > w.H - u.r) bodyOutOfWalls(w, u); // (round 19, lane troll19: nor is a body left in a wall or past the room's edge for another body's shove: a troll's own bulk did it too)
   }
   ballPass(w, dt, wallHit); // (round 19, lane troll19: boulders and snowballs, after the bodies: boulders.js)

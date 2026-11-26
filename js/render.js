@@ -265,6 +265,7 @@ function drawScene(ctx, w) {
   drawArena(ctx, w);
   drawDanger(ctx, w);
   drawGroundFx(ctx, w);
+  for (const f of w.fx) drawSpikeFx(ctx, f); // (round 19, lane physics19: "spikes shouldn't ever render onto of an entity": the Bone King's spikes come up out of the floor, under every body. They were the last thing drawn, over everything; layers.js ORDER)
   drawFoeGround(ctx, w); // round 13 (lane E): snow tracks, burrow mounds
   drawSoilGround(ctx, w); // (round 19, lane boulder19: a rolling boulder's scuffs in the floor)
   flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
@@ -304,7 +305,6 @@ function drawScene(ctx, w) {
   for (const f of w.fx) if (f.type === 'beam' && f.over && !f.over.dead && !f.over.downed /* (round 19, lane corpses19) */ && w.units.includes(f.over)) { drawBeam(ctx, f, w.time); drawUnit(ctx, f.over, w); }
   drawLocal(ctx, dt);
   // melee swings and blasts are drawn as weapon arcs and bursts by fxkit.js (drawLocal), round 8
-  for (const f of w.fx) drawSpikeFx(ctx, f);
   drawMood(ctx, w, view.cw, view.ch, view.dpr);
   return order;
 }

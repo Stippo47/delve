@@ -17,7 +17,8 @@
 //   structure  stood where it was put (u.fixed: turrets, totems, barricades, hives, the wagon).
 //   body       everyone else: heroes, foes, bosses, summons that walk, the Great Ooze's other half.
 // part, link and structure are ANCHORS: no push ever moves them (their brain or their maker put them there), and two
-// anchors never push each other.
+// anchors never push each other. A boss with placed parts is an anchor too while it is stunned, frozen or asleep
+// (heldFast): its brain is not there to bring its body after it.
 //
 // ---------------------------------------------------------------- 2. how high it is
 // heightOf(u): 0 on the floor, 1 hovering, 2 flying (height.js airTier, the same answer the renderer draws by: a leap,
@@ -50,9 +51,11 @@
 //   - what the two walked (or were carried) INTO each other this step is taken out at once, up to SOFT.rigid a second:
 //     nobody walks through anybody, and a body pushes another along at its own pace;
 //   - the rest (they were already inside each other: one landed, was set down, came out of a dash or the sand, a foot
-//     came down on it) eases out at SOFT.v a second plus SOFT.rate of what is left, never faster than SOFT.max;
-//   - every push on a body in a step is added up and made once, never more than SOFT.cap a second in all (a hero
-//     inside two of a drake's hit boxes was pushed by each, one after the other).
+//     came down on it) eases out on top of that, at SOFT.v a second plus SOFT.rate of what is left, never faster
+//     than SOFT.max: two bodies walking into each other still come apart;
+//   - all the pushes on one body in a step never come to more than SOFT.cap a second (a hero inside two of a drake's
+//     hit boxes was pushed by each, one after the other);
+//   - a body between two anchors, whose pushes cancel, slips out sideways (sim.js pinch).
 // The same for a body found inside a rock. Walls and the room's edge are as they were: at once (lane troll19's rule:
 // nobody is ever left in a wall).
 //
@@ -67,7 +70,7 @@
 // every body, whatever made it (docs/physics19.md lists each one and where it was drawn before).
 import { airTier } from './height.js';
 
-export const SOFT = { v: 90, rate: 6, max: 330, rigid: 300, cap: 390, rockRigid: 840 };
+export const SOFT = { v: 90, rate: 6, max: 330, rigid: 270, cap: 330, rockRigid: 840 };
 export const ORDER = ['floor', 'doors', 'raised walls', 'floor hazards', 'arena floor', 'danger zones', 'ground effects', 'tracks', 'puddles', 'shadows',
   'pickups', 'dust', 'rocks and crates', 'side rings', 'corpses', 'floor bodies', 'hovering bodies', 'flying bodies', 'shots', 'particles', 'arena air',
   'air effects', 'swings and bursts', 'light'];
@@ -77,6 +80,10 @@ export const heightOf = airTier;
 export const ownerOf = (u) => (u.partOf && !u.partOf.bodies ? u.partOf : u.linkTo || u);
 // never moved by a push: a boss's placed part, a chain's link, a thing stood where it was put
 export const anchored = (u) => !!(u.fixed || (u.def.part && !(u.def.speed > 0)));
+// a body with placed parts hung on it (boss-kit.js part) whose brain is held (stunned, frozen, asleep): for as long, it
+// is an anchor too. Its parts stay where they were while its brain sleeps, so a head the party could shove about
+// drifted away from its own body, and the body caught up in one step when it woke (the drake: 12 in a step).
+export const heldFast = (u) => !!(u.hasParts && (u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0));
 export const isGhost = (u, time) => !!(u.ethereal || u.passUntil > time || u.def.pass);
 export function bodyKind(u, time = 0) {
   if (u.dead || u.downed) return 'corpse';
@@ -96,12 +103,12 @@ export function bodiesCollide(a, b) {
 // How far two bodies `over` deep in each other come apart this step. `fresh`: how much of that depth is new this
 // step (0 if they were as deep the step before).
 export function softPush(over, fresh, dt) {
-  const base = SOFT.v * dt, soft = Math.min(SOFT.max, SOFT.v + SOFT.rate * over) * dt;
-  return Math.min(over, Math.max(soft, Math.min(fresh, SOFT.rigid * dt) + base));
+  const f = fresh > 0 ? Math.min(fresh, SOFT.rigid * dt) : 0;
+  return Math.min(over, f + Math.min(SOFT.max, SOFT.v + SOFT.rate * (over - f)) * dt);
 }
 // The same out of a rock: what its own walk or a knock carried it in this step, at once (nothing gets through a
 // rock); the rest eased.
 export function softRock(over, fresh, dt) {
-  const base = SOFT.v * dt, soft = Math.min(SOFT.max, SOFT.v + SOFT.rate * over) * dt;
-  return Math.min(over, Math.max(soft, Math.min(fresh, SOFT.rockRigid * dt) + base));
+  const f = fresh > 0 ? Math.min(fresh, SOFT.rockRigid * dt) : 0;
+  return Math.min(over, f + Math.min(SOFT.max, SOFT.v + SOFT.rate * (over - f)) * dt);
 }

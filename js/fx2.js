@@ -1808,7 +1808,7 @@ DRAW.smokeDash = (ctx, f, w, layer) => { if (layer !== 'ground') return; const k
 // Caltrops (round 13: "Should be shown spreading around her"): each one flung out from her on a little arc to where it
 // lies, an inked iron star; one that has bitten is gone
 DRAW.caltrops = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const k = k01(f.t / 0.3), [vx, vy] = upVec(), a = life(f, 0.02, 0.5);
+  const k = k01(f.t / 0.3), [vx, vy] = upVec(), a = life(f, 0.02, 0.5); if (layer !== (k < 1 ? 'air' : 'ground')) return; // (round 19, lane physics19: flung, they are in the air; lying, they are on the floor under every body. They were drawn over whoever stood on them)
   ctx.save(); ctx.globalAlpha *= a;
   for (const c of f.C) { if (!c.live) continue; const x = c.x0 + (c.x - c.x0) * easeOut(k), y = c.y0 + (c.y - c.y0) * easeOut(k), h = Math.sin(k * Math.PI) * 18;
     ctx.save(); ctx.translate(x + vx * h, y + vy * h); ctx.rotate(c.rot + (1 - k) * 8); inked(ctx, () => star(ctx, 0, 0, 6.5, 4, 0.32, 0), '#8A94A6'); disc(ctx, 0, 0, 1.6, '#C9D2DE'); ctx.restore(); }

@@ -42,7 +42,7 @@ const SETS = opt('set', 'bosses,segs,crowd,fliers,structs,trolls,dungeons').spli
 const KD = Math.exp(-5 * DT);
 
 // ---------------------------------------------------------------- the detector
-const C = { steps: 0, unitSteps: 0, small: 0, by: {}, layer: { cross: 0, ownBoss: 0, ownChain: 0, crossKinds: {} }, ex: [] };
+const C = { steps: 0, unitSteps: 0, small: 0, deep: { n8: 0, n16: 0, half: 0, long: 0, longest: 0, ex: [], by: {}, kinds: {} }, by: {}, layer: { cross: 0, ownBoss: 0, ownChain: 0, crossKinds: {} }, ex: [] };
 const catOf = (u, o) => {
   if (o.partOf && (o.partOf === u || o.partOf === u.partOf)) return 'its own parts';
   if (u.partOf && u.partOf === o) return 'its own boss';
@@ -64,7 +64,7 @@ function stateOf(u) {
   if (u.anim && u.anim.kind) return 'anim:' + u.anim.kind + '(' + u.kind + ')';
   return 'brain:' + u.kind;
 }
-const pre = new Map(), pushed = new Map();
+const pre = new Map(), pushed = new Map(), spell = new Map();
 const MOVING = new Set(['dash', 'charge', 'leap', 'ride', 'slip']);
 const actOf = (u) => (u.act ? (u.act.dv || MOVING.has(u.act.type) ? 'act:' + u.act.type : null) : null);
 // what the sim's physics says it moved this step, and out of what (sim.js physics: w.physLog; the copy of the game as
@@ -119,6 +119,9 @@ function after(w, tag) {
     // did the physics push it this step, by at least half of the jump?
     let cause = null, extra = {};
     const P = pushed.get(u), pm = P ? Math.hypot(P.x, P.y) : 0;
+    // (held back again: a body its brain or an ability moved this step, a lunge, a hop, stopped by what it ran into.
+    // Without the push it would have gone further than it did)
+    if (P && pm >= TH / 2 && !placed) { const bx = mx - P.x, by = my - P.y, bm = Math.hypot(bx, by); if (bm > 1 && Math.hypot(mx, my) <= bm + 1 && (bx * P.x + by * P.y) < -0.5 * bm * pm) continue; }
     if (P && pm >= TH / 2 && pm >= mag * 0.5) {
       if (P.kind === 'body') { const o = P.o; cause = 'pushed out of ' + catOf(u, o); extra = { by: o.kind, push: +pm.toFixed(1), tiers: HT.airTier(u) + '/' + HT.airTier(o), m: +(o.mass / u.mass).toFixed(1) }; }
       else if (P.kind === 'rock') { cause = 'pushed out of a rock'; extra = { push: +pm.toFixed(1) }; }
@@ -134,9 +137,25 @@ function after(w, tag) {
         if ((dx * nx + dy * ny) / d > 0.85) { cause = 'pushed out of a boulder'; extra = { gap: +gap.toFixed(1) }; }
       }
     }
+    // a placed part whose own body lunged, rushed, dropped or was carried this step or the one before: it went with it
+    if (!cause && placed) { const o = u.partOf || u.linkTo, q = o && pre.get(o); if (q && Math.max(Math.hypot(o.x - q.x, o.y - q.y), Math.hypot(q.pdx || 0, q.pdy || 0)) >= TH) cause = 'with its body: ' + o.kind + (o.stunT > 0 ? ' (held or carried)' : " (its own lunge, rush or drop)"); }
     if (!cause) cause = p.act || actOf(u) || stateOf(u);
     note(cause, tag, w, u, mag, extra);
     if (V && mag > 20) console.log('  ', tag, 't', w.time.toFixed(2), u.kind, cause, mag.toFixed(1), JSON.stringify(extra));
+  }
+  // the other side of easing bodies apart: how often two that should not share a place are left deep in each other
+  // (same height, neither out of the world, not one animal, not two anchors: the rule of the game as it is now)
+  for (let i = 0; i < us.length; i++) {
+    const a = us[i]; if (a.dead || a.downed || a.ethereal || a.hidden || a.passUntil > w.time || a.def.pass) continue;
+    const fa = !!(a.fixed || (a.def.part && !(a.def.speed > 0))), oa = a.partOf && !a.partOf.bodies ? a.partOf : a.linkTo || a, ta = HT.airTier(a);
+    for (let j = i + 1; j < us.length; j++) {
+      const b = us[j]; if (b.dead || b.downed || b.ethereal || b.hidden || b.passUntil > w.time || b.def.pass) continue;
+      const dx = b.x - a.x, dy = b.y - a.y, m = a.r + b.r, d2 = dx * dx + dy * dy;
+      if (d2 >= (m - 8) * (m - 8)) continue;
+      const fb = !!(b.fixed || (b.def.part && !(b.def.speed > 0))); if (fa && fb) continue;
+      if (oa === (b.partOf && !b.partOf.bodies ? b.partOf : b.linkTo || b) || ta !== HT.airTier(b)) continue;
+      const deep = m - Math.sqrt(d2); C.deep.n8++; if (deep > 16) { C.deep.n16++; { const key = a.id + ':' + b.id, sp = spell.get(key); if (sp && sp.last === C.steps - 1 && sp.w === w) { sp.last = C.steps; sp.n++; if (sp.n === 30) { C.deep.long++; if (C.deep.ex.length < 30) C.deep.ex.push(`${tag} t${w.time.toFixed(1)} ${a.kind} x ${b.kind} ${Math.round(deep)} deep`); } if (sp.n > C.deep.longest) C.deep.longest = sp.n; } else spell.set(key, { last: C.steps, n: 1, w }); } const k = [catOf(b, a), catOf(a, b)].sort()[0]; C.deep.by[k] = (C.deep.by[k] || 0) + 1; const kk = [a.kind, b.kind].sort().join(' x '); C.deep.kinds[kk] = (C.deep.kinds[kk] || 0) + 1; } if (deep > Math.min(a.r, b.r)) C.deep.half++;
+    }
   }
 }
 
@@ -217,6 +236,7 @@ console.log(`tree ${PATH.relative(process.cwd(), root) || "."}`);
 console.log(`${fights} fights, ${Math.round(fightSecs)} s simulated, ${C.steps} steps, ${C.unitSteps} unit-steps, errors ${errors}`);
 console.log(`jumps of ${TH} or more in one step: ${total} (${(total / Math.max(1, fightSecs) * 60).toFixed(1)} a minute of fight); pushed out of something: ${pushes}; other: ${total - pushes}; smaller jumps (${TH / 2} to ${TH}): ${C.small}`);
 const groupOf = (c) => (isPush(c) ? 0 : c.startsWith('placed:') ? 1 : 2);
+console.log(`two bodies left in each other (pair-steps; same height, not one animal): more than 8 deep ${C.deep.n8}, more than 16 deep ${C.deep.n16}, deeper than the smaller one's radius ${C.deep.half}`);
 const GROUPS = ['PUSHED OUT OF SOMETHING (the sim put it somewhere else in one step)', "PARTS A BRAIN PLACES (a snap: its step changed by that much from the step before)", "ITS OWN MOVE OR AN ABILITY'S (dashes, hauls, blinks, a boss's own motion: read, not counted as faults)"];
 let lastG = -1;
 rows.sort((a, b) => groupOf(a[0]) - groupOf(b[0]) || b[1].n - a[1].n);
@@ -226,7 +246,10 @@ for (const [c, E] of rows) {
   console.log(`${String(E.n).padStart(7)}  ${c.padEnd(38)} mean ${(E.sum / E.n).toFixed(1).padStart(5)}  worst ${E.worst.toFixed(1).padStart(6)}   ${kinds}`);
   if (V || has('exs')) for (const e of E.ex.slice().sort((a, b) => b.jump - a.jump).slice(0, EX)) console.log('           ', JSON.stringify(e));
 }
+console.log(`spells of half a second or more with a pair more than 16 deep: ${C.deep.long}; the longest ${(C.deep.longest / 60).toFixed(1)} s`); if (V || has('exs')) for (const e of C.deep.ex) console.log('     ', e);
+console.log('more than 16 deep, by what the other is: ' + Object.entries(C.deep.by).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} ${n}`).join(', '));
+console.log('  the pairs: ' + Object.entries(C.deep.kinds).sort((a, b) => b[1] - a[1]).slice(0, 16).map(([k, n]) => `${k} ${n}`).join(', '));
 const ck = Object.entries(C.layer.crossKinds).sort((a, b) => b[1] - a[1]);
 console.log(`layers (pushes the physics made): pairs on different heights ${C.layer.cross}; a body against its own boss or its own parts ${C.layer.ownBoss}; against its own chain ${C.layer.ownChain}`);
 for (const [k, n] of ck.slice(0, 14)) console.log(`${String(n).padStart(7)}  ${k}`);
-if (opt('json')) FS.writeFileSync(opt('json'), JSON.stringify({ tree: PATH.relative(process.cwd(), root) || ".", fights, secs: Math.round(fightSecs), steps: C.steps, unitSteps: C.unitSteps, th: TH, total, pushes, small: C.small, by: Object.fromEntries(rows.map(([c, E]) => [c, { n: E.n, mean: +(E.sum / E.n).toFixed(1), worst: +E.worst.toFixed(1), kinds: E.kinds, ex: E.ex.slice().sort((a, b) => b.jump - a.jump).slice(0, 20) }])), layer: C.layer }, null, 1));
+if (opt('json')) FS.writeFileSync(opt('json'), JSON.stringify({ tree: PATH.relative(process.cwd(), root) || ".", fights, secs: Math.round(fightSecs), steps: C.steps, unitSteps: C.unitSteps, th: TH, total, pushes, small: C.small, deep: C.deep, by: Object.fromEntries(rows.map(([c, E]) => [c, { n: E.n, mean: +(E.sum / E.n).toFixed(1), worst: +E.worst.toFixed(1), kinds: E.kinds, ex: E.ex.slice().sort((a, b) => b.jump - a.jump).slice(0, 20) }])), layer: C.layer }, null, 1));

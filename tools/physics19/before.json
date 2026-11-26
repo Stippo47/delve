@@ -1,38 +1,43 @@
 {
- "tree": "scratch/before",
+ "tree": "scratch\\before",
  "fights": 188,
  "secs": 9951,
- "steps": 558229,
- "unitSteps": 4924578,
+ "steps": 556265,
+ "unitSteps": 4903600,
  "th": 6,
- "total": 47070,
- "pushes": 10995,
- "small": 120279,
+ "total": 43879,
+ "pushes": 8536,
+ "small": 102102,
+ "deep": {
+  "n8": 4107,
+  "n16": 1815,
+  "half": 693
+ },
  "by": {
   "pushed out of a like body": {
-   "n": 2749,
-   "mean": 13.1,
-   "worst": 51.2,
+   "n": 2380,
+   "mean": 13.5,
+   "worst": 50.6,
    "kinds": {
-    "paladin": 346,
-    "twinfang": 164,
-    "berserker": 131,
-    "tower": 213,
-    "samurai": 42,
-    "oldguard": 19,
+    "paladin": 325,
+    "twinfang": 155,
+    "berserker": 121,
+    "tower": 134,
+    "samurai": 41,
+    "oldguard": 18,
     "bard": 2,
     "sproutling": 4,
-    "slimeSludge": 6,
+    "slimeSludge": 5,
     "slime": 10,
-    "rattler": 119,
+    "rattler": 109,
     "ghost": 21,
     "archer": 24,
-    "winterQueen": 7,
+    "winterQueen": 6,
     "frost": 3,
     "goblin": 46,
-    "goblinBomber": 11,
+    "goblinBomber": 10,
     "goblinSpear": 13,
-    "hobgoblin": 11,
+    "hobgoblin": 10,
     "dynamouse": 4,
     "alpha": 10,
     "warboss": 2,
@@ -45,34 +50,34 @@
     "heraldLight": 22,
     "sandSerpent": 18,
     "chainCrawler": 2,
-    "rattlerSpear": 54,
+    "rattlerSpear": 53,
     "cleric": 4,
-    "mobAxe": 66,
-    "mobDagger": 49,
-    "mob": 51,
-    "mobPitchfork": 45,
+    "mobPitchfork": 10,
     "werewolf": 22,
-    "dame": 14,
+    "mobAxe": 14,
+    "mob": 12,
+    "mobDagger": 7,
+    "dame": 9,
     "necromancer": 21,
-    "minion": 77,
-    "gladiator": 20,
+    "minion": 74,
+    "gladiator": 15,
     "bulwark": 9,
-    "orc": 103,
-    "ogre": 39,
+    "orc": 90,
+    "ogre": 37,
     "rat": 38,
     "crab": 30,
     "boar": 8,
     "banditBrute": 12,
-    "wolf": 46,
+    "wolf": 45,
     "scarab": 73,
-    "mummy": 22,
+    "mummy": 15,
     "slimeBig": 36,
     "slimeSmall": 10,
-    "drillBot": 41,
-    "automaton": 70,
-    "frostWolf": 58,
+    "drillBot": 39,
+    "automaton": 56,
+    "frostWolf": 57,
     "spiderMomma": 10,
-    "snowman": 14,
+    "snowman": 13,
     "witch": 6,
     "warlock": 8,
     "valkyrie": 30,
@@ -81,13 +86,13 @@
     "falconer": 2,
     "wisp": 1,
     "golem": 58,
-    "angel": 31,
+    "angel": 28,
     "spiritWolf": 5,
     "hellhound": 3,
     "demon": 9,
     "bee": 6,
-    "brute": 27,
-    "engineer": 6,
+    "brute": 25,
+    "engineer": 5,
     "quartermaster": 2,
     "beekeeper": 7,
     "wolfRider": 12,
@@ -97,11 +102,10 @@
     "druid": 8,
     "grenadier": 3,
     "croc": 6,
-    "trapper": 1,
     "warden": 2,
     "digger": 3,
     "telekinetic": 1,
-    "lizardman": 14,
+    "lizardman": 11,
     "troll": 6,
     "rockTroll": 6,
     "yeti": 7,
@@ -115,7 +119,6 @@
     "orcShaman": 2,
     "goblinSuicide": 4,
     "lizardBlade": 3,
-    "rattlerBow": 1,
     "rattlerMace": 1,
     "spiritFrost": 1,
     "spiritFire": 1,
@@ -129,19 +132,6 @@
     "spiritHaste": 1
    },
    "ex": [
-    {
-     "tag": "crowd rattler*12,rattlerSpear*6 #501",
-     "t": 2.1,
-     "who": "rattler",
-     "id": 17,
-     "jump": 51.2,
-     "x": 761,
-     "y": 617,
-     "by": "rattlerSpear",
-     "push": 27.2,
-     "tiers": "0/0",
-     "m": 1
-    },
     {
      "tag": "big gildedGolem*2 #1100",
      "t": 20.97,
@@ -232,19 +222,6 @@
      "push": 44.5,
      "tiers": "0/0",
      "m": 1.6
-    },
-    {
-     "tag": "crowd rattler*12,rattlerSpear*6 #501",
-     "t": 2.1,
-     "who": "mobDagger",
-     "id": 6,
-     "jump": 44.4,
-     "x": 742,
-     "y": 403,
-     "by": "rattler",
-     "push": 22.4,
-     "tiers": "0/0",
-     "m": 1.9
     },
     {
      "tag": "crowd scarab*12,mummy*4 #554",
@@ -388,28 +365,54 @@
      "push": 39.5,
      "tiers": "0/0",
      "m": 1.6
+    },
+    {
+     "tag": "big golem*3 #1100",
+     "t": 22.43,
+     "who": "tower",
+     "id": 2,
+     "jump": 39.3,
+     "x": 700,
+     "y": 385,
+     "by": "golem",
+     "push": 37.2,
+     "tiers": "0/0",
+     "m": 1.6
+    },
+    {
+     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #579",
+     "t": 23,
+     "who": "drillBot",
+     "id": 23,
+     "jump": 39.2,
+     "x": 577,
+     "y": 35,
+     "by": "bulwark",
+     "push": 39.2,
+     "tiers": "0/0",
+     "m": 2
     }
    ]
   },
   "pushed out of its own parts": {
-   "n": 2240,
-   "mean": 16.7,
+   "n": 1821,
+   "mean": 17.8,
    "worst": 164.2,
    "kinds": {
     "spiderFoot": 41,
     "ikSpider": 22,
-    "stiltIdol": 439,
+    "stiltIdol": 404,
     "stiltFoot": 142,
-    "sandWurm": 382,
-    "wurmSegment": 967,
+    "sandWurm": 69,
+    "wurmSegment": 941,
     "greatEngine": 99,
-    "engineHammer": 25,
-    "engineClaw": 24,
-    "greatOoze": 32,
-    "mob": 23,
-    "mobAxe": 24,
-    "mobPitchfork": 9,
-    "mobDagger": 11
+    "engineHammer": 24,
+    "engineClaw": 23,
+    "greatOoze": 5,
+    "mob": 19,
+    "mobAxe": 19,
+    "mobPitchfork": 6,
+    "mobDagger": 7
    },
    "ex": [
     {
@@ -674,324 +677,33 @@
     }
    ]
   },
-  "pushed out of a boss body": {
-   "n": 1643,
-   "mean": 15.8,
-   "worst": 89.5,
-   "kinds": {
-    "paladin": 806,
-    "tower": 428,
-    "samurai": 77,
-    "berserker": 52,
-    "twinfang": 137,
-    "sproutling": 2,
-    "oldguard": 56,
-    "archer": 7,
-    "cleric": 5,
-    "scarab": 6,
-    "frost": 4,
-    "welderDrone": 2,
-    "slimeSludge": 7,
-    "slime": 19,
-    "pyromancer": 4,
-    "rattler": 9,
-    "goblin": 1,
-    "hobgoblin": 1,
-    "dynamouse": 7,
-    "goblinSpear": 5,
-    "devil": 2,
-    "frostGiant": 6
-   },
-   "ex": [
-    {
-     "tag": "boss elderEnt #121",
-     "t": 14.02,
-     "who": "tower",
-     "id": 2,
-     "jump": 89.5,
-     "x": 972,
-     "y": 505,
-     "by": "elderEnt",
-     "push": 91.2,
-     "tiers": "0/0",
-     "m": 3.2
-    },
-    {
-     "tag": "boss elderEnt #100",
-     "t": 24.67,
-     "who": "tower",
-     "id": 2,
-     "jump": 79.8,
-     "x": 1260,
-     "y": 524,
-     "by": "elderEnt",
-     "push": 89.5,
-     "tiers": "0/0",
-     "m": 3.2
-    },
-    {
-     "tag": "boss gildedSeraph #135",
-     "t": 14.88,
-     "who": "samurai",
-     "id": 2,
-     "jump": 76.2,
-     "x": 848,
-     "y": 632,
-     "by": "gildedSeraph",
-     "push": 75.6,
-     "tiers": "0/2",
-     "m": 5.3
-    },
-    {
-     "tag": "boss stiltIdol #100",
-     "t": 51.87,
-     "who": "tower",
-     "id": 2,
-     "jump": 73.9,
-     "x": 788,
-     "y": 870,
-     "by": "stiltIdol",
-     "push": 72.3,
-     "tiers": "0/0",
-     "m": 6.4
-    },
-    {
-     "tag": "boss elderEnt #121",
-     "t": 24.08,
-     "who": "tower",
-     "id": 2,
-     "jump": 73.2,
-     "x": 1070,
-     "y": 667,
-     "by": "elderEnt",
-     "push": 75.4,
-     "tiers": "0/0",
-     "m": 3.2
-    },
-    {
-     "tag": "big frostGiant #1100",
-     "t": 3.03,
-     "who": "tower",
-     "id": 2,
-     "jump": 72.9,
-     "x": 854,
-     "y": 422,
-     "by": "frostGiant",
-     "push": 70.3,
-     "tiers": "0/0",
-     "m": 2.1
-    },
-    {
-     "tag": "boss greatOoze #100",
-     "t": 46.22,
-     "who": "tower",
-     "id": 2,
-     "jump": 72.7,
-     "x": 473,
-     "y": 658,
-     "by": "greatOoze",
-     "push": 72.7,
-     "tiers": "0/0",
-     "m": 2.5
-    },
-    {
-     "tag": "boss gildedSeraph #121",
-     "t": 28.23,
-     "who": "tower",
-     "id": 2,
-     "jump": 72.7,
-     "x": 937,
-     "y": 593,
-     "by": "gildedSeraph",
-     "push": 70.5,
-     "tiers": "0/2",
-     "m": 2.9
-    },
-    {
-     "tag": "boss greatOoze #121",
-     "t": 11.55,
-     "who": "tower",
-     "id": 2,
-     "jump": 72.6,
-     "x": 933,
-     "y": 762,
-     "by": "greatOoze",
-     "push": 69.8,
-     "tiers": "0/0",
-     "m": 2.5
-    },
-    {
-     "tag": "boss elderEnt #135",
-     "t": 29.4,
-     "who": "samurai",
-     "id": 2,
-     "jump": 70.8,
-     "x": 971,
-     "y": 596,
-     "by": "elderEnt",
-     "push": 70.3,
-     "tiers": "0/0",
-     "m": 6
-    },
-    {
-     "tag": "boss greatOoze #100",
-     "t": 11.55,
-     "who": "tower",
-     "id": 2,
-     "jump": 70,
-     "x": 1040,
-     "y": 635,
-     "by": "greatOoze",
-     "push": 67.3,
-     "tiers": "0/0",
-     "m": 2.5
-    },
-    {
-     "tag": "boss boneKing #135",
-     "t": 41.53,
-     "who": "samurai",
-     "id": 2,
-     "jump": 65.9,
-     "x": 588,
-     "y": 535,
-     "by": "boneKing",
-     "push": 65.2,
-     "tiers": "0/0",
-     "m": 4
-    },
-    {
-     "tag": "boss greatEngine #121",
-     "t": 10.12,
-     "who": "tower",
-     "id": 2,
-     "jump": 65.3,
-     "x": 1014,
-     "y": 556,
-     "by": "greatEngine",
-     "push": 68,
-     "tiers": "0/0",
-     "m": 5
-    },
-    {
-     "tag": "boss gildedSeraph #100",
-     "t": 8.67,
-     "who": "paladin",
-     "id": 1,
-     "jump": 64.9,
-     "x": 1081,
-     "y": 507,
-     "by": "gildedSeraph",
-     "push": 52.1,
-     "tiers": "0/2",
-     "m": 3.6
-    },
-    {
-     "tag": "boss stiltIdol #121",
-     "t": 43.95,
-     "who": "tower",
-     "id": 2,
-     "jump": 64.5,
-     "x": 840,
-     "y": 820,
-     "by": "stiltIdol",
-     "push": 61.8,
-     "tiers": "0/0",
-     "m": 6.4
-    },
-    {
-     "tag": "boss elderEnt #100",
-     "t": 14.08,
-     "who": "tower",
-     "id": 2,
-     "jump": 64.5,
-     "x": 1099,
-     "y": 419,
-     "by": "elderEnt",
-     "push": 67.3,
-     "tiers": "0/0",
-     "m": 3.2
-    },
-    {
-     "tag": "boss ikSpider #100",
-     "t": 32.83,
-     "who": "tower",
-     "id": 2,
-     "jump": 64,
-     "x": 830,
-     "y": 566,
-     "by": "ikSpider",
-     "push": 66.6,
-     "tiers": "0/0",
-     "m": 5
-    },
-    {
-     "tag": "boss boneKing #100",
-     "t": 46.73,
-     "who": "tower",
-     "id": 2,
-     "jump": 63.8,
-     "x": 888,
-     "y": 815,
-     "by": "boneKing",
-     "push": 66.4,
-     "tiers": "0/0",
-     "m": 2.1
-    },
-    {
-     "tag": "boss ikSpider #100",
-     "t": 48.83,
-     "who": "tower",
-     "id": 2,
-     "jump": 63.2,
-     "x": 783,
-     "y": 510,
-     "by": "ikSpider",
-     "push": 65.6,
-     "tiers": "0/0",
-     "m": 5
-    },
-    {
-     "tag": "boss greatEngine #121",
-     "t": 5.08,
-     "who": "paladin",
-     "id": 1,
-     "jump": 63.1,
-     "x": 884,
-     "y": 399,
-     "by": "greatEngine",
-     "push": 65.2,
-     "tiers": "0/0",
-     "m": 6.4
-    }
-   ]
-  },
   "pushed out of a lighter body": {
-   "n": 1432,
-   "mean": 9.6,
+   "n": 1378,
+   "mean": 9.7,
    "worst": 32.8,
    "kinds": {
     "ikSpider": 47,
-    "paladin": 116,
-    "tower": 83,
+    "paladin": 113,
+    "tower": 78,
     "stiltIdol": 21,
     "cinder": 22,
     "greatEngine": 27,
     "samurai": 3,
-    "greatOoze": 119,
+    "greatOoze": 109,
     "oozeHalf": 7,
     "elderEnt": 73,
-    "boneKing": 105,
+    "boneKing": 93,
     "rattler": 3,
-    "winterQueen": 53,
+    "winterQueen": 52,
     "gildedSeraph": 135,
     "chieftain": 51,
-    "hobgoblin": 16,
+    "hobgoblin": 15,
     "warboss": 8,
-    "graveWarden": 33,
-    "frostGiant": 110,
+    "graveWarden": 25,
+    "frostGiant": 107,
     "pitLord": 11,
-    "archfiend": 37,
-    "radiant": 47,
+    "archfiend": 35,
+    "radiant": 43,
     "bulwark": 19,
     "werewolf": 6,
     "orc": 16,
@@ -999,12 +711,12 @@
     "boar": 5,
     "mummy": 36,
     "dame": 13,
-    "gladiator": 6,
+    "gladiator": 5,
     "slimeBig": 2,
     "berserker": 2,
-    "automaton": 18,
+    "automaton": 16,
     "spiderMomma": 8,
-    "snowman": 3,
+    "snowman": 2,
     "spiritBear": 18,
     "valkyrie": 2,
     "griffon": 1,
@@ -1018,7 +730,7 @@
     "rockTroll": 13,
     "yeti": 1,
     "cleric": 1,
-    "gildedGolem": 35,
+    "gildedGolem": 34,
     "lizardman": 1,
     "twinfang": 2,
     "rattlerBow": 2,
@@ -1289,59 +1001,350 @@
     }
    ]
   },
+  "pushed out of a boss body": {
+   "n": 951,
+   "mean": 20.8,
+   "worst": 89.5,
+   "kinds": {
+    "paladin": 341,
+    "tower": 227,
+    "samurai": 73,
+    "berserker": 50,
+    "twinfang": 130,
+    "sproutling": 2,
+    "oldguard": 46,
+    "archer": 6,
+    "cleric": 5,
+    "scarab": 6,
+    "frost": 4,
+    "welderDrone": 2,
+    "slimeSludge": 7,
+    "slime": 19,
+    "pyromancer": 4,
+    "rattler": 9,
+    "goblin": 1,
+    "hobgoblin": 1,
+    "dynamouse": 7,
+    "goblinSpear": 3,
+    "devil": 2,
+    "frostGiant": 6
+   },
+   "ex": [
+    {
+     "tag": "boss elderEnt #121",
+     "t": 14.02,
+     "who": "tower",
+     "id": 2,
+     "jump": 89.5,
+     "x": 972,
+     "y": 505,
+     "by": "elderEnt",
+     "push": 91.2,
+     "tiers": "0/0",
+     "m": 3.2
+    },
+    {
+     "tag": "boss elderEnt #100",
+     "t": 24.67,
+     "who": "tower",
+     "id": 2,
+     "jump": 79.8,
+     "x": 1260,
+     "y": 524,
+     "by": "elderEnt",
+     "push": 89.5,
+     "tiers": "0/0",
+     "m": 3.2
+    },
+    {
+     "tag": "boss gildedSeraph #135",
+     "t": 14.88,
+     "who": "samurai",
+     "id": 2,
+     "jump": 76.2,
+     "x": 848,
+     "y": 632,
+     "by": "gildedSeraph",
+     "push": 75.6,
+     "tiers": "0/2",
+     "m": 5.3
+    },
+    {
+     "tag": "boss stiltIdol #100",
+     "t": 51.87,
+     "who": "tower",
+     "id": 2,
+     "jump": 73.9,
+     "x": 788,
+     "y": 870,
+     "by": "stiltIdol",
+     "push": 72.3,
+     "tiers": "0/0",
+     "m": 6.4
+    },
+    {
+     "tag": "boss elderEnt #121",
+     "t": 24.08,
+     "who": "tower",
+     "id": 2,
+     "jump": 73.2,
+     "x": 1070,
+     "y": 667,
+     "by": "elderEnt",
+     "push": 75.4,
+     "tiers": "0/0",
+     "m": 3.2
+    },
+    {
+     "tag": "big frostGiant #1100",
+     "t": 3.03,
+     "who": "tower",
+     "id": 2,
+     "jump": 72.9,
+     "x": 854,
+     "y": 422,
+     "by": "frostGiant",
+     "push": 70.3,
+     "tiers": "0/0",
+     "m": 2.1
+    },
+    {
+     "tag": "boss greatOoze #100",
+     "t": 46.22,
+     "who": "tower",
+     "id": 2,
+     "jump": 72.7,
+     "x": 473,
+     "y": 658,
+     "by": "greatOoze",
+     "push": 72.7,
+     "tiers": "0/0",
+     "m": 2.5
+    },
+    {
+     "tag": "boss gildedSeraph #121",
+     "t": 28.23,
+     "who": "tower",
+     "id": 2,
+     "jump": 72.7,
+     "x": 937,
+     "y": 593,
+     "by": "gildedSeraph",
+     "push": 70.5,
+     "tiers": "0/2",
+     "m": 2.9
+    },
+    {
+     "tag": "boss greatOoze #121",
+     "t": 11.55,
+     "who": "tower",
+     "id": 2,
+     "jump": 72.6,
+     "x": 933,
+     "y": 762,
+     "by": "greatOoze",
+     "push": 69.8,
+     "tiers": "0/0",
+     "m": 2.5
+    },
+    {
+     "tag": "boss elderEnt #135",
+     "t": 29.4,
+     "who": "samurai",
+     "id": 2,
+     "jump": 70.8,
+     "x": 971,
+     "y": 596,
+     "by": "elderEnt",
+     "push": 70.3,
+     "tiers": "0/0",
+     "m": 6
+    },
+    {
+     "tag": "boss greatOoze #100",
+     "t": 11.55,
+     "who": "tower",
+     "id": 2,
+     "jump": 70,
+     "x": 1040,
+     "y": 635,
+     "by": "greatOoze",
+     "push": 67.3,
+     "tiers": "0/0",
+     "m": 2.5
+    },
+    {
+     "tag": "boss boneKing #135",
+     "t": 41.53,
+     "who": "samurai",
+     "id": 2,
+     "jump": 65.9,
+     "x": 588,
+     "y": 535,
+     "by": "boneKing",
+     "push": 65.2,
+     "tiers": "0/0",
+     "m": 4
+    },
+    {
+     "tag": "boss greatEngine #121",
+     "t": 10.12,
+     "who": "tower",
+     "id": 2,
+     "jump": 65.3,
+     "x": 1014,
+     "y": 556,
+     "by": "greatEngine",
+     "push": 68,
+     "tiers": "0/0",
+     "m": 5
+    },
+    {
+     "tag": "boss gildedSeraph #100",
+     "t": 8.67,
+     "who": "paladin",
+     "id": 1,
+     "jump": 64.9,
+     "x": 1081,
+     "y": 507,
+     "by": "gildedSeraph",
+     "push": 52.1,
+     "tiers": "0/2",
+     "m": 3.6
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 43.95,
+     "who": "tower",
+     "id": 2,
+     "jump": 64.5,
+     "x": 840,
+     "y": 820,
+     "by": "stiltIdol",
+     "push": 61.8,
+     "tiers": "0/0",
+     "m": 6.4
+    },
+    {
+     "tag": "boss elderEnt #100",
+     "t": 14.08,
+     "who": "tower",
+     "id": 2,
+     "jump": 64.5,
+     "x": 1099,
+     "y": 419,
+     "by": "elderEnt",
+     "push": 67.3,
+     "tiers": "0/0",
+     "m": 3.2
+    },
+    {
+     "tag": "boss ikSpider #100",
+     "t": 32.83,
+     "who": "tower",
+     "id": 2,
+     "jump": 64,
+     "x": 830,
+     "y": 566,
+     "by": "ikSpider",
+     "push": 66.6,
+     "tiers": "0/0",
+     "m": 5
+    },
+    {
+     "tag": "boss boneKing #100",
+     "t": 46.73,
+     "who": "tower",
+     "id": 2,
+     "jump": 63.8,
+     "x": 888,
+     "y": 815,
+     "by": "boneKing",
+     "push": 66.4,
+     "tiers": "0/0",
+     "m": 2.1
+    },
+    {
+     "tag": "boss ikSpider #100",
+     "t": 48.83,
+     "who": "tower",
+     "id": 2,
+     "jump": 63.2,
+     "x": 783,
+     "y": 510,
+     "by": "ikSpider",
+     "push": 65.6,
+     "tiers": "0/0",
+     "m": 5
+    },
+    {
+     "tag": "boss greatEngine #121",
+     "t": 5.08,
+     "who": "paladin",
+     "id": 1,
+     "jump": 63.1,
+     "x": 884,
+     "y": 399,
+     "by": "greatEngine",
+     "push": 65.2,
+     "tiers": "0/0",
+     "m": 6.4
+    }
+   ]
+  },
   "pushed out of a heavier body": {
-   "n": 1314,
-   "mean": 14.7,
+   "n": 783,
+   "mean": 18.2,
    "worst": 69.5,
    "kinds": {
-    "twinfang": 310,
+    "twinfang": 294,
     "sproutling": 9,
-    "scarab": 51,
+    "scarab": 44,
     "welderDrone": 2,
     "pyromancer": 3,
-    "ghost": 30,
+    "ghost": 28,
     "samurai": 14,
-    "paladin": 122,
+    "paladin": 45,
     "tower": 1,
     "frost": 1,
     "bard": 2,
-    "goblinSpear": 15,
-    "goblin": 24,
-    "goblinBomber": 7,
+    "goblinSpear": 14,
+    "goblin": 21,
+    "goblinBomber": 5,
     "rat": 25,
-    "rattlerSpear": 12,
     "rattler": 6,
-    "mobPitchfork": 119,
-    "mob": 33,
-    "mobAxe": 97,
+    "rattlerSpear": 11,
+    "mobPitchfork": 24,
     "minion": 18,
-    "mobDagger": 121,
-    "crab": 3,
-    "wolf": 21,
+    "mobDagger": 15,
+    "crab": 2,
+    "mob": 4,
+    "wolf": 20,
     "slime": 15,
     "slimeSmall": 10,
     "werewolf": 1,
+    "mobAxe": 8,
     "drillBot": 7,
     "frostWolf": 22,
     "bat": 9,
-    "warlock": 12,
+    "warlock": 11,
     "shaman": 7,
     "wisp": 1,
     "angel": 18,
     "cherub": 3,
-    "griffon": 9,
+    "griffon": 8,
     "spiritWolf": 3,
     "valkyrie": 1,
     "imp": 6,
     "hellhound": 4,
     "cinderBat": 5,
-    "bee": 13,
+    "bee": 10,
     "beekeeper": 1,
     "grenadier": 1,
     "archer": 6,
     "mouse": 4,
     "goblinSuicide": 3,
-    "leechBlood": 101,
+    "leechBlood": 5,
     "devil": 1,
     "scarabGold": 3,
     "spiritHaste": 2
@@ -1610,20 +1613,20 @@
    ]
   },
   "pushed out of a boss part": {
-   "n": 555,
-   "mean": 19.5,
+   "n": 417,
+   "mean": 21.8,
    "worst": 177.3,
    "kinds": {
     "twinfang": 40,
-    "paladin": 122,
-    "tower": 120,
-    "samurai": 55,
+    "paladin": 85,
+    "tower": 105,
+    "samurai": 54,
     "oldguard": 51,
-    "berserker": 32,
+    "berserker": 31,
     "welderDrone": 16,
-    "cleric": 27,
-    "bard": 31,
-    "pyromancer": 45,
+    "cleric": 12,
+    "bard": 3,
+    "pyromancer": 4,
     "archer": 2,
     "frost": 4,
     "slimeSludge": 6,
@@ -1895,14 +1898,14 @@
    ]
   },
   "pushed out of a boss foot": {
-   "n": 290,
-   "mean": 21.1,
+   "n": 284,
+   "mean": 21.3,
    "worst": 55.4,
    "kinds": {
     "berserker": 25,
-    "paladin": 125,
-    "twinfang": 31,
-    "tower": 36,
+    "paladin": 121,
+    "twinfang": 30,
+    "tower": 35,
     "spiderHunter": 3,
     "samurai": 36,
     "oldguard": 26,
@@ -2173,37 +2176,16 @@
    ]
   },
   "pushed in from the room's edge": {
-   "n": 251,
-   "mean": 11.2,
+   "n": 170,
+   "mean": 11.4,
    "worst": 45.7,
    "kinds": {
     "stiltFoot": 110,
     "engineClaw": 41,
     "engineHammer": 15,
-    "rattler": 7,
     "hobgoblin": 1,
-    "goblinSpear": 1,
-    "twinfang": 29,
-    "imp": 1,
-    "mobAxe": 2,
-    "ogre": 1,
-    "crab": 1,
-    "mobDagger": 1,
-    "dame": 6,
-    "automaton": 7,
-    "gladiator": 1,
-    "frostWolf": 1,
-    "ghost": 1,
-    "banshee": 1,
-    "angel": 5,
-    "demon": 6,
-    "harpooner": 2,
-    "brute": 4,
-    "goblinOrange": 2,
-    "poacher": 1,
-    "rat": 1,
-    "scarab": 2,
-    "bee": 1
+    "automaton": 1,
+    "angel": 2
    },
    "ex": [
     {
@@ -2215,66 +2197,6 @@
      "x": 1263,
      "y": 525,
      "push": 42.2
-    },
-    {
-     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #579",
-     "t": 12.63,
-     "who": "dame",
-     "id": 1,
-     "jump": 44.3,
-     "x": 906,
-     "y": 36,
-     "push": 66.3
-    },
-    {
-     "tag": "dungeon spire run 0 room 4",
-     "t": 42.07,
-     "who": "twinfang",
-     "id": 3,
-     "jump": 31.8,
-     "x": 713,
-     "y": 1408,
-     "push": 24.5
-    },
-    {
-     "tag": "dungeon spire run 0 room 4",
-     "t": 42.08,
-     "who": "twinfang",
-     "id": 3,
-     "jump": 28.2,
-     "x": 741,
-     "y": 1408,
-     "push": 34
-    },
-    {
-     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #580",
-     "t": 36.28,
-     "who": "automaton",
-     "id": 8,
-     "jump": 27.7,
-     "x": 1244,
-     "y": 554,
-     "push": 61.5
-    },
-    {
-     "tag": "dungeon spire run 0 room 4",
-     "t": 42.1,
-     "who": "twinfang",
-     "id": 3,
-     "jump": 23.2,
-     "x": 764,
-     "y": 1408,
-     "push": 37.7
-    },
-    {
-     "tag": "crowd frostWolf*8,snowman*4,spiderMomma*2 #593",
-     "t": 10.52,
-     "who": "frostWolf",
-     "id": 8,
-     "jump": 22,
-     "x": 495,
-     "y": 26,
-     "push": 23.5
     },
     {
      "tag": "boss greatEngine #128",
@@ -2337,16 +2259,6 @@
      "push": 10.2
     },
     {
-     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #579",
-     "t": 12.65,
-     "who": "dame",
-     "id": 1,
-     "jump": 19.7,
-     "x": 926,
-     "y": 36,
-     "push": 48.2
-    },
-    {
      "tag": "boss stiltIdol #121",
      "t": 14.37,
      "who": "stiltFoot",
@@ -2405,46 +2317,110 @@
      "x": 708,
      "y": 936,
      "push": 10.2
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 26.53,
+     "who": "engineClaw",
+     "id": 11,
+     "jump": 19.2,
+     "x": 1263,
+     "y": 478,
+     "push": 145
+    },
+    {
+     "tag": "boss stiltIdol #107",
+     "t": 51.38,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 19,
+     "x": 999,
+     "y": 936,
+     "push": 10.2
+    },
+    {
+     "tag": "boss stiltIdol #107",
+     "t": 51.4,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 19,
+     "x": 999,
+     "y": 936,
+     "push": 10.2
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 19.83,
+     "who": "engineClaw",
+     "id": 13,
+     "jump": 18.9,
+     "x": 1161,
+     "y": 923,
+     "push": 18.8
+    },
+    {
+     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #579",
+     "t": 12.63,
+     "who": "automaton",
+     "id": 10,
+     "jump": 18.6,
+     "x": 979,
+     "y": 36,
+     "push": 10.7
+    },
+    {
+     "tag": "boss greatEngine #135",
+     "t": 15.02,
+     "who": "engineHammer",
+     "id": 10,
+     "jump": 18.5,
+     "x": 1263,
+     "y": 564,
+     "push": 17.4
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 21.57,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 17.9,
+     "x": 937,
+     "y": 936,
+     "push": 10.2
     }
    ]
   },
   "pushed out of a rock": {
-   "n": 244,
-   "mean": 18.4,
+   "n": 134,
+   "mean": 21.5,
    "worst": 120.2,
    "kinds": {
-    "twinfang": 25,
+    "twinfang": 16,
     "paladin": 2,
     "samurai": 3,
     "oldguard": 5,
     "engineHammer": 27,
-    "engineClaw": 49,
-    "greatOoze": 26,
+    "engineClaw": 50,
     "oozeHalf": 5,
-    "boneKing": 23,
-    "bard": 8,
+    "boneKing": 1,
+    "bard": 1,
     "graveWarden": 1,
     "tower": 1,
-    "rattlerSpear": 2,
-    "mob": 3,
-    "mobPitchfork": 11,
-    "mobDagger": 17,
-    "bulwark": 1,
+    "rattlerSpear": 1,
+    "mobPitchfork": 1,
     "minion": 5,
-    "werewolf": 1,
     "crab": 1,
-    "scarab": 5,
     "mummy": 1,
-    "mobAxe": 3,
+    "mobDagger": 1,
+    "mobAxe": 2,
+    "mob": 1,
     "frostWolf": 1,
     "bat": 1,
     "ghost": 1,
     "griffon": 1,
-    "angel": 6,
-    "hellhound": 4,
+    "angel": 1,
     "automaton": 2,
     "beekeeper": 1,
-    "wolf": 1,
     "archer": 1
    },
    "ex": [
@@ -2499,16 +2475,6 @@
      "push": 50.8
     },
     {
-     "tag": "dungeon crypt run 0 room 4",
-     "t": 49.37,
-     "who": "twinfang",
-     "id": 3,
-     "jump": 89.3,
-     "x": 874,
-     "y": 785,
-     "push": 60.1
-    },
-    {
      "tag": "boss greatEngine #107",
      "t": 21.18,
      "who": "engineClaw",
@@ -2549,16 +2515,6 @@
      "push": 63.3
     },
     {
-     "tag": "boss greatOoze #114",
-     "t": 15.28,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 46.7,
-     "x": 487,
-     "y": 202,
-     "push": 80
-    },
-    {
      "tag": "boss greatOoze #135",
      "t": 39.8,
      "who": "oozeHalf",
@@ -2587,16 +2543,6 @@
      "x": 832,
      "y": 823,
      "push": 75.2
-    },
-    {
-     "tag": "boss greatOoze #114",
-     "t": 15.3,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 41.6,
-     "x": 489,
-     "y": 243,
-     "push": 79.9
     },
     {
      "tag": "crowd slime*8,slimeBig*4 #566",
@@ -2647,12 +2593,42 @@
      "x": 710,
      "y": 740,
      "push": 58.2
+    },
+    {
+     "tag": "boss greatEngine #114",
+     "t": 15.05,
+     "who": "engineClaw",
+     "id": 9,
+     "jump": 38.2,
+     "x": 706,
+     "y": 755,
+     "push": 41.2
+    },
+    {
+     "tag": "crowd slime*8,slimeBig*4 #566",
+     "t": 2.62,
+     "who": "mobAxe",
+     "id": 5,
+     "jump": 37.6,
+     "x": 723,
+     "y": 327,
+     "push": 23.9
+    },
+    {
+     "tag": "crowd frostWolf*8,snowman*4,spiderMomma*2 #592",
+     "t": 11.08,
+     "who": "minion",
+     "id": 30,
+     "jump": 36.7,
+     "x": 605,
+     "y": 248,
+     "push": 36.7
     }
    ]
   },
   "pushed out of a fixed thing": {
-   "n": 108,
-   "mean": 24.1,
+   "n": 100,
+   "mean": 24.9,
    "worst": 64.7,
    "kinds": {
     "ghost": 1,
@@ -2668,15 +2644,14 @@
     "brute": 1,
     "spiritWolf": 1,
     "spiritBear": 1,
-    "orc": 7,
+    "orc": 6,
     "wolfRider": 4,
     "chef": 2,
-    "automaton": 6,
+    "automaton": 4,
     "quartermaster": 4,
     "ogre": 1,
     "wolf": 3,
     "croc": 2,
-    "druid": 5,
     "twinfang": 1
    },
    "ex": [
@@ -2943,13 +2918,13 @@
    ]
   },
   "pushed out of a chain link": {
-   "n": 85,
-   "mean": 34.9,
+   "n": 57,
+   "mean": 46.1,
    "worst": 186.6,
    "kinds": {
     "twinfang": 9,
-    "tower": 23,
-    "paladin": 46,
+    "tower": 18,
+    "paladin": 23,
     "berserker": 2,
     "samurai": 5
    },
@@ -3163,19 +3138,6 @@
      "m": 2.8
     },
     {
-     "tag": "chain sandSerpent #333",
-     "t": 9.7,
-     "who": "tower",
-     "id": 2,
-     "jump": 57.3,
-     "x": 959,
-     "y": 283,
-     "by": "serpentCoil",
-     "push": 30.5,
-     "tiers": "0/0",
-     "m": 0.9
-    },
-    {
      "tag": "chain chainCrawler #333",
      "t": 39.28,
      "who": "tower",
@@ -3213,15 +3175,28 @@
      "push": 52.7,
      "tiers": "0/0",
      "m": 0.9
+    },
+    {
+     "tag": "chain chainCrawler #300",
+     "t": 18.78,
+     "who": "twinfang",
+     "id": 4,
+     "jump": 52.2,
+     "x": 1035,
+     "y": 880,
+     "by": "crawlerPlate",
+     "push": 52,
+     "tiers": "0/0",
+     "m": 2.2
     }
    ]
   },
   "pushed out of its own boss": {
-   "n": 57,
-   "mean": 11.3,
+   "n": 54,
+   "mean": 11.5,
    "worst": 35.7,
    "kinds": {
-    "wurmSegment": 33,
+    "wurmSegment": 30,
     "engineClaw": 12,
     "engineHammer": 3,
     "oozeHalf": 3,
@@ -3492,223 +3467,6 @@
     }
    ]
   },
-  "pushed out of a wall": {
-   "n": 21,
-   "mean": 11.6,
-   "worst": 34,
-   "kinds": {
-    "mobDagger": 2,
-    "ogre": 1,
-    "lizardBlade": 7,
-    "angel": 3,
-    "spiritHaste": 1,
-    "scarab": 5,
-    "twinfang": 1,
-    "wasp": 1
-   },
-   "ex": [
-    {
-     "tag": "dungeon foundry run 0 room 1",
-     "t": 19.42,
-     "who": "twinfang",
-     "id": 3,
-     "jump": 34,
-     "x": 323,
-     "y": 432,
-     "push": 33.4
-    },
-    {
-     "tag": "big ogre*3 #1146",
-     "t": 0.02,
-     "who": "ogre",
-     "id": 5,
-     "jump": 25.5,
-     "x": 678,
-     "y": 381,
-     "push": 25.5
-    },
-    {
-     "tag": "dungeon spire run 0 room 6",
-     "t": 10.63,
-     "who": "angel",
-     "id": 8,
-     "jump": 20.3,
-     "x": 1125,
-     "y": 681,
-     "push": 35.5
-    },
-    {
-     "tag": "dungeon foundry run 0 room 5",
-     "t": 18.93,
-     "who": "wasp",
-     "id": 8,
-     "jump": 18.9,
-     "x": 1297,
-     "y": 792,
-     "push": 17.4
-    },
-    {
-     "tag": "dungeon spire run 0 room 6",
-     "t": 10.62,
-     "who": "angel",
-     "id": 8,
-     "jump": 17,
-     "x": 1105,
-     "y": 686,
-     "push": 34.1
-    },
-    {
-     "tag": "crowd rattler*12,rattlerSpear*6 #501",
-     "t": 17.38,
-     "who": "mobDagger",
-     "id": 6,
-     "jump": 12.8,
-     "x": 540,
-     "y": 383,
-     "push": 9.4
-    },
-    {
-     "tag": "dungeon sewers run 0 room 4",
-     "t": 33.95,
-     "who": "lizardBlade",
-     "id": 12,
-     "jump": 10.7,
-     "x": 1079,
-     "y": 897,
-     "push": 34.7
-    },
-    {
-     "tag": "dungeon sewers run 0 room 4",
-     "t": 33.97,
-     "who": "lizardBlade",
-     "id": 12,
-     "jump": 10.2,
-     "x": 1074,
-     "y": 906,
-     "push": 35.2
-    },
-    {
-     "tag": "dungeon spire run 0 room 6",
-     "t": 10.6,
-     "who": "angel",
-     "id": 8,
-     "jump": 8.5,
-     "x": 1092,
-     "y": 696,
-     "push": 30.1
-    },
-    {
-     "tag": "dungeon sewers run 0 room 4",
-     "t": 33.98,
-     "who": "lizardBlade",
-     "id": 12,
-     "jump": 7.9,
-     "x": 1069,
-     "y": 912,
-     "push": 35.3
-    },
-    {
-     "tag": "dungeon dunes run 0 room 4",
-     "t": 70.57,
-     "who": "spiritHaste",
-     "id": 16,
-     "jump": 7.9,
-     "x": 358,
-     "y": 940,
-     "push": 5.9
-    },
-    {
-     "tag": "dungeon sewers run 0 room 4",
-     "t": 33.83,
-     "who": "lizardBlade",
-     "id": 12,
-     "jump": 7.8,
-     "x": 1083,
-     "y": 853,
-     "push": 4.7
-    },
-    {
-     "tag": "dungeon dunes run 0 room 4",
-     "t": 76.23,
-     "who": "scarab",
-     "id": 20,
-     "jump": 7.8,
-     "x": 221,
-     "y": 942,
-     "push": 7.1
-    },
-    {
-     "tag": "dungeon dunes run 0 room 4",
-     "t": 88.75,
-     "who": "scarab",
-     "id": 18,
-     "jump": 7.4,
-     "x": 215,
-     "y": 498,
-     "push": 8.6
-    },
-    {
-     "tag": "dungeon sewers run 0 room 4",
-     "t": 33.87,
-     "who": "lizardBlade",
-     "id": 12,
-     "jump": 7.3,
-     "x": 1083,
-     "y": 867,
-     "push": 18.6
-    },
-    {
-     "tag": "dungeon sewers run 0 room 4",
-     "t": 33.93,
-     "who": "lizardBlade",
-     "id": 12,
-     "jump": 7.3,
-     "x": 1082,
-     "y": 887,
-     "push": 33.5
-    },
-    {
-     "tag": "dungeon sewers run 0 room 4",
-     "t": 33.85,
-     "who": "lizardBlade",
-     "id": 12,
-     "jump": 7.1,
-     "x": 1083,
-     "y": 859,
-     "push": 11.8
-    },
-    {
-     "tag": "dungeon dunes run 0 room 4",
-     "t": 76.25,
-     "who": "scarab",
-     "id": 20,
-     "jump": 7.1,
-     "x": 214,
-     "y": 942,
-     "push": 13
-    },
-    {
-     "tag": "dungeon dunes run 0 room 4",
-     "t": 88.77,
-     "who": "scarab",
-     "id": 18,
-     "jump": 6.4,
-     "x": 208,
-     "y": 498,
-     "push": 13.4
-    },
-    {
-     "tag": "crowd rattler*12,rattlerSpear*6 #501",
-     "t": 17.4,
-     "who": "mobDagger",
-     "id": 6,
-     "jump": 6.2,
-     "x": 547,
-     "y": 383,
-     "push": 4.9
-    }
-   ]
-  },
   "pushed out of a boulder": {
    "n": 6,
    "mean": 10.4,
@@ -3783,12 +3541,222 @@
     }
    ]
   },
+  "pushed out of a wall": {
+   "n": 1,
+   "mean": 25.5,
+   "worst": 25.5,
+   "kinds": {
+    "ogre": 1
+   },
+   "ex": [
+    {
+     "tag": "big ogre*3 #1146",
+     "t": 0.02,
+     "who": "ogre",
+     "id": 5,
+     "jump": 25.5,
+     "x": 678,
+     "y": 381,
+     "push": 25.5
+    }
+   ]
+  },
+  "placed:crawlerPlate": {
+   "n": 588,
+   "mean": 7.2,
+   "worst": 11.6,
+   "kinds": {
+    "crawlerPlate": 588
+   },
+   "ex": [
+    {
+     "tag": "chain chainCrawler #300",
+     "t": 21.48,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 11.6,
+     "x": 886,
+     "y": 918
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 15.67,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 11,
+     "x": 950,
+     "y": 925
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 15.67,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 11,
+     "x": 903,
+     "y": 931
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 15.67,
+     "who": "crawlerPlate",
+     "id": 8,
+     "jump": 10.9,
+     "x": 855,
+     "y": 930
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.5,
+     "who": "crawlerPlate",
+     "id": 13,
+     "jump": 10.8,
+     "x": 568,
+     "y": 812
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.5,
+     "who": "crawlerPlate",
+     "id": 14,
+     "jump": 10.8,
+     "x": 607,
+     "y": 824
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.45,
+     "who": "crawlerPlate",
+     "id": 14,
+     "jump": 10.5,
+     "x": 612,
+     "y": 826
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.5,
+     "who": "crawlerPlate",
+     "id": 11,
+     "jump": 10.5,
+     "x": 479,
+     "y": 839
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.45,
+     "who": "crawlerPlate",
+     "id": 13,
+     "jump": 10.4,
+     "x": 573,
+     "y": 812
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.5,
+     "who": "crawlerPlate",
+     "id": 12,
+     "jump": 10.4,
+     "x": 521,
+     "y": 816
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 52.45,
+     "who": "crawlerPlate",
+     "id": 12,
+     "jump": 10.4,
+     "x": 432,
+     "y": 803
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 11.5,
+     "who": "crawlerPlate",
+     "id": 8,
+     "jump": 10.2,
+     "x": 796,
+     "y": 886
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 15.67,
+     "who": "crawlerPlate",
+     "id": 9,
+     "jump": 10.2,
+     "x": 820,
+     "y": 897
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.45,
+     "who": "crawlerPlate",
+     "id": 11,
+     "jump": 10.2,
+     "x": 483,
+     "y": 836
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.45,
+     "who": "crawlerPlate",
+     "id": 12,
+     "jump": 10.2,
+     "x": 525,
+     "y": 814
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 10.78,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 10.1,
+     "x": 795,
+     "y": 930
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 10.77,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 10,
+     "x": 795,
+     "y": 930
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 51.6,
+     "who": "crawlerPlate",
+     "id": 11,
+     "jump": 10,
+     "x": 369,
+     "y": 811
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 52.47,
+     "who": "crawlerPlate",
+     "id": 12,
+     "jump": 10,
+     "x": 429,
+     "y": 802
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 49.45,
+     "who": "crawlerPlate",
+     "id": 10,
+     "jump": 9.9,
+     "x": 450,
+     "y": 870
+    }
+   ]
+  },
   "placed:serpentCoil": {
-   "n": 1186,
-   "mean": 10.5,
+   "n": 511,
+   "mean": 8.9,
    "worst": 45.5,
    "kinds": {
-    "serpentCoil": 1186
+    "serpentCoil": 511
    },
    "ex": [
     {
@@ -3808,42 +3776,6 @@
      "jump": 45.5,
      "x": 626,
      "y": 420
-    },
-    {
-     "tag": "dungeon dunes run 0 room 1",
-     "t": 12.57,
-     "who": "serpentCoil",
-     "id": 13,
-     "jump": 41.6,
-     "x": 737,
-     "y": 513
-    },
-    {
-     "tag": "dungeon dunes run 0 room 1",
-     "t": 12.57,
-     "who": "serpentCoil",
-     "id": 9,
-     "jump": 41.5,
-     "x": 596,
-     "y": 512
-    },
-    {
-     "tag": "dungeon dunes run 0 room 1",
-     "t": 12.57,
-     "who": "serpentCoil",
-     "id": 14,
-     "jump": 41.5,
-     "x": 758,
-     "y": 552
-    },
-    {
-     "tag": "dungeon dunes run 0 room 1",
-     "t": 12.57,
-     "who": "serpentCoil",
-     "id": 8,
-     "jump": 41.4,
-     "x": 562,
-     "y": 551
     },
     {
      "tag": "chain sandSerpent #322",
@@ -3970,775 +3902,431 @@
      "jump": 37.7,
      "x": 478,
      "y": 260
-    }
-   ]
-  },
-  "placed:wurmSegment": {
-   "n": 956,
-   "mean": 104.7,
-   "worst": 516.6,
-   "kinds": {
-    "wurmSegment": 956
-   },
-   "ex": [
+    },
     {
-     "tag": "boss sandWurm #128",
-     "t": 2.93,
-     "who": "wurmSegment",
+     "tag": "chain sandSerpent #300",
+     "t": 8,
+     "who": "serpentCoil",
      "id": 9,
-     "jump": 516.6,
-     "x": 559,
-     "y": 398
+     "jump": 34.1,
+     "x": 772,
+     "y": 655
     },
     {
-     "tag": "boss sandWurm #128",
-     "t": 3.05,
-     "who": "wurmSegment",
-     "id": 10,
-     "jump": 515.9,
-     "x": 560,
-     "y": 399
+     "tag": "chain sandSerpent #300",
+     "t": 8.02,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 34.1,
+     "x": 772,
+     "y": 655
     },
     {
-     "tag": "boss sandWurm #128",
-     "t": 2.82,
-     "who": "wurmSegment",
-     "id": 8,
-     "jump": 515.7,
-     "x": 560,
-     "y": 400
-    },
-    {
-     "tag": "boss sandWurm #128",
-     "t": 3.52,
-     "who": "wurmSegment",
-     "id": 15,
-     "jump": 515.6,
-     "x": 560,
-     "y": 399
-    },
-    {
-     "tag": "boss sandWurm #128",
-     "t": 3.58,
-     "who": "wurmSegment",
-     "id": 16,
-     "jump": 515.6,
-     "x": 560,
-     "y": 400
-    },
-    {
-     "tag": "boss sandWurm #128",
-     "t": 2.57,
-     "who": "wurmSegment",
-     "id": 6,
-     "jump": 514.2,
-     "x": 561,
-     "y": 402
-    },
-    {
-     "tag": "boss sandWurm #128",
-     "t": 3.27,
-     "who": "wurmSegment",
+     "tag": "chain sandSerpent #311",
+     "t": 18.58,
+     "who": "serpentCoil",
      "id": 12,
-     "jump": 514,
-     "x": 561,
-     "y": 402
+     "jump": 27.7,
+     "x": 435,
+     "y": 290
     },
     {
-     "tag": "boss sandWurm #128",
-     "t": 3.17,
-     "who": "wurmSegment",
-     "id": 11,
-     "jump": 513.4,
-     "x": 562,
-     "y": 403
-    },
-    {
-     "tag": "boss sandWurm #128",
-     "t": 2.7,
-     "who": "wurmSegment",
-     "id": 7,
-     "jump": 513,
-     "x": 562,
-     "y": 404
-    },
-    {
-     "tag": "boss sandWurm #128",
-     "t": 3.45,
-     "who": "wurmSegment",
-     "id": 14,
-     "jump": 513,
-     "x": 562,
-     "y": 404
-    },
-    {
-     "tag": "boss sandWurm #128",
-     "t": 3.37,
-     "who": "wurmSegment",
-     "id": 13,
-     "jump": 512.4,
-     "x": 563,
-     "y": 405
-    },
-    {
-     "tag": "boss sandWurm #100",
-     "t": 2.85,
-     "who": "wurmSegment",
-     "id": 9,
-     "jump": 502.9,
-     "x": 574,
-     "y": 443
-    },
-    {
-     "tag": "boss sandWurm #121",
-     "t": 2.85,
-     "who": "wurmSegment",
-     "id": 9,
-     "jump": 502.6,
-     "x": 578,
-     "y": 441
-    },
-    {
-     "tag": "boss sandWurm #100",
-     "t": 2.97,
-     "who": "wurmSegment",
-     "id": 10,
-     "jump": 501.7,
-     "x": 575,
-     "y": 443
-    },
-    {
-     "tag": "boss sandWurm #100",
-     "t": 2.73,
-     "who": "wurmSegment",
-     "id": 8,
-     "jump": 501.3,
-     "x": 576,
-     "y": 443
-    },
-    {
-     "tag": "boss sandWurm #100",
-     "t": 3.5,
-     "who": "wurmSegment",
-     "id": 16,
-     "jump": 501.2,
-     "x": 576,
-     "y": 443
-    },
-    {
-     "tag": "boss sandWurm #121",
-     "t": 2.97,
-     "who": "wurmSegment",
-     "id": 10,
-     "jump": 501.1,
-     "x": 579,
-     "y": 441
-    },
-    {
-     "tag": "boss sandWurm #121",
-     "t": 3.43,
-     "who": "wurmSegment",
-     "id": 15,
-     "jump": 501,
-     "x": 579,
-     "y": 441
-    },
-    {
-     "tag": "boss sandWurm #100",
-     "t": 3.43,
-     "who": "wurmSegment",
-     "id": 15,
-     "jump": 500.8,
-     "x": 575,
-     "y": 443
-    },
-    {
-     "tag": "boss sandWurm #121",
-     "t": 2.73,
-     "who": "wurmSegment",
-     "id": 8,
-     "jump": 500.7,
-     "x": 580,
-     "y": 441
-    }
-   ]
-  },
-  "placed:crawlerPlate": {
-   "n": 717,
-   "mean": 9.5,
-   "worst": 149.2,
-   "kinds": {
-    "crawlerPlate": 717
-   },
-   "ex": [
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 17,
-     "jump": 149.2,
-     "x": 715,
-     "y": 662
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 20,
-     "jump": 149.2,
-     "x": 828,
-     "y": 661
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 18,
-     "jump": 149,
-     "x": 753,
-     "y": 656
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 21,
-     "jump": 148.7,
-     "x": 866,
-     "y": 660
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 22,
-     "jump": 148.7,
-     "x": 904,
-     "y": 660
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 23,
-     "jump": 148.7,
-     "x": 942,
-     "y": 660
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 24,
-     "jump": 148.7,
-     "x": 975,
-     "y": 660
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 16,
-     "jump": 148.2,
-     "x": 678,
-     "y": 662
-    },
-    {
-     "tag": "chain chainCrawler #344",
-     "t": 2.18,
-     "who": "crawlerPlate",
-     "id": 19,
-     "jump": 148.2,
-     "x": 791,
-     "y": 658
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 9.65,
-     "who": "crawlerPlate",
-     "id": 6,
-     "jump": 20.5,
-     "x": 714,
-     "y": 776
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 9.63,
-     "who": "crawlerPlate",
-     "id": 6,
-     "jump": 19.9,
-     "x": 714,
-     "y": 776
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 9.65,
-     "who": "crawlerPlate",
-     "id": 7,
-     "jump": 18.4,
-     "x": 758,
-     "y": 794
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 9.63,
-     "who": "crawlerPlate",
-     "id": 7,
-     "jump": 18.2,
-     "x": 758,
-     "y": 794
-    },
-    {
-     "tag": "chain chainCrawler #300",
-     "t": 19.78,
-     "who": "crawlerPlate",
-     "id": 6,
-     "jump": 15.5,
-     "x": 926,
-     "y": 919
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 3.32,
-     "who": "crawlerPlate",
-     "id": 7,
-     "jump": 15.5,
-     "x": 895,
-     "y": 554
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 3.32,
-     "who": "crawlerPlate",
-     "id": 9,
-     "jump": 15.4,
-     "x": 989,
-     "y": 554
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 3.32,
-     "who": "crawlerPlate",
-     "id": 10,
-     "jump": 15.4,
-     "x": 1037,
-     "y": 554
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 3.32,
-     "who": "crawlerPlate",
-     "id": 11,
-     "jump": 15.4,
-     "x": 1084,
-     "y": 554
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 3.32,
-     "who": "crawlerPlate",
+     "tag": "chain sandSerpent #311",
+     "t": 18.6,
+     "who": "serpentCoil",
      "id": 12,
-     "jump": 15.4,
-     "x": 1132,
-     "y": 554
-    },
-    {
-     "tag": "chain chainCrawler #333",
-     "t": 3.32,
-     "who": "crawlerPlate",
-     "id": 13,
-     "jump": 15.4,
-     "x": 1179,
-     "y": 554
+     "jump": 27.7,
+     "x": 435,
+     "y": 290
     }
    ]
   },
   "placed:drakeSegment": {
-   "n": 697,
-   "mean": 14.3,
-   "worst": 68.6,
+   "n": 374,
+   "mean": 13.4,
+   "worst": 36.2,
    "kinds": {
-    "drakeSegment": 697
+    "drakeSegment": 374
    },
    "ex": [
     {
-     "tag": "boss cinder #114",
-     "t": 2.7,
-     "who": "drakeSegment",
-     "id": 6,
-     "jump": 68.6,
-     "x": 903,
-     "y": 455
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.7,
-     "who": "drakeSegment",
-     "id": 7,
-     "jump": 67.8,
-     "x": 938,
-     "y": 457
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.7,
-     "who": "drakeSegment",
-     "id": 8,
-     "jump": 67.7,
-     "x": 988,
-     "y": 463
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.7,
-     "who": "drakeSegment",
-     "id": 9,
-     "jump": 67.5,
-     "x": 1036,
-     "y": 477
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.7,
+     "tag": "boss cinder #121",
+     "t": 3.27,
      "who": "drakeSegment",
      "id": 10,
-     "jump": 66.4,
-     "x": 1081,
-     "y": 493
+     "jump": 36.2,
+     "x": 1078,
+     "y": 549
     },
     {
      "tag": "boss cinder #114",
-     "t": 2.7,
+     "t": 26.48,
      "who": "drakeSegment",
-     "id": 11,
-     "jump": 65.4,
-     "x": 1124,
-     "y": 511
+     "id": 6,
+     "jump": 35.7,
+     "x": 856,
+     "y": 50
     },
     {
      "tag": "boss cinder #114",
-     "t": 2.7,
+     "t": 26.48,
      "who": "drakeSegment",
-     "id": 12,
-     "jump": 62.4,
-     "x": 1171,
-     "y": 543
+     "id": 7,
+     "jump": 35.2,
+     "x": 892,
+     "y": 49
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 26.5,
+     "who": "drakeSegment",
+     "id": 6,
+     "jump": 35.1,
+     "x": 856,
+     "y": 50
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 26.5,
+     "who": "drakeSegment",
+     "id": 7,
+     "jump": 34.7,
+     "x": 892,
+     "y": 49
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 26.48,
+     "who": "drakeSegment",
+     "id": 8,
+     "jump": 34.2,
+     "x": 942,
+     "y": 57
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 26.5,
+     "who": "drakeSegment",
+     "id": 8,
+     "jump": 33.7,
+     "x": 941,
+     "y": 57
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 26.48,
+     "who": "drakeSegment",
+     "id": 9,
+     "jump": 31.7,
+     "x": 985,
+     "y": 81
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 26.5,
+     "who": "drakeSegment",
+     "id": 9,
+     "jump": 31.2,
+     "x": 985,
+     "y": 81
     },
     {
      "tag": "boss cinder #121",
-     "t": 3.25,
+     "t": 3.28,
      "who": "drakeSegment",
      "id": 11,
-     "jump": 59.1,
-     "x": 1125,
-     "y": 497
+     "jump": 28.3,
+     "x": 1108,
+     "y": 555
     },
     {
-     "tag": "boss cinder #114",
-     "t": 2.72,
-     "who": "drakeSegment",
-     "id": 6,
-     "jump": 51.9,
-     "x": 886,
-     "y": 456
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.72,
-     "who": "drakeSegment",
-     "id": 7,
-     "jump": 51.6,
-     "x": 921,
-     "y": 458
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.72,
-     "who": "drakeSegment",
-     "id": 8,
-     "jump": 51.4,
-     "x": 971,
-     "y": 461
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.72,
+     "tag": "boss cinder #121",
+     "t": 3.27,
      "who": "drakeSegment",
      "id": 9,
-     "jump": 51.2,
-     "x": 1021,
-     "y": 471
+     "jump": 27.2,
+     "x": 1039,
+     "y": 524
     },
     {
      "tag": "boss cinder #114",
-     "t": 2.72,
+     "t": 26.48,
      "who": "drakeSegment",
      "id": 10,
-     "jump": 50.2,
-     "x": 1067,
-     "y": 486
+     "jump": 27,
+     "x": 1011,
+     "y": 120
     },
     {
      "tag": "boss cinder #114",
-     "t": 2.72,
+     "t": 26.5,
+     "who": "drakeSegment",
+     "id": 10,
+     "jump": 26.6,
+     "x": 1011,
+     "y": 120
+    },
+    {
+     "tag": "boss cinder #121",
+     "t": 24.48,
+     "who": "drakeSegment",
+     "id": 10,
+     "jump": 26.6,
+     "x": 370,
+     "y": 524
+    },
+    {
+     "tag": "boss cinder #121",
+     "t": 24.48,
      "who": "drakeSegment",
      "id": 11,
-     "jump": 48.8,
-     "x": 1109,
-     "y": 502
+     "jump": 25.4,
+     "x": 329,
+     "y": 545
     },
     {
-     "tag": "boss cinder #107",
-     "t": 3.62,
+     "tag": "boss cinder #100",
+     "t": 29.38,
      "who": "drakeSegment",
-     "id": 6,
-     "jump": 46.2,
-     "x": 959,
-     "y": 450
+     "id": 10,
+     "jump": 25,
+     "x": 751,
+     "y": 41
     },
     {
-     "tag": "boss cinder #114",
-     "t": 2.72,
+     "tag": "boss cinder #121",
+     "t": 3.28,
+     "who": "drakeSegment",
+     "id": 10,
+     "jump": 25,
+     "x": 1065,
+     "y": 544
+    },
+    {
+     "tag": "boss cinder #121",
+     "t": 24.45,
+     "who": "drakeSegment",
+     "id": 8,
+     "jump": 24.7,
+     "x": 402,
+     "y": 454
+    },
+    {
+     "tag": "boss cinder #121",
+     "t": 24.48,
      "who": "drakeSegment",
      "id": 12,
-     "jump": 45.8,
-     "x": 1158,
-     "y": 534
-    },
-    {
-     "tag": "boss cinder #107",
-     "t": 3.62,
-     "who": "drakeSegment",
-     "id": 7,
-     "jump": 45.5,
-     "x": 987,
-     "y": 458
-    },
-    {
-     "tag": "boss cinder #107",
-     "t": 3.62,
-     "who": "drakeSegment",
-     "id": 8,
-     "jump": 44.6,
-     "x": 1036,
-     "y": 466
-    },
-    {
-     "tag": "boss cinder #107",
-     "t": 3.62,
-     "who": "drakeSegment",
-     "id": 9,
-     "jump": 43.3,
-     "x": 1086,
-     "y": 464
-    },
-    {
-     "tag": "boss cinder #107",
-     "t": 3.62,
-     "who": "drakeSegment",
-     "id": 10,
-     "jump": 41.8,
-     "x": 1133,
-     "y": 451
-    }
-   ]
-  },
-  "placed:stiltFoot": {
-   "n": 197,
-   "mean": 15.1,
-   "worst": 71.2,
-   "kinds": {
-    "stiltFoot": 197
-   },
-   "ex": [
-    {
-     "tag": "boss stiltIdol #121",
-     "t": 10.23,
-     "who": "stiltFoot",
-     "id": 9,
-     "jump": 71.2,
-     "x": 970,
-     "y": 936
-    },
-    {
-     "tag": "boss stiltIdol #121",
-     "t": 10.23,
-     "who": "stiltFoot",
-     "id": 11,
-     "jump": 70.4,
-     "x": 1018,
-     "y": 936
-    },
-    {
-     "tag": "boss stiltIdol #135",
-     "t": 12.17,
-     "who": "stiltFoot",
-     "id": 8,
-     "jump": 60.2,
-     "x": 803,
-     "y": 817
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 22.17,
-     "who": "stiltFoot",
-     "id": 6,
-     "jump": 49.5,
-     "x": 934,
-     "y": 633
-    },
-    {
-     "tag": "boss stiltIdol #135",
-     "t": 5.43,
-     "who": "stiltFoot",
-     "id": 7,
-     "jump": 48.5,
-     "x": 685,
-     "y": 450
-    },
-    {
-     "tag": "boss stiltIdol #114",
-     "t": 6.4,
-     "who": "stiltFoot",
-     "id": 10,
-     "jump": 40.7,
-     "x": 1013,
-     "y": 728
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 23.92,
-     "who": "stiltFoot",
-     "id": 6,
-     "jump": 39.9,
-     "x": 952,
-     "y": 677
-    },
-    {
-     "tag": "boss stiltIdol #135",
-     "t": 18.3,
-     "who": "stiltFoot",
-     "id": 7,
-     "jump": 39.8,
-     "x": 864,
-     "y": 817
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 23.92,
-     "who": "stiltFoot",
-     "id": 7,
-     "jump": 36.2,
-     "x": 907,
-     "y": 657
-    },
-    {
-     "tag": "boss stiltIdol #114",
-     "t": 8.4,
-     "who": "stiltFoot",
-     "id": 6,
-     "jump": 33.6,
-     "x": 930,
-     "y": 868
-    },
-    {
-     "tag": "boss stiltIdol #114",
-     "t": 8.38,
-     "who": "stiltFoot",
-     "id": 6,
-     "jump": 32.9,
-     "x": 930,
-     "y": 868
-    },
-    {
-     "tag": "boss stiltIdol #135",
-     "t": 17.7,
-     "who": "stiltFoot",
-     "id": 7,
-     "jump": 32.2,
-     "x": 861,
-     "y": 936
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 22.15,
-     "who": "stiltFoot",
-     "id": 8,
-     "jump": 30.6,
-     "x": 908,
-     "y": 674
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 23.93,
-     "who": "stiltFoot",
-     "id": 7,
-     "jump": 30.5,
-     "x": 907,
-     "y": 657
-    },
-    {
-     "tag": "boss stiltIdol #121",
-     "t": 10.45,
-     "who": "stiltFoot",
-     "id": 7,
-     "jump": 29.9,
-     "x": 1101,
-     "y": 750
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 22.15,
-     "who": "stiltFoot",
-     "id": 6,
-     "jump": 26.7,
-     "x": 934,
-     "y": 633
-    },
-    {
-     "tag": "boss stiltIdol #135",
-     "t": 8.03,
-     "who": "stiltFoot",
-     "id": 9,
-     "jump": 26,
-     "x": 778,
-     "y": 503
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 7.95,
-     "who": "stiltFoot",
-     "id": 8,
-     "jump": 25.5,
-     "x": 609,
-     "y": 574
-    },
-    {
-     "tag": "boss stiltIdol #128",
-     "t": 7.98,
-     "who": "stiltFoot",
-     "id": 11,
-     "jump": 24.1,
-     "x": 947,
+     "jump": 24.6,
+     "x": 276,
      "y": 567
     },
     {
-     "tag": "boss stiltIdol #114",
-     "t": 11.92,
-     "who": "stiltFoot",
+     "tag": "boss cinder #121",
+     "t": 24.48,
+     "who": "drakeSegment",
+     "id": 9,
+     "jump": 24.5,
+     "x": 404,
+     "y": 491
+    }
+   ]
+  },
+  "placed:wurmSegment": {
+   "n": 335,
+   "mean": 18.8,
+   "worst": 130.4,
+   "kinds": {
+    "wurmSegment": 335
+   },
+   "ex": [
+    {
+     "tag": "boss sandWurm #107",
+     "t": 12.28,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 130.4,
+     "x": 430,
+     "y": 479
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.68,
+     "who": "wurmSegment",
+     "id": 13,
+     "jump": 88.8,
+     "x": 503,
+     "y": 795
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.7,
+     "who": "wurmSegment",
+     "id": 13,
+     "jump": 84.3,
+     "x": 489,
+     "y": 757
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.2,
+     "who": "wurmSegment",
      "id": 11,
-     "jump": 23.5,
-     "x": 1198,
-     "y": 936
+     "jump": 78.7,
+     "x": 711,
+     "y": 477
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 36.33,
+     "who": "wurmSegment",
+     "id": 11,
+     "jump": 78.4,
+     "x": 446,
+     "y": 816
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 13.77,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 74.9,
+     "x": 351,
+     "y": 692
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.7,
+     "who": "wurmSegment",
+     "id": 11,
+     "jump": 72.8,
+     "x": 408,
+     "y": 763
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 36.32,
+     "who": "wurmSegment",
+     "id": 11,
+     "jump": 71.6,
+     "x": 440,
+     "y": 826
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.18,
+     "who": "wurmSegment",
+     "id": 11,
+     "jump": 70.5,
+     "x": 719,
+     "y": 473
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.07,
+     "who": "wurmSegment",
+     "id": 13,
+     "jump": 69.2,
+     "x": 637,
+     "y": 449
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.07,
+     "who": "wurmSegment",
+     "id": 12,
+     "jump": 65,
+     "x": 673,
+     "y": 472
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.68,
+     "who": "wurmSegment",
+     "id": 12,
+     "jump": 62.2,
+     "x": 447,
+     "y": 766
+    },
+    {
+     "tag": "boss sandWurm #121",
+     "t": 17.27,
+     "who": "wurmSegment",
+     "id": 10,
+     "jump": 61.8,
+     "x": 645,
+     "y": 527
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.97,
+     "who": "wurmSegment",
+     "id": 13,
+     "jump": 60.9,
+     "x": 487,
+     "y": 780
+    },
+    {
+     "tag": "boss sandWurm #107",
+     "t": 12.28,
+     "who": "wurmSegment",
+     "id": 11,
+     "jump": 59.6,
+     "x": 474,
+     "y": 419
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.7,
+     "who": "wurmSegment",
+     "id": 12,
+     "jump": 56.8,
+     "x": 452,
+     "y": 792
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.68,
+     "who": "wurmSegment",
+     "id": 14,
+     "jump": 55.3,
+     "x": 520,
+     "y": 751
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.7,
+     "who": "wurmSegment",
+     "id": 14,
+     "jump": 54.2,
+     "x": 534,
+     "y": 773
+    },
+    {
+     "tag": "boss sandWurm #107",
+     "t": 16.83,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 52.7,
+     "x": 551,
+     "y": 471
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 16.82,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 52.7,
+     "x": 637,
+     "y": 415
     }
    ]
   },
   "placed:engineClaw": {
-   "n": 193,
-   "mean": 28.2,
+   "n": 160,
+   "mean": 24.7,
    "worst": 170.7,
    "kinds": {
-    "engineClaw": 193
+    "engineClaw": 160
    },
    "ex": [
     {
@@ -4778,24 +4366,6 @@
      "y": 695
     },
     {
-     "tag": "boss greatEngine #128",
-     "t": 16.6,
-     "who": "engineClaw",
-     "id": 7,
-     "jump": 148.7,
-     "x": 1048,
-     "y": 598
-    },
-    {
-     "tag": "boss greatEngine #128",
-     "t": 5.93,
-     "who": "engineClaw",
-     "id": 7,
-     "jump": 146.1,
-     "x": 874,
-     "y": 509
-    },
-    {
      "tag": "boss greatEngine #107",
      "t": 22.33,
      "who": "engineClaw",
@@ -4814,15 +4384,6 @@
      "y": 697
     },
     {
-     "tag": "boss greatEngine #128",
-     "t": 16.58,
-     "who": "engineClaw",
-     "id": 7,
-     "jump": 115.9,
-     "x": 1131,
-     "y": 640
-    },
-    {
      "tag": "boss greatEngine #114",
      "t": 18.33,
      "who": "engineClaw",
@@ -4830,15 +4391,6 @@
      "jump": 114,
      "x": 883,
      "y": 683
-    },
-    {
-     "tag": "boss greatEngine #128",
-     "t": 5.92,
-     "who": "engineClaw",
-     "id": 7,
-     "jump": 113.8,
-     "x": 957,
-     "y": 529
     },
     {
      "tag": "boss greatEngine #114",
@@ -4850,49 +4402,13 @@
      "y": 684
     },
     {
-     "tag": "boss greatEngine #100",
-     "t": 6.63,
+     "tag": "boss greatEngine #121",
+     "t": 4.28,
      "who": "engineClaw",
      "id": 7,
-     "jump": 94.1,
-     "x": 1039,
-     "y": 476
-    },
-    {
-     "tag": "boss greatEngine #100",
-     "t": 6.65,
-     "who": "engineClaw",
-     "id": 7,
-     "jump": 91.8,
-     "x": 986,
-     "y": 503
-    },
-    {
-     "tag": "boss greatEngine #128",
-     "t": 16.62,
-     "who": "engineClaw",
-     "id": 7,
-     "jump": 90.7,
-     "x": 1055,
-     "y": 548
-    },
-    {
-     "tag": "boss greatEngine #100",
-     "t": 16.65,
-     "who": "engineClaw",
-     "id": 13,
-     "jump": 88.9,
-     "x": 1148,
-     "y": 823
-    },
-    {
-     "tag": "boss greatEngine #100",
-     "t": 16.63,
-     "who": "engineClaw",
-     "id": 13,
-     "jump": 82.6,
-     "x": 1143,
-     "y": 831
+     "jump": 81.8,
+     "x": 935,
+     "y": 579
     },
     {
      "tag": "boss greatEngine #107",
@@ -4904,15 +4420,6 @@
      "y": 703
     },
     {
-     "tag": "boss greatEngine #128",
-     "t": 5.95,
-     "who": "engineClaw",
-     "id": 7,
-     "jump": 78.1,
-     "x": 863,
-     "y": 462
-    },
-    {
      "tag": "boss greatEngine #114",
      "t": 6.35,
      "who": "engineClaw",
@@ -4920,6 +4427,87 @@
      "jump": 74.2,
      "x": 915,
      "y": 429
+    },
+    {
+     "tag": "boss greatEngine #114",
+     "t": 6.37,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 70.3,
+     "x": 913,
+     "y": 425
+    },
+    {
+     "tag": "boss greatEngine #114",
+     "t": 4.73,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 57.8,
+     "x": 975,
+     "y": 338
+    },
+    {
+     "tag": "boss greatEngine #121",
+     "t": 36.7,
+     "who": "engineClaw",
+     "id": 19,
+     "jump": 57.8,
+     "x": 1041,
+     "y": 701
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 12.4,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 57.8,
+     "x": 1141,
+     "y": 331
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 4.67,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 57.7,
+     "x": 1047,
+     "y": 345
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 33.48,
+     "who": "engineClaw",
+     "id": 17,
+     "jump": 57.7,
+     "x": 918,
+     "y": 747
+    },
+    {
+     "tag": "boss greatEngine #107",
+     "t": 4.83,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 57.7,
+     "x": 872,
+     "y": 387
+    },
+    {
+     "tag": "boss greatEngine #121",
+     "t": 4.3,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 57.1,
+     "x": 994,
+     "y": 586
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 4.68,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 53.6,
+     "x": 987,
+     "y": 332
     }
    ]
   },
@@ -5113,12 +4701,202 @@
     }
    ]
   },
+  "placed:stiltFoot": {
+   "n": 150,
+   "mean": 15.3,
+   "worst": 71.2,
+   "kinds": {
+    "stiltFoot": 150
+   },
+   "ex": [
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 10.23,
+     "who": "stiltFoot",
+     "id": 9,
+     "jump": 71.2,
+     "x": 970,
+     "y": 936
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 10.23,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 70.4,
+     "x": 1018,
+     "y": 936
+    },
+    {
+     "tag": "boss stiltIdol #135",
+     "t": 12.17,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 60.2,
+     "x": 803,
+     "y": 817
+    },
+    {
+     "tag": "boss stiltIdol #135",
+     "t": 5.43,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 48.5,
+     "x": 685,
+     "y": 450
+    },
+    {
+     "tag": "boss stiltIdol #114",
+     "t": 6.4,
+     "who": "stiltFoot",
+     "id": 10,
+     "jump": 40.7,
+     "x": 1013,
+     "y": 728
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 23.92,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 39.9,
+     "x": 952,
+     "y": 677
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 23.92,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 36.2,
+     "x": 907,
+     "y": 657
+    },
+    {
+     "tag": "boss stiltIdol #135",
+     "t": 17.7,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 32.2,
+     "x": 861,
+     "y": 936
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 23.93,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 30.5,
+     "x": 907,
+     "y": 657
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 10.45,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 29.9,
+     "x": 1101,
+     "y": 750
+    },
+    {
+     "tag": "boss stiltIdol #135",
+     "t": 8.03,
+     "who": "stiltFoot",
+     "id": 9,
+     "jump": 26,
+     "x": 778,
+     "y": 503
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 7.95,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 25.5,
+     "x": 609,
+     "y": 574
+    },
+    {
+     "tag": "boss stiltIdol #114",
+     "t": 11.92,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 23.5,
+     "x": 1198,
+     "y": 936
+    },
+    {
+     "tag": "boss stiltIdol #114",
+     "t": 11.93,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 23.5,
+     "x": 1198,
+     "y": 936
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 47.23,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 23.3,
+     "x": 1276,
+     "y": 779
+    },
+    {
+     "tag": "boss stiltIdol #107",
+     "t": 51.9,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 23.2,
+     "x": 999,
+     "y": 936
+    },
+    {
+     "tag": "boss stiltIdol #107",
+     "t": 51.92,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 23.2,
+     "x": 999,
+     "y": 936
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 8.13,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 23.1,
+     "x": 578,
+     "y": 482
+    },
+    {
+     "tag": "boss stiltIdol #114",
+     "t": 8.2,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 22.8,
+     "x": 856,
+     "y": 840
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 10.3,
+     "who": "stiltFoot",
+     "id": 9,
+     "jump": 22.8,
+     "x": 992,
+     "y": 936
+    }
+   ]
+  },
   "placed:engineHammer": {
-   "n": 108,
-   "mean": 27.9,
+   "n": 92,
+   "mean": 29.6,
    "worst": 151.1,
    "kinds": {
-    "engineHammer": 108
+    "engineHammer": 92
    },
    "ex": [
     {
@@ -5304,49 +5082,13 @@
    ]
   },
   "placed:drakeTail": {
-   "n": 68,
-   "mean": 12.1,
-   "worst": 54.8,
+   "n": 42,
+   "mean": 10.4,
+   "worst": 20.2,
    "kinds": {
-    "drakeTail": 68
+    "drakeTail": 42
    },
    "ex": [
-    {
-     "tag": "boss cinder #114",
-     "t": 2.7,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 54.8,
-     "x": 1210,
-     "y": 596
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.72,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 39.1,
-     "x": 1201,
-     "y": 583
-    },
-    {
-     "tag": "boss cinder #121",
-     "t": 3.25,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 30.7,
-     "x": 1175,
-     "y": 385
-    },
-    {
-     "tag": "boss cinder #107",
-     "t": 3.62,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 26.4,
-     "x": 1210,
-     "y": 314
-    },
     {
      "tag": "boss cinder #100",
      "t": 6.4,
@@ -5411,24 +5153,6 @@
      "y": 592
     },
     {
-     "tag": "boss cinder #107",
-     "t": 3.63,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 15,
-     "x": 1208,
-     "y": 326
-    },
-    {
-     "tag": "boss cinder #128",
-     "t": 22.12,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 14.6,
-     "x": 287,
-     "y": 818
-    },
-    {
      "tag": "boss cinder #121",
      "t": 3.3,
      "who": "drakeTail",
@@ -5436,42 +5160,6 @@
      "jump": 14,
      "x": 1148,
      "y": 465
-    },
-    {
-     "tag": "boss cinder #114",
-     "t": 2.57,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 13.7,
-     "x": 1233,
-     "y": 646
-    },
-    {
-     "tag": "boss cinder #128",
-     "t": 2.75,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 13.3,
-     "x": 1213,
-     "y": 310
-    },
-    {
-     "tag": "boss cinder #135",
-     "t": 3.02,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 13.2,
-     "x": 1213,
-     "y": 289
-    },
-    {
-     "tag": "boss cinder #135",
-     "t": 3.02,
-     "who": "drakeTail",
-     "id": 13,
-     "jump": 13.1,
-     "x": 1213,
-     "y": 289
     },
     {
      "tag": "boss cinder #121",
@@ -5484,21 +5172,111 @@
     },
     {
      "tag": "boss cinder #121",
-     "t": 8.17,
+     "t": 3.35,
      "who": "drakeTail",
      "id": 13,
-     "jump": 12.8,
-     "x": 989,
-     "y": 447
+     "jump": 12,
+     "x": 1164,
+     "y": 485
+    },
+    {
+     "tag": "boss cinder #100",
+     "t": 3.75,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 11.8,
+     "x": 1238,
+     "y": 384
+    },
+    {
+     "tag": "boss cinder #128",
+     "t": 23.43,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 11.5,
+     "x": 478,
+     "y": 916
+    },
+    {
+     "tag": "boss cinder #100",
+     "t": 3.7,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 11.1,
+     "x": 1220,
+     "y": 353
+    },
+    {
+     "tag": "boss cinder #128",
+     "t": 25.35,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 10.5,
+     "x": 798,
+     "y": 858
+    },
+    {
+     "tag": "boss cinder #135",
+     "t": 6.67,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 10.1,
+     "x": 1078,
+     "y": 468
+    },
+    {
+     "tag": "boss cinder #135",
+     "t": 6.68,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 9.7,
+     "x": 1077,
+     "y": 470
+    },
+    {
+     "tag": "boss cinder #121",
+     "t": 6.32,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 9.2,
+     "x": 1132,
+     "y": 399
+    },
+    {
+     "tag": "boss cinder #100",
+     "t": 6.28,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 9.1,
+     "x": 1137,
+     "y": 569
+    },
+    {
+     "tag": "boss cinder #121",
+     "t": 6.3,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 9.1,
+     "x": 1130,
+     "y": 383
+    },
+    {
+     "tag": "boss cinder #135",
+     "t": 11.22,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 9,
+     "x": 347,
+     "y": 495
     }
    ]
   },
   "placed:oozeHalf": {
-   "n": 19,
-   "mean": 12.3,
+   "n": 9,
+   "mean": 14.7,
    "worst": 37.2,
    "kinds": {
-    "oozeHalf": 19
+    "oozeHalf": 9
    },
    "ex": [
     {
@@ -5520,24 +5298,6 @@
      "y": 433
     },
     {
-     "tag": "boss greatOoze #100",
-     "t": 46.25,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 18.9,
-     "x": 493,
-     "y": 623
-    },
-    {
-     "tag": "boss greatOoze #135",
-     "t": 39.53,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 13.8,
-     "x": 1133,
-     "y": 52
-    },
-    {
      "tag": "boss greatOoze #107",
      "t": 31.93,
      "who": "oozeHalf",
@@ -5545,15 +5305,6 @@
      "jump": 11.8,
      "x": 744,
      "y": 237
-    },
-    {
-     "tag": "boss greatOoze #135",
-     "t": 39.28,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 10.5,
-     "x": 1246,
-     "y": 121
     },
     {
      "tag": "boss greatOoze #107",
@@ -5565,15 +5316,6 @@
      "y": 918
     },
     {
-     "tag": "boss greatOoze #100",
-     "t": 50,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 9.3,
-     "x": 49,
-     "y": 828
-    },
-    {
      "tag": "boss greatOoze #107",
      "t": 32.88,
      "who": "oozeHalf",
@@ -5581,24 +5323,6 @@
      "jump": 9.3,
      "x": 1245,
      "y": 387
-    },
-    {
-     "tag": "boss greatOoze #135",
-     "t": 39.27,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 9.3,
-     "x": 1246,
-     "y": 132
-    },
-    {
-     "tag": "boss greatOoze #135",
-     "t": 39.52,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 9.3,
-     "x": 1147,
-     "y": 51
     },
     {
      "tag": "boss greatOoze #100",
@@ -5610,15 +5334,6 @@
      "y": 585
     },
     {
-     "tag": "boss greatOoze #135",
-     "t": 39.3,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 8.8,
-     "x": 1238,
-     "y": 116
-    },
-    {
      "tag": "boss greatOoze #107",
      "t": 32.92,
      "who": "oozeHalf",
@@ -5626,15 +5341,6 @@
      "jump": 8.5,
      "x": 1235,
      "y": 395
-    },
-    {
-     "tag": "boss greatOoze #135",
-     "t": 39.95,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 7.9,
-     "x": 943,
-     "y": 187
     },
     {
      "tag": "boss greatOoze #128",
@@ -5647,86 +5353,23 @@
     },
     {
      "tag": "boss greatOoze #135",
-     "t": 39.55,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 7.6,
-     "x": 1126,
-     "y": 57
-    },
-    {
-     "tag": "boss greatOoze #135",
      "t": 38.28,
      "who": "oozeHalf",
      "id": 12,
      "jump": 7.3,
      "x": 805,
      "y": 446
-    },
-    {
-     "tag": "boss greatOoze #100",
-     "t": 49.22,
-     "who": "oozeHalf",
-     "id": 12,
-     "jump": 6.6,
-     "x": 477,
-     "y": 795
     }
    ]
   },
   "placed:seraphHorn": {
-   "n": 7,
-   "mean": 9.8,
-   "worst": 24.7,
+   "n": 1,
+   "mean": 7,
+   "worst": 7,
    "kinds": {
-    "seraphHorn": 7
+    "seraphHorn": 1
    },
    "ex": [
-    {
-     "tag": "boss gildedSeraph #121",
-     "t": 28.25,
-     "who": "seraphHorn",
-     "id": 11,
-     "jump": 24.7,
-     "x": 951,
-     "y": 451
-    },
-    {
-     "tag": "boss gildedSeraph #114",
-     "t": 18.47,
-     "who": "seraphHorn",
-     "id": 10,
-     "jump": 7.8,
-     "x": 982,
-     "y": 450
-    },
-    {
-     "tag": "boss gildedSeraph #114",
-     "t": 18.47,
-     "who": "seraphHorn",
-     "id": 11,
-     "jump": 7.8,
-     "x": 838,
-     "y": 481
-    },
-    {
-     "tag": "boss gildedSeraph #114",
-     "t": 18.47,
-     "who": "seraphHorn",
-     "id": 8,
-     "jump": 7.4,
-     "x": 806,
-     "y": 336
-    },
-    {
-     "tag": "boss gildedSeraph #114",
-     "t": 18.47,
-     "who": "seraphHorn",
-     "id": 9,
-     "jump": 7.1,
-     "x": 951,
-     "y": 306
-    },
     {
      "tag": "boss gildedSeraph #121",
      "t": 28.33,
@@ -5735,26 +5378,17 @@
      "jump": 7,
      "x": 989,
      "y": 423
-    },
-    {
-     "tag": "boss gildedSeraph #121",
-     "t": 28.27,
-     "who": "seraphHorn",
-     "id": 11,
-     "jump": 6.8,
-     "x": 965,
-     "y": 441
     }
    ]
   },
   "act:dash": {
-   "n": 24825,
+   "n": 24798,
    "mean": 20.9,
    "worst": 333.4,
    "kinds": {
-    "twinfang": 12312,
-    "paladin": 6961,
-    "tower": 273,
+    "twinfang": 12300,
+    "paladin": 6950,
+    "tower": 269,
     "samurai": 2087,
     "sproutling": 2,
     "goblinSpear": 39,
@@ -5964,21 +5598,21 @@
    ]
   },
   "held/stunned": {
-   "n": 2558,
+   "n": 2546,
    "mean": 10.2,
    "worst": 83.6,
    "kinds": {
-    "tower": 176,
-    "berserker": 16,
+    "tower": 172,
+    "berserker": 15,
     "sproutling": 26,
     "welderDrone": 15,
     "slimeSludge": 2,
     "rattler": 126,
-    "ghost": 34,
+    "ghost": 33,
     "paladin": 415,
     "seraphSinger": 35,
     "archer": 112,
-    "oldguard": 91,
+    "oldguard": 90,
     "twinfang": 32,
     "cleric": 87,
     "dynamouse": 2,
@@ -5989,7 +5623,7 @@
     "bat": 53,
     "imp": 39,
     "cherub": 25,
-    "sandSerpent": 20,
+    "sandSerpent": 19,
     "chainCrawler": 7,
     "rattlerSpear": 6,
     "orc": 12,
@@ -6000,13 +5634,13 @@
     "wolf": 45,
     "boar": 12,
     "banditBrute": 4,
-    "scarab": 133,
+    "scarab": 132,
     "mummy": 39,
     "slime": 19,
     "slimeSmall": 28,
     "automaton": 43,
     "drillBot": 20,
-    "gearSprite": 53,
+    "gearSprite": 52,
     "snowman": 13,
     "spiderMomma": 25,
     "frostWolf": 26,
@@ -6023,7 +5657,7 @@
     "alchemist": 2,
     "croc": 2,
     "yeti": 21,
-    "brute": 55,
+    "brute": 54,
     "bandit": 15,
     "banditSpear": 15,
     "banditDagger": 7,
@@ -6052,7 +5686,7 @@
     "spiritHaste": 19,
     "cobra": 4,
     "cogSprite": 41,
-    "hornetBronze": 8,
+    "hornetBronze": 7,
     "waspBronze": 8
    },
    "ex": [
@@ -6239,11 +5873,11 @@
    ]
   },
   "brain:greatOoze": {
-   "n": 1176,
-   "mean": 9.8,
+   "n": 1126,
+   "mean": 9.7,
    "worst": 64.8,
    "kinds": {
-    "greatOoze": 1176
+    "greatOoze": 1126
    },
    "ex": [
     {
@@ -6319,69 +5953,6 @@
      "y": 284
     },
     {
-     "tag": "boss greatOoze #128",
-     "t": 3.98,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 38.4,
-     "x": 1010,
-     "y": 475
-    },
-    {
-     "tag": "boss greatOoze #121",
-     "t": 4.95,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 34.8,
-     "x": 1034,
-     "y": 499
-    },
-    {
-     "tag": "boss greatOoze #107",
-     "t": 27.95,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 32.5,
-     "x": 817,
-     "y": 462
-    },
-    {
-     "tag": "boss greatOoze #107",
-     "t": 17.35,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 32.4,
-     "x": 615,
-     "y": 428
-    },
-    {
-     "tag": "boss greatOoze #121",
-     "t": 19.5,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 24.8,
-     "x": 937,
-     "y": 736
-    },
-    {
-     "tag": "boss greatOoze #107",
-     "t": 14.05,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 16.4,
-     "x": 904,
-     "y": 418
-    },
-    {
-     "tag": "boss greatOoze #121",
-     "t": 46.3,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 15.5,
-     "x": 693,
-     "y": 336
-    },
-    {
      "tag": "boss greatOoze #100",
      "t": 49.58,
      "who": "greatOoze",
@@ -6389,15 +5960,6 @@
      "jump": 14.5,
      "x": 50,
      "y": 404
-    },
-    {
-     "tag": "boss greatOoze #121",
-     "t": 19.52,
-     "who": "greatOoze",
-     "id": 5,
-     "jump": 13.8,
-     "x": 949,
-     "y": 730
     },
     {
      "tag": "boss greatOoze #107",
@@ -6425,29 +5987,92 @@
      "jump": 11.3,
      "x": 693,
      "y": 517
+    },
+    {
+     "tag": "boss greatOoze #107",
+     "t": 14.07,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 10.9,
+     "x": 893,
+     "y": 418
+    },
+    {
+     "tag": "boss greatOoze #100",
+     "t": 17.62,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 10.5,
+     "x": 976,
+     "y": 596
+    },
+    {
+     "tag": "boss greatOoze #121",
+     "t": 20.03,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 10.5,
+     "x": 1215,
+     "y": 602
+    },
+    {
+     "tag": "boss greatOoze #135",
+     "t": 46.38,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 10.4,
+     "x": 662,
+     "y": 384
+    },
+    {
+     "tag": "boss greatOoze #107",
+     "t": 13.73,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 10.1,
+     "x": 1078,
+     "y": 420
+    },
+    {
+     "tag": "boss greatOoze #114",
+     "t": 41.38,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 10.1,
+     "x": 956,
+     "y": 250
+    },
+    {
+     "tag": "boss greatOoze #121",
+     "t": 20.82,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 10.1,
+     "x": 847,
+     "y": 419
+    },
+    {
+     "tag": "boss greatOoze #100",
+     "t": 48.22,
+     "who": "greatOoze",
+     "id": 5,
+     "jump": 9.8,
+     "x": 415,
+     "y": 763
     }
    ]
   },
   "act:channel": {
-   "n": 924,
-   "mean": 13.1,
-   "worst": 281.3,
+   "n": 871,
+   "mean": 12.5,
+   "worst": 121,
    "kinds": {
-    "mobPitchfork": 273,
-    "mobDagger": 253,
-    "mob": 105,
-    "mobAxe": 293
+    "mobDagger": 234,
+    "mob": 100,
+    "mobPitchfork": 264,
+    "mobAxe": 273
    },
    "ex": [
-    {
-     "tag": "crowd scarab*12,mummy*4 #553",
-     "t": 5.87,
-     "who": "mobDagger",
-     "id": 6,
-     "jump": 281.3,
-     "x": 648,
-     "y": 379
-    },
     {
      "tag": "crowd rattler*12,rattlerSpear*6 #501",
      "t": 36.22,
@@ -6456,15 +6081,6 @@
      "jump": 121,
      "x": 1062,
      "y": 603
-    },
-    {
-     "tag": "crowd scarab*12,mummy*4 #553",
-     "t": 2.98,
-     "who": "mob",
-     "id": 3,
-     "jump": 106.9,
-     "x": 696,
-     "y": 333
     },
     {
      "tag": "crowd scarab*12,mummy*4 #553",
@@ -6618,15 +6234,223 @@
      "jump": 51.1,
      "x": 248,
      "y": 516
+    },
+    {
+     "tag": "crowd scarab*12,mummy*4 #553",
+     "t": 5.88,
+     "who": "mobDagger",
+     "id": 6,
+     "jump": 50.4,
+     "x": 622,
+     "y": 422
+    },
+    {
+     "tag": "crowd wolf*10,boar*4,banditBrute*3 #540",
+     "t": 2.07,
+     "who": "mobAxe",
+     "id": 5,
+     "jump": 50.3,
+     "x": 602,
+     "y": 280
+    }
+   ]
+  },
+  "with its body: sandSerpent (its own lunge, rush or drop)": {
+   "n": 431,
+   "mean": 12.1,
+   "worst": 41.6,
+   "kinds": {
+    "serpentCoil": 431
+   },
+   "ex": [
+    {
+     "tag": "dungeon dunes run 0 room 1",
+     "t": 12.57,
+     "who": "serpentCoil",
+     "id": 13,
+     "jump": 41.6,
+     "x": 737,
+     "y": 513
+    },
+    {
+     "tag": "dungeon dunes run 0 room 1",
+     "t": 12.57,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 41.5,
+     "x": 596,
+     "y": 512
+    },
+    {
+     "tag": "dungeon dunes run 0 room 1",
+     "t": 12.57,
+     "who": "serpentCoil",
+     "id": 14,
+     "jump": 41.5,
+     "x": 758,
+     "y": 552
+    },
+    {
+     "tag": "dungeon dunes run 0 room 1",
+     "t": 12.57,
+     "who": "serpentCoil",
+     "id": 8,
+     "jump": 41.4,
+     "x": 562,
+     "y": 551
+    },
+    {
+     "tag": "dungeon dunes run 0 room 5",
+     "t": 19.85,
+     "who": "serpentCoil",
+     "id": 7,
+     "jump": 27.9,
+     "x": 1044,
+     "y": 368
+    },
+    {
+     "tag": "dungeon dunes run 0 room 5",
+     "t": 19.85,
+     "who": "serpentCoil",
+     "id": 8,
+     "jump": 27.9,
+     "x": 994,
+     "y": 353
+    },
+    {
+     "tag": "dungeon dunes run 0 room 5",
+     "t": 19.85,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 27.9,
+     "x": 946,
+     "y": 335
+    },
+    {
+     "tag": "dungeon dunes run 0 room 5",
+     "t": 19.85,
+     "who": "serpentCoil",
+     "id": 10,
+     "jump": 27.9,
+     "x": 904,
+     "y": 306
+    },
+    {
+     "tag": "dungeon dunes run 0 room 5",
+     "t": 19.85,
+     "who": "serpentCoil",
+     "id": 11,
+     "jump": 27.9,
+     "x": 885,
+     "y": 262
+    },
+    {
+     "tag": "dungeon dunes run 0 room 5",
+     "t": 19.85,
+     "who": "serpentCoil",
+     "id": 12,
+     "jump": 27.9,
+     "x": 899,
+     "y": 224
+    },
+    {
+     "tag": "dungeon dunes run 0 room 5",
+     "t": 19.85,
+     "who": "serpentCoil",
+     "id": 6,
+     "jump": 27.5,
+     "x": 1095,
+     "y": 375
+    },
+    {
+     "tag": "chain sandSerpent #344",
+     "t": 8.6,
+     "who": "serpentCoil",
+     "id": 7,
+     "jump": 24.7,
+     "x": 617,
+     "y": 151
+    },
+    {
+     "tag": "chain sandSerpent #344",
+     "t": 8.6,
+     "who": "serpentCoil",
+     "id": 8,
+     "jump": 24.7,
+     "x": 577,
+     "y": 184
+    },
+    {
+     "tag": "chain sandSerpent #344",
+     "t": 8.6,
+     "who": "serpentCoil",
+     "id": 13,
+     "jump": 24.7,
+     "x": 584,
+     "y": 353
+    },
+    {
+     "tag": "chain sandSerpent #344",
+     "t": 8.6,
+     "who": "serpentCoil",
+     "id": 12,
+     "jump": 24.6,
+     "x": 543,
+     "y": 335
+    },
+    {
+     "tag": "chain sandSerpent #344",
+     "t": 8.6,
+     "who": "serpentCoil",
+     "id": 11,
+     "jump": 23.7,
+     "x": 502,
+     "y": 305
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 4.03,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 23.6,
+     "x": 1113,
+     "y": 510
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 4.03,
+     "who": "serpentCoil",
+     "id": 12,
+     "jump": 22,
+     "x": 1287,
+     "y": 493
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 4.03,
+     "who": "serpentCoil",
+     "id": 10,
+     "jump": 21.8,
+     "x": 1171,
+     "y": 479
+    },
+    {
+     "tag": "dungeon dunes run 0 room 1",
+     "t": 12.58,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 21.4,
+     "x": 585,
+     "y": 530
     }
    ]
   },
   "brain:sandWurm": {
-   "n": 338,
-   "mean": 10,
+   "n": 336,
+   "mean": 9.9,
    "worst": 28.5,
    "kinds": {
-    "sandWurm": 338
+    "sandWurm": 336
    },
    "ex": [
     {
@@ -6801,23 +6625,214 @@
      "y": 478
     },
     {
-     "tag": "boss sandWurm #100",
-     "t": 23.52,
+     "tag": "boss sandWurm #135",
+     "t": 23.68,
      "who": "sandWurm",
      "id": 5,
-     "jump": 13.9,
-     "x": 646,
-     "y": 459
+     "jump": 13.1,
+     "x": 651,
+     "y": 506
+    }
+   ]
+  },
+  "with its body: cinder (its own lunge, rush or drop)": {
+   "n": 287,
+   "mean": 16.2,
+   "worst": 68.6,
+   "kinds": {
+    "drakeSegment": 266,
+    "drakeTail": 21
+   },
+   "ex": [
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeSegment",
+     "id": 6,
+     "jump": 68.6,
+     "x": 903,
+     "y": 455
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeSegment",
+     "id": 7,
+     "jump": 67.8,
+     "x": 938,
+     "y": 457
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeSegment",
+     "id": 8,
+     "jump": 67.7,
+     "x": 988,
+     "y": 463
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeSegment",
+     "id": 9,
+     "jump": 67.5,
+     "x": 1036,
+     "y": 477
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeSegment",
+     "id": 10,
+     "jump": 66.4,
+     "x": 1081,
+     "y": 493
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeSegment",
+     "id": 11,
+     "jump": 65.4,
+     "x": 1124,
+     "y": 511
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeSegment",
+     "id": 12,
+     "jump": 62.4,
+     "x": 1171,
+     "y": 543
+    },
+    {
+     "tag": "boss cinder #121",
+     "t": 3.25,
+     "who": "drakeSegment",
+     "id": 11,
+     "jump": 59.1,
+     "x": 1125,
+     "y": 497
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.7,
+     "who": "drakeTail",
+     "id": 13,
+     "jump": 54.8,
+     "x": 1210,
+     "y": 596
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.72,
+     "who": "drakeSegment",
+     "id": 6,
+     "jump": 51.9,
+     "x": 886,
+     "y": 456
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.72,
+     "who": "drakeSegment",
+     "id": 7,
+     "jump": 51.6,
+     "x": 921,
+     "y": 458
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.72,
+     "who": "drakeSegment",
+     "id": 8,
+     "jump": 51.4,
+     "x": 971,
+     "y": 461
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.72,
+     "who": "drakeSegment",
+     "id": 9,
+     "jump": 51.2,
+     "x": 1021,
+     "y": 471
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.72,
+     "who": "drakeSegment",
+     "id": 10,
+     "jump": 50.2,
+     "x": 1067,
+     "y": 486
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.72,
+     "who": "drakeSegment",
+     "id": 11,
+     "jump": 48.8,
+     "x": 1109,
+     "y": 502
+    },
+    {
+     "tag": "boss cinder #107",
+     "t": 3.62,
+     "who": "drakeSegment",
+     "id": 6,
+     "jump": 46.2,
+     "x": 959,
+     "y": 450
+    },
+    {
+     "tag": "boss cinder #114",
+     "t": 2.72,
+     "who": "drakeSegment",
+     "id": 12,
+     "jump": 45.8,
+     "x": 1158,
+     "y": 534
+    },
+    {
+     "tag": "boss cinder #107",
+     "t": 3.62,
+     "who": "drakeSegment",
+     "id": 7,
+     "jump": 45.5,
+     "x": 987,
+     "y": 458
+    },
+    {
+     "tag": "boss cinder #107",
+     "t": 3.62,
+     "who": "drakeSegment",
+     "id": 8,
+     "jump": 44.6,
+     "x": 1036,
+     "y": 466
+    },
+    {
+     "tag": "boss cinder #107",
+     "t": 3.62,
+     "who": "drakeSegment",
+     "id": 9,
+     "jump": 43.3,
+     "x": 1086,
+     "y": 464
     }
    ]
   },
   "hook:lastStandAura": {
-   "n": 280,
+   "n": 279,
    "mean": 9.9,
    "worst": 69.7,
    "kinds": {
     "frost": 157,
-    "bard": 77,
+    "bard": 76,
     "samurai": 46
    },
    "ex": [
@@ -6865,15 +6880,6 @@
      "jump": 26.5,
      "x": 606,
      "y": 553
-    },
-    {
-     "tag": "big rockTroll #1146",
-     "t": 1.65,
-     "who": "bard",
-     "id": 4,
-     "jump": 24.7,
-     "x": 607,
-     "y": 554
     },
     {
      "tag": "big troll #1146",
@@ -7000,6 +7006,205 @@
      "jump": 9,
      "x": 582,
      "y": 722
+    },
+    {
+     "tag": "boss gildedSeraph #114",
+     "t": 13.48,
+     "who": "frost",
+     "id": 3,
+     "jump": 9,
+     "x": 574,
+     "y": 725
+    }
+   ]
+  },
+  "with its body: sandWurm (its own lunge, rush or drop)": {
+   "n": 270,
+   "mean": 26.3,
+   "worst": 254.1,
+   "kinds": {
+    "wurmSegment": 270
+   },
+   "ex": [
+    {
+     "tag": "boss sandWurm #107",
+     "t": 12.35,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 254.1,
+     "x": 476,
+     "y": 388
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.33,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 168.7,
+     "x": 725,
+     "y": 456
+    },
+    {
+     "tag": "boss sandWurm #135",
+     "t": 12.57,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 164.3,
+     "x": 259,
+     "y": 342
+    },
+    {
+     "tag": "boss sandWurm #107",
+     "t": 12.37,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 143.8,
+     "x": 482,
+     "y": 390
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.53,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 135.5,
+     "x": 415,
+     "y": 745
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.35,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 118.9,
+     "x": 726,
+     "y": 458
+    },
+    {
+     "tag": "boss sandWurm #135",
+     "t": 12.6,
+     "who": "wurmSegment",
+     "id": 10,
+     "jump": 77.7,
+     "x": 286,
+     "y": 365
+    },
+    {
+     "tag": "boss sandWurm #107",
+     "t": 12.35,
+     "who": "wurmSegment",
+     "id": 11,
+     "jump": 76.1,
+     "x": 487,
+     "y": 455
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.33,
+     "who": "wurmSegment",
+     "id": 12,
+     "jump": 75.2,
+     "x": 656,
+     "y": 423
+    },
+    {
+     "tag": "boss sandWurm #107",
+     "t": 11.45,
+     "who": "wurmSegment",
+     "id": 7,
+     "jump": 73.7,
+     "x": 527,
+     "y": 454
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 11.43,
+     "who": "wurmSegment",
+     "id": 7,
+     "jump": 73.7,
+     "x": 647,
+     "y": 448
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 35.47,
+     "who": "wurmSegment",
+     "id": 7,
+     "jump": 73.7,
+     "x": 484,
+     "y": 776
+    },
+    {
+     "tag": "boss sandWurm #135",
+     "t": 11.57,
+     "who": "wurmSegment",
+     "id": 7,
+     "jump": 73.7,
+     "x": 306,
+     "y": 344
+    },
+    {
+     "tag": "boss sandWurm #107",
+     "t": 12.35,
+     "who": "wurmSegment",
+     "id": 12,
+     "jump": 68.8,
+     "x": 544,
+     "y": 438
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.52,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 66.4,
+     "x": 639,
+     "y": 440
+    },
+    {
+     "tag": "boss sandWurm #135",
+     "t": 12.62,
+     "who": "wurmSegment",
+     "id": 10,
+     "jump": 65.7,
+     "x": 271,
+     "y": 337
+    },
+    {
+     "tag": "boss sandWurm #135",
+     "t": 12.52,
+     "who": "wurmSegment",
+     "id": 11,
+     "jump": 65.2,
+     "x": 303,
+     "y": 352
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 36.57,
+     "who": "wurmSegment",
+     "id": 10,
+     "jump": 64.5,
+     "x": 555,
+     "y": 753
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 12.52,
+     "who": "wurmSegment",
+     "id": 10,
+     "jump": 64.2,
+     "x": 598,
+     "y": 398
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 36.57,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 63.9,
+     "x": 506,
+     "y": 769
     }
    ]
   },
@@ -7194,19 +7399,19 @@
    ]
   },
   "act:windup": {
-   "n": 264,
+   "n": 260,
    "mean": 13,
    "worst": 546.4,
    "kinds": {
-    "rattler": 56,
+    "rattler": 55,
     "devil": 7,
     "heraldLight": 1,
     "chainCrawler": 4,
     "orc": 19,
-    "ogre": 18,
+    "ogre": 17,
     "crab": 20,
     "mummy": 18,
-    "automaton": 58,
+    "automaton": 56,
     "angel": 15,
     "demon": 5,
     "croc": 1,
@@ -7337,15 +7542,6 @@
      "y": 195
     },
     {
-     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #579",
-     "t": 2.8,
-     "who": "automaton",
-     "id": 13,
-     "jump": 22.4,
-     "x": 730,
-     "y": 331
-    },
-    {
      "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #580",
      "t": 2.67,
      "who": "automaton",
@@ -7391,22 +7587,31 @@
      "y": 511
     },
     {
-     "tag": "crowd rattler*12,rattlerSpear*6 #501",
-     "t": 2.1,
-     "who": "rattler",
-     "id": 18,
-     "jump": 12.8,
-     "x": 678,
-     "y": 680
+     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #578",
+     "t": 46.38,
+     "who": "automaton",
+     "id": 7,
+     "jump": 12.2,
+     "x": 1113,
+     "y": 159
+    },
+    {
+     "tag": "dungeon warren run 0 room 5",
+     "t": 2.58,
+     "who": "hobgoblin",
+     "id": 4,
+     "jump": 12.1,
+     "x": 455,
+     "y": 169
     }
    ]
   },
   "anim:thrust(boneKing)": {
-   "n": 248,
-   "mean": 32.5,
+   "n": 238,
+   "mean": 32,
    "worst": 82.2,
    "kinds": {
-    "boneKing": 248
+    "boneKing": 238
    },
    "ex": [
     {
@@ -7435,15 +7640,6 @@
      "jump": 79,
      "x": 1159,
      "y": 546
-    },
-    {
-     "tag": "boss boneKing #114",
-     "t": 35.3,
-     "who": "boneKing",
-     "id": 5,
-     "jump": 69.6,
-     "x": 976,
-     "y": 455
     },
     {
      "tag": "boss boneKing #128",
@@ -7563,15 +7759,6 @@
      "y": 524
     },
     {
-     "tag": "boss boneKing #100",
-     "t": 23.33,
-     "who": "boneKing",
-     "id": 5,
-     "jump": 55.3,
-     "x": 1088,
-     "y": 555
-    },
-    {
      "tag": "boss boneKing #114",
      "t": 2.77,
      "who": "boneKing",
@@ -7588,6 +7775,24 @@
      "jump": 55.3,
      "x": 1023,
      "y": 475
+    },
+    {
+     "tag": "boss boneKing #128",
+     "t": 48.9,
+     "who": "boneKing",
+     "id": 5,
+     "jump": 55.3,
+     "x": 1021,
+     "y": 678
+    },
+    {
+     "tag": "boss boneKing #114",
+     "t": 20.17,
+     "who": "boneKing",
+     "id": 5,
+     "jump": 55.2,
+     "x": 1196,
+     "y": 495
     }
    ]
   },
@@ -7782,11 +7987,11 @@
    ]
   },
   "anim:ability(boneKing)": {
-   "n": 206,
-   "mean": 10.6,
+   "n": 189,
+   "mean": 10.4,
    "worst": 17.8,
    "kinds": {
-    "boneKing": 206
+    "boneKing": 189
    },
    "ex": [
     {
@@ -7944,15 +8149,6 @@
     },
     {
      "tag": "boss boneKing #121",
-     "t": 18.97,
-     "who": "boneKing",
-     "id": 5,
-     "jump": 16.8,
-     "x": 577,
-     "y": 529
-    },
-    {
-     "tag": "boss boneKing #121",
      "t": 19.27,
      "who": "boneKing",
      "id": 5,
@@ -7968,6 +8164,205 @@
      "jump": 16.6,
      "x": 907,
      "y": 502
+    },
+    {
+     "tag": "boss boneKing #121",
+     "t": 19.3,
+     "who": "boneKing",
+     "id": 5,
+     "jump": 16.3,
+     "x": 923,
+     "y": 500
+    }
+   ]
+  },
+  "with its body: sandSerpent (held or carried)": {
+   "n": 121,
+   "mean": 11.4,
+   "worst": 27,
+   "kinds": {
+    "serpentCoil": 121
+   },
+   "ex": [
+    {
+     "tag": "chain sandSerpent #300",
+     "t": 3.73,
+     "who": "serpentCoil",
+     "id": 7,
+     "jump": 27,
+     "x": 834,
+     "y": 472
+    },
+    {
+     "tag": "chain sandSerpent #300",
+     "t": 3.73,
+     "who": "serpentCoil",
+     "id": 6,
+     "jump": 23.3,
+     "x": 825,
+     "y": 523
+    },
+    {
+     "tag": "chain sandSerpent #300",
+     "t": 3.75,
+     "who": "serpentCoil",
+     "id": 7,
+     "jump": 22.1,
+     "x": 835,
+     "y": 467
+    },
+    {
+     "tag": "chain sandSerpent #311",
+     "t": 13.25,
+     "who": "serpentCoil",
+     "id": 7,
+     "jump": 21.1,
+     "x": 394,
+     "y": 316
+    },
+    {
+     "tag": "chain sandSerpent #311",
+     "t": 13.25,
+     "who": "serpentCoil",
+     "id": 8,
+     "jump": 21.1,
+     "x": 387,
+     "y": 368
+    },
+    {
+     "tag": "chain sandSerpent #311",
+     "t": 13.25,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 21,
+     "x": 376,
+     "y": 419
+    },
+    {
+     "tag": "chain sandSerpent #311",
+     "t": 13.25,
+     "who": "serpentCoil",
+     "id": 10,
+     "jump": 21,
+     "x": 360,
+     "y": 468
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 3.32,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 20.6,
+     "x": 1044,
+     "y": 494
+    },
+    {
+     "tag": "chain sandSerpent #311",
+     "t": 13.25,
+     "who": "serpentCoil",
+     "id": 11,
+     "jump": 20.5,
+     "x": 335,
+     "y": 514
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 3.32,
+     "who": "serpentCoil",
+     "id": 7,
+     "jump": 20.5,
+     "x": 923,
+     "y": 452
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 3.32,
+     "who": "serpentCoil",
+     "id": 8,
+     "jump": 20.5,
+     "x": 980,
+     "y": 482
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 3.32,
+     "who": "serpentCoil",
+     "id": 10,
+     "jump": 20.4,
+     "x": 1108,
+     "y": 481
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 3.32,
+     "who": "serpentCoil",
+     "id": 11,
+     "jump": 20.2,
+     "x": 1172,
+     "y": 487
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 3.32,
+     "who": "serpentCoil",
+     "id": 6,
+     "jump": 20.1,
+     "x": 858,
+     "y": 442
+    },
+    {
+     "tag": "chain sandSerpent #333",
+     "t": 3.32,
+     "who": "serpentCoil",
+     "id": 12,
+     "jump": 20.1,
+     "x": 1228,
+     "y": 485
+    },
+    {
+     "tag": "chain sandSerpent #300",
+     "t": 3.73,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 18.2,
+     "x": 935,
+     "y": 448
+    },
+    {
+     "tag": "chain sandSerpent #300",
+     "t": 3.75,
+     "who": "serpentCoil",
+     "id": 6,
+     "jump": 18.2,
+     "x": 827,
+     "y": 519
+    },
+    {
+     "tag": "chain sandSerpent #300",
+     "t": 3.75,
+     "who": "serpentCoil",
+     "id": 9,
+     "jump": 16.9,
+     "x": 936,
+     "y": 448
+    },
+    {
+     "tag": "chain sandSerpent #300",
+     "t": 3.73,
+     "who": "serpentCoil",
+     "id": 8,
+     "jump": 16.4,
+     "x": 886,
+     "y": 464
+    },
+    {
+     "tag": "dungeon dunes run 0 room 1",
+     "t": 25.68,
+     "who": "serpentCoil",
+     "id": 14,
+     "jump": 16.3,
+     "x": 473,
+     "y": 1073
     }
    ]
   },
@@ -8158,6 +8553,577 @@
      "jump": 7.7,
      "x": 638,
      "y": 330
+    }
+   ]
+  },
+  "with its body: chainCrawler (held or carried)": {
+   "n": 92,
+   "mean": 10,
+   "worst": 20.5,
+   "kinds": {
+    "crawlerPlate": 92
+   },
+   "ex": [
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 9.65,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 20.5,
+     "x": 714,
+     "y": 776
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 9.63,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 19.9,
+     "x": 714,
+     "y": 776
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 9.65,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 18.4,
+     "x": 758,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 9.63,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 18.2,
+     "x": 758,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #300",
+     "t": 19.78,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 15.5,
+     "x": 926,
+     "y": 919
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 15.5,
+     "x": 895,
+     "y": 554
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 9,
+     "jump": 15.4,
+     "x": 989,
+     "y": 554
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 10,
+     "jump": 15.4,
+     "x": 1037,
+     "y": 554
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 11,
+     "jump": 15.4,
+     "x": 1084,
+     "y": 554
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 12,
+     "jump": 15.4,
+     "x": 1132,
+     "y": 554
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 13,
+     "jump": 15.4,
+     "x": 1179,
+     "y": 554
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 14,
+     "jump": 15.4,
+     "x": 1220,
+     "y": 554
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 8,
+     "jump": 15.3,
+     "x": 942,
+     "y": 555
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.32,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 15.2,
+     "x": 848,
+     "y": 552
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 9.65,
+     "who": "crawlerPlate",
+     "id": 8,
+     "jump": 14.6,
+     "x": 806,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 9.63,
+     "who": "crawlerPlate",
+     "id": 8,
+     "jump": 13.9,
+     "x": 806,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 44.72,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 13.7,
+     "x": 723,
+     "y": 936
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 44.72,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 13.5,
+     "x": 677,
+     "y": 947
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 44.72,
+     "who": "crawlerPlate",
+     "id": 8,
+     "jump": 13.4,
+     "x": 630,
+     "y": 951
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 3.33,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 13.2,
+     "x": 847,
+     "y": 549
+    }
+   ]
+  },
+  "with its body: stiltIdol (its own lunge, rush or drop)": {
+   "n": 47,
+   "mean": 14.4,
+   "worst": 49.5,
+   "kinds": {
+    "stiltFoot": 47
+   },
+   "ex": [
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 22.17,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 49.5,
+     "x": 934,
+     "y": 633
+    },
+    {
+     "tag": "boss stiltIdol #135",
+     "t": 18.3,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 39.8,
+     "x": 864,
+     "y": 817
+    },
+    {
+     "tag": "boss stiltIdol #114",
+     "t": 8.4,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 33.6,
+     "x": 930,
+     "y": 868
+    },
+    {
+     "tag": "boss stiltIdol #114",
+     "t": 8.38,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 32.9,
+     "x": 930,
+     "y": 868
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 22.15,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 30.6,
+     "x": 908,
+     "y": 674
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 22.15,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 26.7,
+     "x": 934,
+     "y": 633
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 7.98,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 24.1,
+     "x": 947,
+     "y": 567
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 10.58,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 22.8,
+     "x": 800,
+     "y": 781
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 10.6,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 22.6,
+     "x": 800,
+     "y": 781
+    },
+    {
+     "tag": "boss stiltIdol #107",
+     "t": 31.33,
+     "who": "stiltFoot",
+     "id": 9,
+     "jump": 22.3,
+     "x": 1098,
+     "y": 833
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 8.37,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 21.6,
+     "x": 613,
+     "y": 751
+    },
+    {
+     "tag": "boss stiltIdol #107",
+     "t": 23.9,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 15.9,
+     "x": 1134,
+     "y": 546
+    },
+    {
+     "tag": "boss stiltIdol #107",
+     "t": 23.92,
+     "who": "stiltFoot",
+     "id": 8,
+     "jump": 15.9,
+     "x": 1134,
+     "y": 546
+    },
+    {
+     "tag": "boss stiltIdol #100",
+     "t": 13.12,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 14.2,
+     "x": 1038,
+     "y": 927
+    },
+    {
+     "tag": "boss stiltIdol #114",
+     "t": 15.32,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 13.8,
+     "x": 1028,
+     "y": 721
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 13.05,
+     "who": "stiltFoot",
+     "id": 7,
+     "jump": 13.3,
+     "x": 870,
+     "y": 721
+    },
+    {
+     "tag": "boss stiltIdol #100",
+     "t": 26.37,
+     "who": "stiltFoot",
+     "id": 10,
+     "jump": 12.7,
+     "x": 663,
+     "y": 719
+    },
+    {
+     "tag": "boss stiltIdol #121",
+     "t": 14.23,
+     "who": "stiltFoot",
+     "id": 6,
+     "jump": 12.3,
+     "x": 826,
+     "y": 720
+    },
+    {
+     "tag": "boss stiltIdol #100",
+     "t": 13.13,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 11.8,
+     "x": 1038,
+     "y": 927
+    },
+    {
+     "tag": "boss stiltIdol #128",
+     "t": 22.02,
+     "who": "stiltFoot",
+     "id": 11,
+     "jump": 11.6,
+     "x": 673,
+     "y": 875
+    }
+   ]
+  },
+  "with its body: greatEngine (its own lunge, rush or drop)": {
+   "n": 40,
+   "mean": 41.2,
+   "worst": 148.7,
+   "kinds": {
+    "engineClaw": 28,
+    "engineHammer": 12
+   },
+   "ex": [
+    {
+     "tag": "boss greatEngine #128",
+     "t": 16.6,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 148.7,
+     "x": 1048,
+     "y": 598
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 5.93,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 146.1,
+     "x": 874,
+     "y": 509
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 16.58,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 115.9,
+     "x": 1131,
+     "y": 640
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 5.92,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 113.8,
+     "x": 957,
+     "y": 529
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 6.63,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 94.1,
+     "x": 1039,
+     "y": 476
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 6.65,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 91.8,
+     "x": 986,
+     "y": 503
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 16.62,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 90.7,
+     "x": 1055,
+     "y": 548
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 16.65,
+     "who": "engineClaw",
+     "id": 13,
+     "jump": 88.9,
+     "x": 1148,
+     "y": 823
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 16.63,
+     "who": "engineClaw",
+     "id": 13,
+     "jump": 82.6,
+     "x": 1143,
+     "y": 831
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 5.95,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 78.1,
+     "x": 863,
+     "y": 462
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 6.67,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 42.9,
+     "x": 974,
+     "y": 539
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 16.63,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 42.3,
+     "x": 1082,
+     "y": 535
+    },
+    {
+     "tag": "boss greatEngine #107",
+     "t": 19.42,
+     "who": "engineClaw",
+     "id": 11,
+     "jump": 42.1,
+     "x": 1118,
+     "y": 768
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 17.6,
+     "who": "engineClaw",
+     "id": 13,
+     "jump": 39.5,
+     "x": 1112,
+     "y": 783
+    },
+    {
+     "tag": "boss greatEngine #100",
+     "t": 17.6,
+     "who": "engineHammer",
+     "id": 12,
+     "jump": 35.9,
+     "x": 972,
+     "y": 739
+    },
+    {
+     "tag": "boss greatEngine #107",
+     "t": 19.42,
+     "who": "engineHammer",
+     "id": 10,
+     "jump": 34.9,
+     "x": 999,
+     "y": 856
+    },
+    {
+     "tag": "boss greatEngine #128",
+     "t": 5.97,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 31,
+     "x": 876,
+     "y": 435
+    },
+    {
+     "tag": "boss greatEngine #107",
+     "t": 9.22,
+     "who": "engineClaw",
+     "id": 7,
+     "jump": 26,
+     "x": 1122,
+     "y": 504
+    },
+    {
+     "tag": "boss greatEngine #107",
+     "t": 18.72,
+     "who": "engineClaw",
+     "id": 11,
+     "jump": 21.9,
+     "x": 1189,
+     "y": 786
+    },
+    {
+     "tag": "boss greatEngine #107",
+     "t": 19.43,
+     "who": "engineHammer",
+     "id": 10,
+     "jump": 16.8,
+     "x": 1017,
+     "y": 866
     }
    ]
   },
@@ -8357,6 +9323,196 @@
     }
    ]
   },
+  "with its body: chainCrawler (its own lunge, rush or drop)": {
+   "n": 37,
+   "mean": 44.6,
+   "worst": 149.2,
+   "kinds": {
+    "crawlerPlate": 37
+   },
+   "ex": [
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 17,
+     "jump": 149.2,
+     "x": 715,
+     "y": 662
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 20,
+     "jump": 149.2,
+     "x": 828,
+     "y": 661
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 18,
+     "jump": 149,
+     "x": 753,
+     "y": 656
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 21,
+     "jump": 148.7,
+     "x": 866,
+     "y": 660
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 22,
+     "jump": 148.7,
+     "x": 904,
+     "y": 660
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 23,
+     "jump": 148.7,
+     "x": 942,
+     "y": 660
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 24,
+     "jump": 148.7,
+     "x": 975,
+     "y": 660
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 16,
+     "jump": 148.2,
+     "x": 678,
+     "y": 662
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.18,
+     "who": "crawlerPlate",
+     "id": 19,
+     "jump": 148.2,
+     "x": 791,
+     "y": 658
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 17,
+     "jump": 13.5,
+     "x": 691,
+     "y": 796
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 20,
+     "jump": 13.4,
+     "x": 804,
+     "y": 795
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 18,
+     "jump": 13.3,
+     "x": 729,
+     "y": 790
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 21,
+     "jump": 13,
+     "x": 842,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 22,
+     "jump": 13,
+     "x": 880,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 23,
+     "jump": 13,
+     "x": 918,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 24,
+     "jump": 13,
+     "x": 951,
+     "y": 794
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 16,
+     "jump": 12.5,
+     "x": 653,
+     "y": 796
+    },
+    {
+     "tag": "chain chainCrawler #344",
+     "t": 2.2,
+     "who": "crawlerPlate",
+     "id": 19,
+     "jump": 12.5,
+     "x": 767,
+     "y": 792
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 15.65,
+     "who": "crawlerPlate",
+     "id": 6,
+     "jump": 10.9,
+     "x": 950,
+     "y": 925
+    },
+    {
+     "tag": "chain chainCrawler #333",
+     "t": 15.65,
+     "who": "crawlerPlate",
+     "id": 7,
+     "jump": 10.9,
+     "x": 903,
+     "y": 931
+    }
+   ]
+  },
   "brain:paladin": {
    "n": 36,
    "mean": 8.2,
@@ -8547,196 +9703,6 @@
     }
    ]
   },
-  "anim:swing(warlock)": {
-   "n": 34,
-   "mean": 163.4,
-   "worst": 576.5,
-   "kinds": {
-    "warlock": 34
-   },
-   "ex": [
-    {
-     "tag": "fliers wisp*6,wolf*6 #735",
-     "t": 12.73,
-     "who": "warlock",
-     "id": 3,
-     "jump": 576.5,
-     "x": 1145,
-     "y": 552
-    },
-    {
-     "tag": "fliers wisp*6,wolf*6 #735",
-     "t": 9.93,
-     "who": "warlock",
-     "id": 3,
-     "jump": 527,
-     "x": 157,
-     "y": 613
-    },
-    {
-     "tag": "fliers bee*8,wasp*6,automaton*2 #803",
-     "t": 6.05,
-     "who": "warlock",
-     "id": 3,
-     "jump": 293.4,
-     "x": 697,
-     "y": 444
-    },
-    {
-     "tag": "fliers bee*8,wasp*6,automaton*2 #803",
-     "t": 2.98,
-     "who": "warlock",
-     "id": 3,
-     "jump": 259.8,
-     "x": 465,
-     "y": 651
-    },
-    {
-     "tag": "fliers ghost*6,banshee*3,rattler*6 #718",
-     "t": 33.12,
-     "who": "warlock",
-     "id": 3,
-     "jump": 256.8,
-     "x": 1186,
-     "y": 746
-    },
-    {
-     "tag": "fliers cinderBat*8,demon*2 #786",
-     "t": 5.9,
-     "who": "warlock",
-     "id": 3,
-     "jump": 250.3,
-     "x": 885,
-     "y": 683
-    },
-    {
-     "tag": "fliers cinderBat*8,demon*2 #786",
-     "t": 2.62,
-     "who": "warlock",
-     "id": 3,
-     "jump": 245.5,
-     "x": 763,
-     "y": 475
-    },
-    {
-     "tag": "fliers spiritFrost*4,spiritFire*4,rattler*6 #820",
-     "t": 6.15,
-     "who": "warlock",
-     "id": 3,
-     "jump": 233.8,
-     "x": 584,
-     "y": 265
-    },
-    {
-     "tag": "fliers wisp*6,wolf*6 #735",
-     "t": 6.73,
-     "who": "warlock",
-     "id": 3,
-     "jump": 195.6,
-     "x": 584,
-     "y": 164
-    },
-    {
-     "tag": "fliers imp*8,hellhound*4 #769",
-     "t": 14.52,
-     "who": "warlock",
-     "id": 3,
-     "jump": 189.1,
-     "x": 930,
-     "y": 640
-    },
-    {
-     "tag": "fliers cherub*6,angel*3,golem*2 #752",
-     "t": 12.77,
-     "who": "warlock",
-     "id": 3,
-     "jump": 170.8,
-     "x": 715,
-     "y": 328
-    },
-    {
-     "tag": "fliers cherub*6,angel*3,golem*2 #752",
-     "t": 35.17,
-     "who": "warlock",
-     "id": 3,
-     "jump": 170,
-     "x": 753,
-     "y": 319
-    },
-    {
-     "tag": "fliers imp*8,hellhound*4 #769",
-     "t": 11.45,
-     "who": "warlock",
-     "id": 3,
-     "jump": 159.7,
-     "x": 1031,
-     "y": 78
-    },
-    {
-     "tag": "fliers bee*8,wasp*6,automaton*2 #803",
-     "t": 10.53,
-     "who": "warlock",
-     "id": 3,
-     "jump": 157.8,
-     "x": 706,
-     "y": 561
-    },
-    {
-     "tag": "fliers cherub*6,angel*3,golem*2 #752",
-     "t": 28.52,
-     "who": "warlock",
-     "id": 3,
-     "jump": 150,
-     "x": 897,
-     "y": 366
-    },
-    {
-     "tag": "fliers spiritFrost*4,spiritFire*4,rattler*6 #820",
-     "t": 12.05,
-     "who": "warlock",
-     "id": 3,
-     "jump": 140.5,
-     "x": 1185,
-     "y": 38
-    },
-    {
-     "tag": "fliers wisp*6,wolf*6 #735",
-     "t": 2.75,
-     "who": "warlock",
-     "id": 3,
-     "jump": 139.9,
-     "x": 708,
-     "y": 547
-    },
-    {
-     "tag": "fliers bat*10,frostWolf*4 #701",
-     "t": 8.73,
-     "who": "warlock",
-     "id": 3,
-     "jump": 133.9,
-     "x": 486,
-     "y": 162
-    },
-    {
-     "tag": "fliers imp*8,hellhound*4 #769",
-     "t": 5.4,
-     "who": "warlock",
-     "id": 3,
-     "jump": 127.8,
-     "x": 654,
-     "y": 486
-    },
-    {
-     "tag": "fliers cherub*6,angel*3,golem*2 #752",
-     "t": 23.08,
-     "who": "warlock",
-     "id": 3,
-     "jump": 123.7,
-     "x": 901,
-     "y": 263
-    }
-   ]
-  },
   "brain:boneKing": {
    "n": 33,
    "mean": 32.6,
@@ -8924,6 +9890,196 @@
      "jump": 20.7,
      "x": 1211,
      "y": 570
+    }
+   ]
+  },
+  "anim:swing(warlock)": {
+   "n": 33,
+   "mean": 167.1,
+   "worst": 576.5,
+   "kinds": {
+    "warlock": 33
+   },
+   "ex": [
+    {
+     "tag": "fliers wisp*6,wolf*6 #735",
+     "t": 12.73,
+     "who": "warlock",
+     "id": 3,
+     "jump": 576.5,
+     "x": 1145,
+     "y": 552
+    },
+    {
+     "tag": "fliers wisp*6,wolf*6 #735",
+     "t": 9.93,
+     "who": "warlock",
+     "id": 3,
+     "jump": 527,
+     "x": 157,
+     "y": 613
+    },
+    {
+     "tag": "fliers bee*8,wasp*6,automaton*2 #803",
+     "t": 6.05,
+     "who": "warlock",
+     "id": 3,
+     "jump": 293.4,
+     "x": 697,
+     "y": 444
+    },
+    {
+     "tag": "fliers bee*8,wasp*6,automaton*2 #803",
+     "t": 2.98,
+     "who": "warlock",
+     "id": 3,
+     "jump": 259.8,
+     "x": 465,
+     "y": 651
+    },
+    {
+     "tag": "fliers ghost*6,banshee*3,rattler*6 #718",
+     "t": 33.12,
+     "who": "warlock",
+     "id": 3,
+     "jump": 256.8,
+     "x": 1186,
+     "y": 746
+    },
+    {
+     "tag": "fliers cinderBat*8,demon*2 #786",
+     "t": 5.9,
+     "who": "warlock",
+     "id": 3,
+     "jump": 250.3,
+     "x": 885,
+     "y": 683
+    },
+    {
+     "tag": "fliers cinderBat*8,demon*2 #786",
+     "t": 2.62,
+     "who": "warlock",
+     "id": 3,
+     "jump": 245.5,
+     "x": 763,
+     "y": 475
+    },
+    {
+     "tag": "fliers spiritFrost*4,spiritFire*4,rattler*6 #820",
+     "t": 6.15,
+     "who": "warlock",
+     "id": 3,
+     "jump": 233.8,
+     "x": 584,
+     "y": 265
+    },
+    {
+     "tag": "fliers wisp*6,wolf*6 #735",
+     "t": 6.73,
+     "who": "warlock",
+     "id": 3,
+     "jump": 195.6,
+     "x": 584,
+     "y": 164
+    },
+    {
+     "tag": "fliers imp*8,hellhound*4 #769",
+     "t": 14.52,
+     "who": "warlock",
+     "id": 3,
+     "jump": 189.1,
+     "x": 930,
+     "y": 640
+    },
+    {
+     "tag": "fliers cherub*6,angel*3,golem*2 #752",
+     "t": 12.77,
+     "who": "warlock",
+     "id": 3,
+     "jump": 170.8,
+     "x": 715,
+     "y": 328
+    },
+    {
+     "tag": "fliers cherub*6,angel*3,golem*2 #752",
+     "t": 35.17,
+     "who": "warlock",
+     "id": 3,
+     "jump": 170,
+     "x": 753,
+     "y": 319
+    },
+    {
+     "tag": "fliers imp*8,hellhound*4 #769",
+     "t": 11.45,
+     "who": "warlock",
+     "id": 3,
+     "jump": 159.7,
+     "x": 1031,
+     "y": 78
+    },
+    {
+     "tag": "fliers bee*8,wasp*6,automaton*2 #803",
+     "t": 10.53,
+     "who": "warlock",
+     "id": 3,
+     "jump": 157.8,
+     "x": 706,
+     "y": 561
+    },
+    {
+     "tag": "fliers cherub*6,angel*3,golem*2 #752",
+     "t": 28.52,
+     "who": "warlock",
+     "id": 3,
+     "jump": 150,
+     "x": 897,
+     "y": 366
+    },
+    {
+     "tag": "fliers spiritFrost*4,spiritFire*4,rattler*6 #820",
+     "t": 12.05,
+     "who": "warlock",
+     "id": 3,
+     "jump": 140.5,
+     "x": 1185,
+     "y": 38
+    },
+    {
+     "tag": "fliers wisp*6,wolf*6 #735",
+     "t": 2.75,
+     "who": "warlock",
+     "id": 3,
+     "jump": 139.9,
+     "x": 708,
+     "y": 547
+    },
+    {
+     "tag": "fliers bat*10,frostWolf*4 #701",
+     "t": 8.73,
+     "who": "warlock",
+     "id": 3,
+     "jump": 133.9,
+     "x": 486,
+     "y": 162
+    },
+    {
+     "tag": "fliers imp*8,hellhound*4 #769",
+     "t": 5.4,
+     "who": "warlock",
+     "id": 3,
+     "jump": 127.8,
+     "x": 654,
+     "y": 486
+    },
+    {
+     "tag": "fliers cherub*6,angel*3,golem*2 #752",
+     "t": 23.08,
+     "who": "warlock",
+     "id": 3,
+     "jump": 123.7,
+     "x": 901,
+     "y": 263
     }
    ]
   },
@@ -9312,11 +10468,11 @@
    ]
   },
   "brain:wisp": {
-   "n": 22,
-   "mean": 228.2,
+   "n": 21,
+   "mean": 228.9,
    "worst": 298.4,
    "kinds": {
-    "wisp": 22
+    "wisp": 21
    },
    "ex": [
     {
@@ -9437,15 +10593,6 @@
      "y": 404
     },
     {
-     "tag": "fliers wisp*6,wolf*6 #736",
-     "t": 4.95,
-     "who": "wisp",
-     "id": 15,
-     "jump": 211.5,
-     "x": 683,
-     "y": 443
-    },
-    {
      "tag": "fliers wisp*6,wolf*6 #735",
      "t": 10.42,
      "who": "wisp",
@@ -9498,15 +10645,24 @@
      "jump": 182.7,
      "x": 554,
      "y": 183
+    },
+    {
+     "tag": "fliers wisp*6,wolf*6 #735",
+     "t": 5.58,
+     "who": "wisp",
+     "id": 13,
+     "jump": 182.4,
+     "x": 193,
+     "y": 398
     }
    ]
   },
   "anim:thrust(twinfang)": {
-   "n": 14,
-   "mean": 552.3,
+   "n": 12,
+   "mean": 576.9,
    "worst": 992.3,
    "kinds": {
-    "twinfang": 14
+    "twinfang": 12
    },
    "ex": [
     {
@@ -9544,15 +10700,6 @@
      "jump": 668.1,
      "x": 1167,
      "y": 512
-    },
-    {
-     "tag": "dungeon foundry run 0 room 2",
-     "t": 6.3,
-     "who": "twinfang",
-     "id": 3,
-     "jump": 604,
-     "x": 1248,
-     "y": 310
     },
     {
      "tag": "dungeon spire run 0 room 6",
@@ -9625,15 +10772,106 @@
      "jump": 338.7,
      "x": 833,
      "y": 925
+    }
+   ]
+  },
+  "with its body: greatOoze (its own lunge, rush or drop)": {
+   "n": 10,
+   "mean": 10.2,
+   "worst": 18.9,
+   "kinds": {
+    "oozeHalf": 10
+   },
+   "ex": [
+    {
+     "tag": "boss greatOoze #100",
+     "t": 46.25,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 18.9,
+     "x": 493,
+     "y": 623
     },
     {
-     "tag": "dungeon frost run 0 room 2",
-     "t": 7.37,
-     "who": "twinfang",
-     "id": 3,
-     "jump": 205.5,
-     "x": 903,
-     "y": 928
+     "tag": "boss greatOoze #135",
+     "t": 39.53,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 13.8,
+     "x": 1133,
+     "y": 52
+    },
+    {
+     "tag": "boss greatOoze #135",
+     "t": 39.28,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 10.5,
+     "x": 1246,
+     "y": 121
+    },
+    {
+     "tag": "boss greatOoze #100",
+     "t": 50,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 9.3,
+     "x": 49,
+     "y": 828
+    },
+    {
+     "tag": "boss greatOoze #135",
+     "t": 39.27,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 9.3,
+     "x": 1246,
+     "y": 132
+    },
+    {
+     "tag": "boss greatOoze #135",
+     "t": 39.52,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 9.3,
+     "x": 1147,
+     "y": 51
+    },
+    {
+     "tag": "boss greatOoze #135",
+     "t": 39.3,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 8.8,
+     "x": 1238,
+     "y": 116
+    },
+    {
+     "tag": "boss greatOoze #135",
+     "t": 39.95,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 7.9,
+     "x": 943,
+     "y": 187
+    },
+    {
+     "tag": "boss greatOoze #135",
+     "t": 39.55,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 7.6,
+     "x": 1126,
+     "y": 57
+    },
+    {
+     "tag": "boss greatOoze #100",
+     "t": 49.22,
+     "who": "oozeHalf",
+     "id": 12,
+     "jump": 6.6,
+     "x": 477,
+     "y": 795
     }
    ]
   },
@@ -9929,134 +11167,131 @@
     }
    ]
   },
-  "brain:minion": {
+  "with its body: cinder (held or carried)": {
    "n": 6,
-   "mean": 57.2,
-   "worst": 133.5,
+   "mean": 6.8,
+   "worst": 6.9,
    "kinds": {
-    "minion": 6
+    "drakeSegment": 6
    },
    "ex": [
     {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 23.85,
-     "who": "minion",
-     "id": 36,
-     "jump": 133.5,
-     "x": 656,
-     "y": 495
+     "tag": "boss cinder #107",
+     "t": 53.92,
+     "who": "drakeSegment",
+     "id": 6,
+     "jump": 6.9,
+     "x": 1186,
+     "y": 800
     },
     {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 23.85,
-     "who": "minion",
-     "id": 39,
-     "jump": 86.2,
-     "x": 486,
-     "y": 573
+     "tag": "boss cinder #107",
+     "t": 53.92,
+     "who": "drakeSegment",
+     "id": 7,
+     "jump": 6.9,
+     "x": 1158,
+     "y": 823
     },
     {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 13.43,
-     "who": "minion",
-     "id": 32,
-     "jump": 66.9,
-     "x": 495,
-     "y": 281
+     "tag": "boss cinder #107",
+     "t": 53.92,
+     "who": "drakeSegment",
+     "id": 10,
+     "jump": 6.9,
+     "x": 1025,
+     "y": 887
     },
     {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 14.93,
-     "who": "minion",
-     "id": 34,
-     "jump": 24.5,
-     "x": 228,
-     "y": 434
+     "tag": "boss cinder #107",
+     "t": 53.92,
+     "who": "drakeSegment",
+     "id": 8,
+     "jump": 6.7,
+     "x": 1114,
+     "y": 848
     },
     {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 13.43,
-     "who": "minion",
-     "id": 33,
-     "jump": 21,
-     "x": 274,
-     "y": 201
+     "tag": "boss cinder #107",
+     "t": 53.92,
+     "who": "drakeSegment",
+     "id": 9,
+     "jump": 6.7,
+     "x": 1069,
+     "y": 869
     },
     {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 14.93,
-     "who": "minion",
-     "id": 36,
-     "jump": 11.3,
-     "x": 196,
-     "y": 371
+     "tag": "boss cinder #107",
+     "t": 53.92,
+     "who": "drakeSegment",
+     "id": 11,
+     "jump": 6.6,
+     "x": 980,
+     "y": 894
     }
    ]
   },
-  "hook:trapped": {
+  "with its body: gildedSeraph (its own lunge, rush or drop)": {
    "n": 6,
-   "mean": 59.2,
-   "worst": 68.1,
+   "mean": 10.3,
+   "worst": 24.7,
    "kinds": {
-    "orc": 1,
-    "ogre": 1,
-    "lizardman": 1,
-    "croc": 3
+    "seraphHorn": 6
    },
    "ex": [
     {
-     "tag": "structures earthMage #919",
-     "t": 38.67,
-     "who": "ogre",
-     "id": 14,
-     "jump": 68.1,
-     "x": 156,
-     "y": 284
-    },
-    {
-     "tag": "structures earthMage #919",
-     "t": 30.37,
-     "who": "orc",
-     "id": 8,
-     "jump": 61.3,
-     "x": 292,
-     "y": 448
-    },
-    {
-     "tag": "structures earthMage #921",
-     "t": 16.08,
-     "who": "croc",
-     "id": 14,
-     "jump": 60.8,
-     "x": 755,
-     "y": 831
-    },
-    {
-     "tag": "structures earthMage #921",
-     "t": 23.15,
-     "who": "croc",
-     "id": 15,
-     "jump": 58.1,
-     "x": 604,
-     "y": 884
-    },
-    {
-     "tag": "structures earthMage #921",
-     "t": 3.3,
-     "who": "lizardman",
+     "tag": "boss gildedSeraph #121",
+     "t": 28.25,
+     "who": "seraphHorn",
      "id": 11,
-     "jump": 56.7,
-     "x": 741,
-     "y": 453
+     "jump": 24.7,
+     "x": 951,
+     "y": 451
     },
     {
-     "tag": "structures earthMage #921",
-     "t": 9.22,
-     "who": "croc",
-     "id": 14,
-     "jump": 50.3,
-     "x": 672,
-     "y": 815
+     "tag": "boss gildedSeraph #114",
+     "t": 18.47,
+     "who": "seraphHorn",
+     "id": 10,
+     "jump": 7.8,
+     "x": 982,
+     "y": 450
+    },
+    {
+     "tag": "boss gildedSeraph #114",
+     "t": 18.47,
+     "who": "seraphHorn",
+     "id": 11,
+     "jump": 7.8,
+     "x": 838,
+     "y": 481
+    },
+    {
+     "tag": "boss gildedSeraph #114",
+     "t": 18.47,
+     "who": "seraphHorn",
+     "id": 8,
+     "jump": 7.4,
+     "x": 806,
+     "y": 336
+    },
+    {
+     "tag": "boss gildedSeraph #114",
+     "t": 18.47,
+     "who": "seraphHorn",
+     "id": 9,
+     "jump": 7.1,
+     "x": 951,
+     "y": 306
+    },
+    {
+     "tag": "boss gildedSeraph #121",
+     "t": 28.27,
+     "who": "seraphHorn",
+     "id": 11,
+     "jump": 6.8,
+     "x": 965,
+     "y": 441
     }
    ]
   },
@@ -10122,6 +11357,119 @@
      "jump": 6.4,
      "x": 1171,
      "y": 606
+    }
+   ]
+  },
+  "with its body: sandWurm (held or carried)": {
+   "n": 5,
+   "mean": 8.3,
+   "worst": 10.6,
+   "kinds": {
+    "wurmSegment": 5
+   },
+   "ex": [
+    {
+     "tag": "boss sandWurm #107",
+     "t": 41.62,
+     "who": "wurmSegment",
+     "id": 6,
+     "jump": 10.6,
+     "x": 631,
+     "y": 534
+    },
+    {
+     "tag": "boss sandWurm #121",
+     "t": 12.83,
+     "who": "wurmSegment",
+     "id": 9,
+     "jump": 9.6,
+     "x": 675,
+     "y": 569
+    },
+    {
+     "tag": "boss sandWurm #128",
+     "t": 6.87,
+     "who": "wurmSegment",
+     "id": 8,
+     "jump": 7.9,
+     "x": 448,
+     "y": 673
+    },
+    {
+     "tag": "boss sandWurm #114",
+     "t": 18.27,
+     "who": "wurmSegment",
+     "id": 6,
+     "jump": 7.4,
+     "x": 627,
+     "y": 420
+    },
+    {
+     "tag": "boss sandWurm #107",
+     "t": 41.62,
+     "who": "wurmSegment",
+     "id": 7,
+     "jump": 6.3,
+     "x": 652,
+     "y": 474
+    }
+   ]
+  },
+  "hook:trapped": {
+   "n": 5,
+   "mean": 59.4,
+   "worst": 68.1,
+   "kinds": {
+    "orc": 1,
+    "ogre": 1,
+    "lizardman": 1,
+    "croc": 2
+   },
+   "ex": [
+    {
+     "tag": "structures earthMage #919",
+     "t": 38.67,
+     "who": "ogre",
+     "id": 14,
+     "jump": 68.1,
+     "x": 156,
+     "y": 284
+    },
+    {
+     "tag": "structures earthMage #919",
+     "t": 30.37,
+     "who": "orc",
+     "id": 8,
+     "jump": 61.3,
+     "x": 292,
+     "y": 448
+    },
+    {
+     "tag": "structures earthMage #921",
+     "t": 16.08,
+     "who": "croc",
+     "id": 14,
+     "jump": 60.8,
+     "x": 755,
+     "y": 831
+    },
+    {
+     "tag": "structures earthMage #921",
+     "t": 3.3,
+     "who": "lizardman",
+     "id": 11,
+     "jump": 56.7,
+     "x": 741,
+     "y": 453
+    },
+    {
+     "tag": "structures earthMage #921",
+     "t": 9.22,
+     "who": "croc",
+     "id": 14,
+     "jump": 50.3,
+     "x": 672,
+     "y": 815
     }
    ]
   },
@@ -10337,151 +11685,40 @@
     }
    ]
   },
-  "brain:dame": {
+  "brain:minion": {
    "n": 3,
-   "mean": 66.5,
-   "worst": 131.5,
+   "mean": 95.5,
+   "worst": 133.5,
    "kinds": {
-    "dame": 3
+    "minion": 3
    },
    "ex": [
     {
      "tag": "crowd rat*12,crab*6 #527",
      "t": 23.85,
-     "who": "dame",
-     "id": 1,
-     "jump": 131.5,
-     "x": 396,
-     "y": 301
-    },
-    {
-     "tag": "crowd scarab*12,mummy*4 #553",
-     "t": 28.25,
-     "who": "dame",
-     "id": 1,
-     "jump": 61.2,
-     "x": 1148,
-     "y": 402
-    },
-    {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 23.87,
-     "who": "dame",
-     "id": 1,
-     "jump": 6.8,
-     "x": 392,
-     "y": 297
-    }
-   ]
-  },
-  "brain:mobPitchfork": {
-   "n": 3,
-   "mean": 26.4,
-   "worst": 44.9,
-   "kinds": {
-    "mobPitchfork": 3
-   },
-   "ex": [
-    {
-     "tag": "crowd slime*8,slimeBig*4 #566",
-     "t": 1.88,
-     "who": "mobPitchfork",
-     "id": 4,
-     "jump": 44.9,
-     "x": 570,
-     "y": 500
+     "who": "minion",
+     "id": 36,
+     "jump": 133.5,
+     "x": 656,
+     "y": 495
     },
     {
      "tag": "crowd rat*12,crab*6 #527",
      "t": 23.85,
-     "who": "mobPitchfork",
-     "id": 4,
-     "jump": 23.7,
-     "x": 452,
-     "y": 538
+     "who": "minion",
+     "id": 39,
+     "jump": 86.2,
+     "x": 486,
+     "y": 573
     },
     {
-     "tag": "crowd automaton*4,gearSprite*8,drillBot*4 #579",
-     "t": 15.93,
-     "who": "mobPitchfork",
-     "id": 4,
-     "jump": 10.7,
-     "x": 698,
-     "y": 163
-    }
-   ]
-  },
-  "brain:wolf": {
-   "n": 3,
-   "mean": 41.7,
-   "worst": 73.3,
-   "kinds": {
-    "wolf": 3
-   },
-   "ex": [
-    {
-     "tag": "crowd wolf*10,boar*4,banditBrute*3 #540",
-     "t": 1.72,
-     "who": "wolf",
-     "id": 16,
-     "jump": 73.3,
-     "x": 723,
-     "y": 489
-    },
-    {
-     "tag": "structures earthMage #921",
-     "t": 25.12,
-     "who": "wolf",
-     "id": 19,
-     "jump": 33.9,
-     "x": 703,
-     "y": 718
-    },
-    {
-     "tag": "crowd wolf*10,boar*4,banditBrute*3 #540",
-     "t": 1.73,
-     "who": "wolf",
-     "id": 18,
-     "jump": 17.9,
-     "x": 749,
-     "y": 697
-    }
-   ]
-  },
-  "anim:cast(warlock)": {
-   "n": 3,
-   "mean": 66.7,
-   "worst": 116.4,
-   "kinds": {
-    "warlock": 3
-   },
-   "ex": [
-    {
-     "tag": "fliers cinderBat*8,demon*2 #786",
-     "t": 8.52,
-     "who": "warlock",
-     "id": 3,
-     "jump": 116.4,
-     "x": 981,
-     "y": 846
-    },
-    {
-     "tag": "fliers ghost*6,banshee*3,rattler*6 #718",
-     "t": 19,
-     "who": "warlock",
-     "id": 3,
-     "jump": 51.6,
-     "x": 860,
-     "y": 392
-    },
-    {
-     "tag": "fliers cherub*6,angel*3,golem*2 #752",
-     "t": 38.87,
-     "who": "warlock",
-     "id": 3,
-     "jump": 32.2,
-     "x": 800,
-     "y": 69
+     "tag": "crowd rat*12,crab*6 #527",
+     "t": 13.43,
+     "who": "minion",
+     "id": 32,
+     "jump": 66.9,
+     "x": 495,
+     "y": 281
     }
    ]
   },
@@ -10624,34 +11861,6 @@
     }
    ]
   },
-  "brain:oldguard": {
-   "n": 2,
-   "mean": 43.4,
-   "worst": 49.7,
-   "kinds": {
-    "oldguard": 2
-   },
-   "ex": [
-    {
-     "tag": "big brute*3 #1146",
-     "t": 4.08,
-     "who": "oldguard",
-     "id": 1,
-     "jump": 49.7,
-     "x": 675,
-     "y": 533
-    },
-    {
-     "tag": "boss boneKing #135",
-     "t": 2.95,
-     "who": "oldguard",
-     "id": 1,
-     "jump": 37.1,
-     "x": 728,
-     "y": 398
-    }
-   ]
-  },
   "anim:ability(werewolf)": {
    "n": 2,
    "mean": 81.1,
@@ -10677,34 +11886,6 @@
      "jump": 77.3,
      "x": 606,
      "y": 681
-    }
-   ]
-  },
-  "brain:rattlerSpear": {
-   "n": 2,
-   "mean": 27.1,
-   "worst": 44.9,
-   "kinds": {
-    "rattlerSpear": 2
-   },
-   "ex": [
-    {
-     "tag": "crowd rattler*12,rattlerSpear*6 #501",
-     "t": 14.5,
-     "who": "rattlerSpear",
-     "id": 25,
-     "jump": 44.9,
-     "x": 1064,
-     "y": 314
-    },
-    {
-     "tag": "crowd rattler*12,rattlerSpear*6 #501",
-     "t": 4.52,
-     "who": "rattlerSpear",
-     "id": 24,
-     "jump": 9.3,
-     "x": 696,
-     "y": 361
     }
    ]
   },
@@ -10736,6 +11917,62 @@
     }
    ]
   },
+  "brain:mobPitchfork": {
+   "n": 2,
+   "mean": 34.3,
+   "worst": 44.9,
+   "kinds": {
+    "mobPitchfork": 2
+   },
+   "ex": [
+    {
+     "tag": "crowd slime*8,slimeBig*4 #566",
+     "t": 1.88,
+     "who": "mobPitchfork",
+     "id": 4,
+     "jump": 44.9,
+     "x": 570,
+     "y": 500
+    },
+    {
+     "tag": "crowd rat*12,crab*6 #527",
+     "t": 23.85,
+     "who": "mobPitchfork",
+     "id": 4,
+     "jump": 23.7,
+     "x": 452,
+     "y": 538
+    }
+   ]
+  },
+  "brain:wolf": {
+   "n": 2,
+   "mean": 53.6,
+   "worst": 73.3,
+   "kinds": {
+    "wolf": 2
+   },
+   "ex": [
+    {
+     "tag": "crowd wolf*10,boar*4,banditBrute*3 #540",
+     "t": 1.72,
+     "who": "wolf",
+     "id": 16,
+     "jump": 73.3,
+     "x": 723,
+     "y": 489
+    },
+    {
+     "tag": "structures earthMage #921",
+     "t": 25.12,
+     "who": "wolf",
+     "id": 19,
+     "jump": 33.9,
+     "x": 703,
+     "y": 718
+    }
+   ]
+  },
   "anim:swing(mob)": {
    "n": 2,
    "mean": 94.6,
@@ -10764,59 +12001,31 @@
     }
    ]
   },
-  "brain:snowman": {
+  "anim:cast(warlock)": {
    "n": 2,
-   "mean": 26.4,
-   "worst": 34.8,
+   "mean": 84,
+   "worst": 116.4,
    "kinds": {
-    "snowman": 2
+    "warlock": 2
    },
    "ex": [
     {
-     "tag": "crowd frostWolf*8,snowman*4,spiderMomma*2 #592",
-     "t": 16.42,
-     "who": "snowman",
-     "id": 19,
-     "jump": 34.8,
-     "x": 1245,
-     "y": 547
+     "tag": "fliers cinderBat*8,demon*2 #786",
+     "t": 8.52,
+     "who": "warlock",
+     "id": 3,
+     "jump": 116.4,
+     "x": 981,
+     "y": 846
     },
     {
-     "tag": "crowd frostWolf*8,snowman*4,spiderMomma*2 #592",
-     "t": 3.37,
-     "who": "snowman",
-     "id": 19,
-     "jump": 18.1,
-     "x": 902,
-     "y": 793
-    }
-   ]
-  },
-  "anim:cast(wisp)": {
-   "n": 2,
-   "mean": 233.8,
-   "worst": 244.9,
-   "kinds": {
-    "wisp": 2
-   },
-   "ex": [
-    {
-     "tag": "fliers wisp*6,wolf*6 #735",
-     "t": 1.57,
-     "who": "wisp",
-     "id": 13,
-     "jump": 244.9,
-     "x": 487,
-     "y": 484
-    },
-    {
-     "tag": "fliers wisp*6,wolf*6 #736",
-     "t": 1.78,
-     "who": "wisp",
-     "id": 15,
-     "jump": 222.6,
-     "x": 665,
-     "y": 480
+     "tag": "fliers ghost*6,banshee*3,rattler*6 #718",
+     "t": 19,
+     "who": "warlock",
+     "id": 3,
+     "jump": 51.6,
+     "x": 860,
+     "y": 392
     }
    ]
   },
@@ -10905,6 +12114,44 @@
     }
    ]
   },
+  "with its body: greatEngine (held or carried)": {
+   "n": 1,
+   "mean": 18.3,
+   "worst": 18.3,
+   "kinds": {
+    "engineHammer": 1
+   },
+   "ex": [
+    {
+     "tag": "boss greatEngine #135",
+     "t": 12.93,
+     "who": "engineHammer",
+     "id": 10,
+     "jump": 18.3,
+     "x": 1027,
+     "y": 680
+    }
+   ]
+  },
+  "brain:oldguard": {
+   "n": 1,
+   "mean": 37.1,
+   "worst": 37.1,
+   "kinds": {
+    "oldguard": 1
+   },
+   "ex": [
+    {
+     "tag": "boss boneKing #135",
+     "t": 2.95,
+     "who": "oldguard",
+     "id": 1,
+     "jump": 37.1,
+     "x": 728,
+     "y": 398
+    }
+   ]
+  },
   "anim:cast(cleric)": {
    "n": 1,
    "mean": 13.7,
@@ -10940,44 +12187,6 @@
      "jump": 16.9,
      "x": 661,
      "y": 803
-    }
-   ]
-  },
-  "anim:thrust(rat)": {
-   "n": 1,
-   "mean": 25.2,
-   "worst": 25.2,
-   "kinds": {
-    "rat": 1
-   },
-   "ex": [
-    {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 2.65,
-     "who": "rat",
-     "id": 18,
-     "jump": 25.2,
-     "x": 716,
-     "y": 695
-    }
-   ]
-  },
-  "brain:rat": {
-   "n": 1,
-   "mean": 18.9,
-   "worst": 18.9,
-   "kinds": {
-    "rat": 1
-   },
-   "ex": [
-    {
-     "tag": "crowd rat*12,crab*6 #527",
-     "t": 2.65,
-     "who": "rat",
-     "id": 19,
-     "jump": 18.9,
-     "x": 481,
-     "y": 670
     }
    ]
   },
@@ -11133,6 +12342,25 @@
     }
    ]
   },
+  "brain:dame": {
+   "n": 1,
+   "mean": 61.2,
+   "worst": 61.2,
+   "kinds": {
+    "dame": 1
+   },
+   "ex": [
+    {
+     "tag": "crowd scarab*12,mummy*4 #553",
+     "t": 28.25,
+     "who": "dame",
+     "id": 1,
+     "jump": 61.2,
+     "x": 1148,
+     "y": 402
+    }
+   ]
+  },
   "anim:thrust(mobPitchfork)": {
    "n": 1,
    "mean": 114.1,
@@ -11285,22 +12513,22 @@
     }
    ]
   },
-  "hook:totemCover": {
+  "brain:snowman": {
    "n": 1,
-   "mean": 191.4,
-   "worst": 191.4,
+   "mean": 34.8,
+   "worst": 34.8,
    "kinds": {
-    "warlock": 1
+    "snowman": 1
    },
    "ex": [
     {
-     "tag": "fliers ghost*6,banshee*3,rattler*6 #718",
-     "t": 12.08,
-     "who": "warlock",
-     "id": 3,
-     "jump": 191.4,
-     "x": 536,
-     "y": 394
+     "tag": "crowd frostWolf*8,snowman*4,spiderMomma*2 #592",
+     "t": 16.42,
+     "who": "snowman",
+     "id": 19,
+     "jump": 34.8,
+     "x": 1245,
+     "y": 547
     }
    ]
   },
@@ -11323,22 +12551,22 @@
     }
    ]
   },
-  "anim:throw(trapper)": {
+  "anim:cast(wisp)": {
    "n": 1,
-   "mean": 35.8,
-   "worst": 35.8,
+   "mean": 244.9,
+   "worst": 244.9,
    "kinds": {
-    "trapper": 1
+    "wisp": 1
    },
    "ex": [
     {
-     "tag": "structures earthMage #921",
-     "t": 1.95,
-     "who": "trapper",
-     "id": 4,
-     "jump": 35.8,
-     "x": 570,
-     "y": 485
+     "tag": "fliers wisp*6,wolf*6 #735",
+     "t": 1.57,
+     "who": "wisp",
+     "id": 13,
+     "jump": 244.9,
+     "x": 487,
+     "y": 484
     }
    ]
   },
@@ -11434,25 +12662,6 @@
      "jump": 6.4,
      "x": 686,
      "y": 377
-    }
-   ]
-  },
-  "hook:thrown": {
-   "n": 1,
-   "mean": 28.4,
-   "worst": 28.4,
-   "kinds": {
-    "lizardman": 1
-   },
-   "ex": [
-    {
-     "tag": "structures warden #939",
-     "t": 16.6,
-     "who": "lizardman",
-     "id": 7,
-     "jump": 28.4,
-     "x": 778,
-     "y": 468
     }
    ]
   },
