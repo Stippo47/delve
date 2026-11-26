@@ -30,7 +30,7 @@ yeti         pocket   back within 6s 20/20  median   1.9s  never 0  a new one 20
 yeti         friends  back within 6s  0/20  median   7.5s  never 0
 yeti         ring     back within 6s 20/20  median   1.9s  never 0  a new one 20
 yeti         knocked  back within 6s 13/20  median   5.9s  never 0
-fights troll        let go 112, taken up again 111 (within 6s 111, mean 3.1s), still loose at the end 1, broken while loose 0
-fights rockTroll    let go 65, taken up again 64 (within 6s 64, mean 3.4s), still loose at the end 1, broken while loose 0
-fights rockTroll@1  let go 84, taken up again 78 (within 6s 78, mean 2.1s), still loose at the end 6, broken while loose 0
+fights troll        let go 121, taken up again 117 (within 6s 117, mean 3.1s), still loose at the end 4, broken while loose 0
+fights rockTroll    let go 73, taken up again 69 (within 6s 69, mean 3.6s), still loose at the end 4, broken while loose 0
+fights rockTroll@1  let go 75, taken up again 73 (within 6s 73, mean 2.1s), still loose at the end 2, broken while loose 0
 fights yeti         let go 263, taken up again 221 (within 6s 187, mean 2.6s), still loose at the end 13, broken while loose 29

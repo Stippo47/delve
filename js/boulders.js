@@ -21,6 +21,12 @@
 //     and the rocks, and whatever is then still inside the ball, the BALL gives back: a body with its back to a wall
 //     stops the ball (or slides out along the wall, if it stood off the ball's line). A ball lying loose and still is
 //     as immovable as a rock, but a body is still never left in a wall for it;
+//     And nobody rides on its front: the designer, later in round 19, "Things that are touching the boulder almost get
+//     glued to it, in front. Like if he rolls the bolder into someone it kind of holds the target in front." A push
+//     straight out of a round thing leaves whoever is square in its way square in its way, step after step, so it
+//     carried them along (before this lane too). A body in the way of a moving ball now slips off round its face to
+//     the side it is already on (SHED), about a second for a pushed boulder, a blink for a rolling one; against a wall
+//     it slips along the wall; only in a corner, with no side to go to, is it held until the ball stops or is let go;
 //  4. a rolling ball stopped that way bounces off as off a wall;
 //  5. the owner is kept at the rod's length from it (never inside its own boulder): a stopped boulder stops the troll.
 import { circleRect } from './path.js';
@@ -97,6 +103,10 @@ export function ballSweep(w, b, tx, ty, max = Infinity) {
 // Is this ball its owner's to walk through (in its hands, or still rolling off out of them)? As sim.js ownBoulder.
 const own = (u, b) => b.owner === u && (b.held || b.vx * b.vx + b.vy * b.vy > 10000);
 
+// Shedding (see 3 above): a body square in a moving ball's way slips round its face at `k` of the ball's speed, never
+// slower than `min` nor faster than `max` (room units a second); `from`..`full`: how squarely in the way it has to be
+// (the cosine of its angle off the ball's line) for none of that and for all of it; a side once taken holds `hold` s.
+const SHED = { k: 1.2, min: 110, max: 340, from: 0.15, full: 0.4, hold: 0.7 };
 // Once a step, after the bodies have moved. slam(w, u, speed): a body knocked hard into it (sim.js wallHit).
 export function ballPass(w, dt, slam) {
   let balls = null;
@@ -125,12 +135,31 @@ export function ballPass(w, dt, slam) {
     // (in its owner's hands the two push as one; rolling, it has its speed behind it)
     const M = u ? ballMass(b) + (u.mass || 1) : ballMass(b) * (1 + Math.sqrt(sp2) / 120);
     let bx = 0, by = 0;
+    // how it has moved since the last pass (its roll, its owner's push): which way is "in front" of it
+    const mvx = b.x - (b.px ?? b.x), mvy = b.y - (b.py ?? b.y), mv = Math.hypot(mvx, mvy), vsp = mv / dt;
     for (let pass = 0; pass < 3; pass++) {
       ballStatics(w, b);
       let again = false;
       for (const o of w.units) {
         if (o.dead || o.downed || (b.owner === o && own(o, b))) continue;
-        const dx = o.x - b.x, dy = o.y - b.y, m = o.r + b.r, d2 = dx * dx + dy * dy;
+        let dx = o.x - b.x, dy = o.y - b.y, d2 = dx * dx + dy * dy;
+        const m = o.r + b.r;
+        if (d2 >= (m + 1) * (m + 1)) continue;
+        // in the way of a moving ball: round its face and off to the side
+        if (pass === 0 && vsp > 12 && !o.fixed && d2 > 1e-6) {
+          const d0 = Math.sqrt(d2), nx0 = dx / d0, ny0 = dy / d0, along = (mvx * nx0 + mvy * ny0) / mv;
+          if (along > SHED.from) {
+            const cr = (mvx * ny0 - mvy * nx0) / mv; // which side of the ball's line it is on
+            const S = o.shed && o.shed.b === b && o.shed.until > w.time ? o.shed : (o.shed = { b, side: Math.abs(cr) > 0.05 ? Math.sign(cr) : (o.id | 0) % 2 ? 1 : -1, until: 0 });
+            S.until = w.time + SHED.hold;
+            const heavy = M / (M + (o.mass || 1)), slip = Math.min(SHED.max, Math.max(SHED.min, vsp * SHED.k)) * Math.min(1, (along - SHED.from) / (SHED.full - SHED.from)) * heavy * dt;
+            const sx = o.x, sy = o.y;
+            o.x += -ny0 * S.side * slip; o.y += nx0 * S.side * slip;
+            // (a wall or a rock on that side: back, and the other way round next)
+            if (outOfSolids(w, o, (p) => p === b || (p.owner === o && isBall(p) && own(o, p))) && Math.hypot(o.x - sx, o.y - sy) < slip * 0.5) { if (inWalls(w, o)) { o.x = sx; o.y = sy; } S.side = -S.side; }
+            dx = o.x - b.x; dy = o.y - b.y; d2 = dx * dx + dy * dy;
+          }
+        }
         if (d2 >= m * m) continue;
         const d = Math.sqrt(d2), nx = d > 1e-4 ? dx / d : 1, ny = d > 1e-4 ? dy / d : 0, over = m - d;
         const fixedBall = still && b.owner !== o;
@@ -177,6 +206,7 @@ export function ballPass(w, dt, slam) {
     // push it out of both sides, and each step's shove took it further in: back to where it last fitted
     if (inWalls(w, b)) { if (b.okx != null && Math.hypot(b.okx - b.x, b.oky - b.y) < 80 && !inWalls(w, { x: b.okx, y: b.oky, r: b.r })) { b.x = b.okx; b.y = b.oky; } }
     else { b.okx = b.x; b.oky = b.y; }
+    b.px = b.x; b.py = b.y;
     b.mvx = b.x - x0; b.mvy = b.y - y0; // how it moved this step (the rod, the room and the bodies; not its own roll)
   }
 }

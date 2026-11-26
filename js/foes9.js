@@ -238,6 +238,12 @@ function carry(w, u, b, t, dt) {
   const A = boulderWay(w, u, b, t.x, t.y), err = wrapAngle(A - phi), ae = Math.abs(err);
   const C = u.bCar || (u.bCar = { dir: 0, until: 0 });
   let fwd = sp * clamp(1 - (ae - CARRY.pushOff) / CARRY.pushSpan, 0, 1), tan = 0;
+  // (the designer, later in round 19: "Things that are touching the boulder almost get glued to it, in front. Like if he
+  // rolls the bolder into someone it kind of holds the target in front.") With the boulder up against its mark it stops
+  // pushing: it holds the boulder to them, turning it after them, and lets it go into them (the point-blank roll, a
+  // wedged throw) instead of walking them across the room on the boulder's front. Anyone else in the boulder's way slips
+  // off round its face (boulders.js SHED).
+  if (dist(t.x, t.y, b.x, b.y) < b.r + t.r + 8) fwd = Math.min(fwd, 0);
   if (ae > 0.03) {
     let dir = C.until > w.time && C.dir ? C.dir : Math.sign(err) || 1;
     const rem = (sg) => (sg === Math.sign(err) ? ae : TAU - ae);

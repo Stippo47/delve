@@ -7,7 +7,7 @@
   const T19 = (globalThis.T19 = globalThis.T19 || {});
   const ballOf = (u) => u.bould || u.snow || null;
   T19.ballOf = ballOf;
-  // name: wall | corner | thin | pillar | door | crate | turn90 | turn135 | turn180 | live | friends
+  // name: wall | corner | thin | pillar | door | crate | push | turn90 | turn135 | turn180 | live | friends
   T19.stage = (name, o = {}) => {
     const run = GAME.run, w = run.world;
     const u = w.units.find((q) => !q.dead && (q.kind === 'troll' || q.kind === 'rockTroll' || q.kind === 'yeti'));
@@ -37,6 +37,8 @@
       door: () => { w.walls.push({ x: 0, y: 400, w: W / 2 - 37, h: 40, t19: true }, { x: W / 2 + 37, y: 400, w: W / 2 - 37, h: 40, t19: true }); put(W / 2, 720, up, W / 2, 400 - h.r - 4); },
       // the hero at the corner of a crate (a square block), the troll coming at the corner
       crate: () => { w.walls.push({ x: W / 2 - 40, y: 340, w: 80, h: 80, t19: true }); put(W / 2 + 40 + 260, 420 + 260, -Math.PI * 0.75, W / 2 + 40 + h.r * 0.72, 420 + h.r * 0.72); },
+      // open floor, the hero standing square in its way: is he carried along on the boulder's front?
+      push: () => put(W / 2 + 250, H / 2, Math.PI, W / 2 - 10, H / 2),
       // open floor: the hero off to its side, or behind it; how does it come round?
       turn90: () => put(W / 2, H / 2, 0, W / 2, H / 2 - 330),
       turn135: () => put(W / 2, H / 2, 0, W / 2 - 233, H / 2 - 233),

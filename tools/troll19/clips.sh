@@ -7,6 +7,8 @@ run thin-troll troll thin 10 1.15 640,470
 run corner-rocktroll rockTroll corner 10 1.3 hero
 run door-troll troll door 12 1.15 640,470
 run pillar-rocktroll-elite rockTroll@1 pillar 10 1.15 640,400
+run push-troll troll push 9 1.0 mid
+run push-rocktroll rockTroll push 10 1.0 mid
 run turn90-troll troll turn90 9 1.0 mid
 run turn180-troll troll turn180 10 1.0 mid
 run turn135-rocktroll rockTroll turn135 10 1.0 mid
