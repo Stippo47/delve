@@ -1547,3 +1547,4 @@ and majors; the same code in dungeons, battle mode, the Book's previews and the 
   set-down-and-brawl rule; shorter fights left as they are.
 - Checks: battles 532, 0 problems, 8 out of time; preview-check 0 / 0 / 0. `sw.js` needs tools/build-sw.py for
   js/boulders.js (not run, as told).
+- Lead, troll19 merged (0.41.0): I watched the turn, push and corner films before/after: the troll now walks round its boulder, a hero slides off the boulder instead of riding its front, and the corner case keeps the paladin inside the room. Loaded a troll/rock troll/yeti fight in the browser: everything draws. Also fixed by the lane: a live wagon-mode crash with a yeti on the road.
