@@ -207,6 +207,9 @@ export function ballPass(w, dt, slam) {
     // push it out of both sides, and each step's shove took it further in: back to where it last fitted
     if (inWalls(w, b)) { if (b.okx != null && Math.hypot(b.okx - b.x, b.oky - b.y) < 80 && !inWalls(w, { x: b.okx, y: b.oky, r: b.r })) { b.x = b.okx; b.y = b.oky; } }
     else { b.okx = b.x; b.oky = b.y; }
+    // (round 19, lane troll19b: b.wedged, how long it has been in a wall all the same: dragged on down a slot too narrow
+    // for it, further than that from where it last fitted. Its owner makes an end of it: foes9.js boulderBrain)
+    b.wedged = inWalls(w, b, 6) ? (b.wedged || 0) + dt : 0;
     b.px = b.x; b.py = b.y;
     b.mvx = b.x - x0; b.mvy = b.y - y0; // how it moved this step (the rod, the room and the bodies; not its own roll)
     bodySync(w, b, dt); // (round 19, lane troll19b: its health, below)
@@ -254,7 +257,7 @@ function bodySync(w, b, dt) {
     const u = b.owner;
     if (!u || u.dead || s.dead) { if (!s.dead) retireBody(b); else b.body = null; } // (nobody's ball is nobody's target: a dead yeti's ball rolls on and melts)
     else {
-      s.x = b.x; s.y = b.y; s.r = s.vr = b.r; s.vx = s.vy = s.kx = s.ky = s.dvx = s.dvy = 0; s.spd = 0; s.team = u.team;
+      s.x = b.x; s.y = b.y; s.r = s.vr = b.r; s.vx = s.vy = s.kx = s.ky = s.dvx = s.dvy = 0; s.spd = 0; s.team = b.team = u.team; // (a charmed troll's boulder is its new side's)
       if (s.hitT > 0.1 && !(b.hitT > 0.06)) b.hitT = 0.12; // (struck: the ball flashes, boulder-roll.js)
       b.hp = s.hp; b.maxHp = s.maxHp; // (for the drawing: its cracks)
     }

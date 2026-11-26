@@ -1,6 +1,7 @@
 // Lane troll19b (round 19): the trolls' bowl in numbers, headless, from the staged scenes of tools/troll19b/stage.js.
 // The same file run in a copy of the tree before the lane (scratch/before/tools/troll19b/) gives the "before" column.
 //   node tools/troll19b/bowls.mjs [--kinds troll,rockTroll,yeti] [--scenes bowl,stand,near,fetch,break] [--n 12] [--secs 30]
+//     [--hero paladin] (the staged hero) [--party paladin,archer] (the break scene's heroes, who do hurt)
 // Per kind and scene, over --n seeds of --secs seconds:
 //   bowls a minute     the boulder let go at speed (out of its owner's hands at more than 200 a second)
 //   launch             its speed as it goes
@@ -34,7 +35,7 @@ const med = (a) => { if (!a.length) return 0; const s = a.slice().sort((x, y) =>
 function one(kind, scene, seed) {
   setSeed(seed);
   const [k, rank] = kind.split('@');
-  const party = scene === 'break' ? ['paladin', 'archer'] : ['paladin'];
+  const party = scene === 'break' ? opt('party', 'paladin,archer').split(',') : [opt('hero', 'paladin')];
   for (const id of party) { const hv = save.heroes[id]; hv.owned = true; hv.level = 5; hv.nodes = {}; hv.points = P.START_POINTS + 4; P.autoSpend(save, id); }
   const run = B.newBattle(save, { arena: 'crypt', a: party.map((id) => ({ k: id, n: 1 })), b: [{ k, n: 1, rank: +rank || 0 }] });
   globalThis.GAME = { run };

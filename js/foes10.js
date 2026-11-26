@@ -124,7 +124,7 @@ function snowPush(w, b, nx, ny, u) {
 }
 // A shot that hits the ball chips it (sim.js) and knocks it along the shot's way, more the smaller it is.
 function snowShot(w, b, p) {
-  { const s = b.body; if (s && !s.dead && !(p.hitSet && p.hitSet.has(s))) hurt(w, s, p.dmg || 0, p.owner && alive(p.owner) ? p.owner : null, { shot: true, kAngle: Math.atan2(p.vy, p.vx), knock: 0 }); } // (round 19, lane troll19b: the chip is its body's)
+  { const s = b.body; if (s && !s.dead && p.team !== s.team && !(p.hitSet && p.hitSet.has(s))) hurt(w, s, p.dmg || 0, p.owner && alive(p.owner) ? p.owner : null, { shot: true, kAngle: Math.atan2(p.vy, p.vx), knock: 0 }); } // (round 19, lane troll19b: the chip is its body's)
   const sp = Math.hypot(p.vx, p.vy) || 1, k = clamp((p.dmg || 4) * 7, 25, 110) * (26 / b.r) ** 2;
   if (!b.packing) { b.vx += p.vx / sp * k; b.vy += p.vy / sp * k; b.held = false; } // (in its maker's hands, it only chips)
   w.particles.push({ x: p.x, y: p.y, vx: -p.vx / sp * 60, vy: -p.vy / sp * 60, life: 0.35, max: 0.35, size: 5, color: '#FFFFFF' });

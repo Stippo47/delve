@@ -175,7 +175,8 @@ const gripOf = (u, b) => u.r * (1 + HOLD) + b.r + 8; // the rod: the boulder's m
 //              nobody in its way it rolls about 670 before it lies still (was 355), hitting hard for the first 480 of
 //              that (was 230). A boulder that has struck somebody has spent itself on them: it keeps `keep` of its
 //              speed (less off a heavy body) and slows at fricSpent from then on, so it comes to rest near the fight
-//  wind        the wind-up before it is let go: the troll rears back with it (windPose), `pull` nearer its chest
+//  wind        the wind-up before it is let go: the troll rears back with it (windPose): a step back at `rear` a
+//              second, the boulder `pull` nearer its chest
 //  min         room to roll: the boulder's face this far from its mark before it bowls; nearer, the troll backs off
 //              first, dragging the boulder, at backPace of its pace, for at most `back` seconds (a wall at its back:
 //              it bowls from where it is)
@@ -185,33 +186,38 @@ const gripOf = (u, b) => u.r * (1 + HOLD) + b.r + 8; // the rod: the boulder's m
 //  fetch       its pace going for its boulder, of its walk (it rolls further now, and the troll hurries after it)
 //  knock / knockPow  the blow's shove for a body of mass 1 at full speed (it was 420 for everybody, and half of it
 //              sideways), times its mass to the knockPow: a heavier body is thrown less far, but not by its whole
-//              weight (an archer about 255, a paladin 200, another troll 165; two fifths less behind a shield)
-//  dmg / dmgRock  the blow (was 14 / 18: a little less, for what a wall does to a body thrown this hard)
-//  hp / hpRock the boulder's health (the troll's was 55, to shots only; the rock troll's could not be hurt)
+//              weight (an archer about 290, a paladin 235, another troll 185; a fifth less behind a raised shield)
+//  dmg / dmgRock  the blow (was 14 / 18: less, for what a wall does to a body thrown this hard, and for how often it comes)
+//  hp / hpRock the boulder's health, of its troll's own (a troll's was a flat 55, a fifteenth of the troll's in a
+//              battle, and only shots took it; the rock troll's could not be hurt)
 //  regrow      seconds bare-handed before a rock troll tears up a new one (the troll's stays broken, as before)
 //  rockR       the rock troll's boulder (the troll's is BOULDER_R, 41)
+//  charge      how often the rock troll runs behind its boulder instead of bowling it (it was 2 in 5; now from further
+//              off only, and it lets the boulder go on at the end of its run)
 //  ret / retSlow / retAfter / retGive  the rock troll's boulder rolls back to it at `ret` (the elite's at retElite),
 //              once it has slowed to retSlow (it no longer hurts) or has struck somebody, or retAfter seconds out; not
 //              back in retGive seconds (a wall between them), the troll goes for it on foot
 //  swat / swatRest  fists on its way to its boulder: at most this long over one blow, then this long before the next
-const BOWL = { speed: 400, speedRock: 420, fric: 0.6, fricSpent: 1.6, keep: [0.4, 0.8], wind: 0.7, pull: 15, min: 120, back: 1.3, backPace: 1.5, range: 470, line: 520, cd: [1.6, 2.4], cdRock: [1.8, 2.6],
-  fetch: 1.6, knock: 800, knockPow: 0.75, stun: 0.25, hitstop: 0.04, dmg: 12, dmgRock: 15, hp: 110, hpRock: 300, regrow: 7, rockR: 54,
+const BOWL = { speed: 400, speedRock: 420, fric: 0.6, fricSpent: 1.6, keep: [0.4, 0.8], wind: 0.7, pull: 13, rear: 44, min: 120, back: 1.3, backPace: 1.5, range: 470, line: 520, cd: [1.6, 2.4], cdRock: [1.8, 2.6],
+  fetch: 1.6, knock: 900, knockPow: 0.75, shield: 0.8, stun: 0.2, hitstop: 0.04, dmg: 8, dmgRock: 9, hp: 0.35, hpRock: 0.9, regrow: 7, rockR: 54, charge: 0.15,
   ret: 330, retElite: 400, retSlow: 120, retAfter: 2.4, retGive: 5, swat: 0.9, swatRest: 1.2 };
+if (globalThis.BOWL19) Object.assign(BOWL, globalThis.BOWL19); // (for the tools: tools/troll19b, a test's own numbers)
 function boulderOf(w, u) {
   if (u.bould === undefined) {
-    // (round 19, lane troll19b: "Rock troll should have a huge boulder": BOWL.rockR, 54 against the troll's 41, as wide
-    // as the rock troll itself; its elite's is a tenth bigger again (it was a quarter bigger than a boulder of 41))
-    const big = u.elite && u.def.rock ? 1.1 : 1, r = Math.round((u.def.boulderR || (u.def.rock ? BOWL.rockR : BOULDER_R)) * (u.r / (u.def.r || u.r)) * big);
+    // (round 19, lane troll19b: "Rock troll should have a huge boulder": BOWL.rockR, 54 against the troll's 41, nearly
+    // as wide as the rock troll itself. Its elite's and its major's grow a little less than they do (66 and 80; they
+    // were 64 and 79, a quarter bigger than a boulder of 41 grown as they are): a major's of 92 fitted few gaps)
+    const grown = u.r / (u.def.r || u.r), r = Math.round(u.def.boulderR || (u.def.rock ? BOWL.rockR * grown ** 0.9 : BOULDER_R * grown));
     const b = { x: u.x, y: u.y, r, prop: 'troll-boulder', boulder: true, owner: u, team: u.team, vx: 0, vy: 0, held: true, pull: true, hits: new Set() };
     b.grip = gripOf(u, b);
     // (round 19, lane troll19: out from its own middle to its fists, as far as there is room: it was made in front of
     // the troll whatever stood there, a wall included)
     ballSweep(w, b, u.x + Math.cos(u.facing) * b.grip, u.y + Math.sin(u.facing) * b.grip);
     // (round 19, lane troll19b: every boulder has health, and a body that carries it: boulders.js giveBody. A swing, a
-    // shot, a blast: all of it lands on that. The rock troll's has near three times the troll's and it tears up a new
-    // one; an elite's half as much again, a major's twice)
-    giveBody(w, b, spawn, 'boulderBody', (u.def.rock ? BOWL.hpRock : BOWL.hp) * (w.mult || 1) * (u.major || u.mini ? 2 : u.elite ? 1.5 : 1));
-    b.onShot = (w2, b2, p) => { const s = b2.body; if (s && !s.dead && !(p.hitSet && p.hitSet.has(s))) hurt(w2, s, p.dmg || 0, p.owner && alive(p.owner) ? p.owner : null, { shot: true, kAngle: Math.atan2(p.vy, p.vx), knock: 0 }); };
+    // shot, a blast: all of it lands on that. Its health is a share of its troll's own (so it grows as the troll does,
+    // elite, major, deeper floors): a troll's a third of the troll's, a rock troll's nine tenths of the rock troll's)
+    giveBody(w, b, spawn, 'boulderBody', u.maxHp * (u.def.rock ? BOWL.hpRock : BOWL.hp));
+    b.onShot = (w2, b2, p) => { const s = b2.body; if (s && !s.dead && p.team !== s.team && !(p.hitSet && p.hitSet.has(s))) hurt(w2, s, p.dmg || 0, p.owner && alive(p.owner) ? p.owner : null, { shot: true, kAngle: Math.atan2(p.vy, p.vx), knock: 0 }); };
     b.onBreak = (w2, b2) => breakBoulder(w2, u, b2);
     b.onBlocked = (w2, b2, sp) => boulderHits(w2, u, b2, sp, Math.atan2(b2.vy, b2.vx)); // (stopped by a body that couldn't give way: it hits them: boulders.js)
     b.rollTick = (w2, dt2) => rollBoulder(w2, u, b, dt2); // (round 19, lane troll19: boulders.js rolls it on while its troll is stunned, frozen or asleep: it stopped dead in mid-roll)
@@ -246,9 +252,9 @@ function rodWalk(w, u, b, fwd, tan, dt, acc = CARRY.acc) {
   if (Math.abs(k) > 0.01) ballSweep(w, b, b.x - s * k, b.y + c * k);
 }
 // Round onto the line a behind its boulder within `left` seconds (a tell: it shuffles round quickly, fists on it).
-function lineUp(w, u, b, a, left, dt) {
+function lineUp(w, u, b, a, left, dt, fwd = 0) { // (round 19, lane troll19b: fwd, its step back as it rears)
   const err = wrapAngle(a - angleTo(u.x, u.y, b.x, b.y)), top = u.def.speed * (u.moveMul || 1) * 4.5;
-  rodWalk(w, u, b, 0, clamp(err * b.grip * (1 - CARRY.roll) / Math.max(left, dt * 2), -top, top), dt, 3000);
+  rodWalk(w, u, b, fwd, clamp(err * b.grip * (1 - CARRY.roll) / Math.max(left, dt * 2), -top, top), dt, 3000);
 }
 // Which way the boulder has to go to get to (tx, ty): straight, or round the walls and rocks (the path finder asked for
 // a body the troll's width at the boulder's place; the boulder itself out of the room while it asks. As the yeti's
@@ -334,12 +340,12 @@ function startThrow(w, u, b, a, tell, line = true) {
 // drawn in, the boulder hauled back against its chest (b.grip, boulderBrain) and shaking (b.wind19, boulder-roll.js),
 // grit kicked up round the boulder's foot, more as it comes to the top.
 function windPose(w, u, b, k, dt) {
-  u.bPose = true; u.lean = -0.3 * k;
-  u._force = { 'arm-r': { dy: -7 * k, r: 0.3 * k }, 'arm-l': { dy: -7 * k, r: -0.3 * k } };
+  u.bPose = true; u.lean = -0.34 * k;
+  u._force = { 'arm-r': { dy: -8 * k, r: 0.34 * k }, 'arm-l': { dy: -8 * k, r: -0.34 * k } };
   b.wind19 = k;
-  if (k > 0.05 && rand() < dt * (10 + 34 * k)) {
-    const a = rand() * TAU, back = angleTo(b.x, b.y, u.x, u.y) + rrange(-1.1, 1.1), s = rrange(50, 130) * (0.5 + k);
-    w.particles.push({ x: b.x + Math.cos(a) * b.r * 0.9, y: b.y + Math.sin(a) * b.r * 0.9, vx: Math.cos(back) * s, vy: Math.sin(back) * s, rise: 26, up: 0, life: 0.45, max: 0.45, size: rrange(3, 6.5), color: rand() < 0.4 ? '#8C8270' : '#D8CCB0' });
+  if (k > 0.03 && rand() < dt * (16 + 40 * k)) { // grit and dust flung up from under the boulder, out to its sides and back
+    const side = rand() < 0.5 ? 1 : -1, back = angleTo(b.x, b.y, u.x, u.y), a = back + side * rrange(0.7, 1.9), s = rrange(70, 170) * (0.5 + k), stone = rand() < 0.45;
+    w.particles.push({ x: b.x + Math.cos(a) * b.r * 0.85, y: b.y + Math.sin(a) * b.r * 0.85, vx: Math.cos(a) * s, vy: Math.sin(a) * s, rise: stone ? 0 : 30, up: 0, life: 0.5, max: 0.5, size: stone ? rrange(3.5, 6) : rrange(6, 10), color: stone ? '#8C8270' : rand() < 0.5 ? '#D8CCB0' : '#E6DCC6' });
   }
 }
 function throwTick(w, u, b, dt) {
@@ -348,7 +354,7 @@ function throwTick(w, u, b, dt) {
   u.winding = true; T.t -= dt / windMul(u);
   const k = clamp(1 - T.t / (T.max || BOWL.wind), 0, 1), e = k * k * (3 - 2 * k);
   b.grip = gripOf(u, b) - BOWL.pull * e;
-  lineUp(w, u, b, T.a, T.t, dt);
+  lineUp(w, u, b, T.a, T.t, dt, k < 0.75 ? -BOWL.rear : 0); // (it steps back as it rears, then stands for the heave)
   windPose(w, u, b, e, dt);
   if (T.t <= 0) {
     u.bThrow = null; b.wind19 = 0;
@@ -382,6 +388,10 @@ export function boulderBrain(w, u, dt) {
   const b = u.bould === null ? null : boulderOf(w, u);
   if (!b) return false;
   b.grip = gripOf(u, b);
+  // (round 19, lane troll19b: wedged in a wall for more than half a second (boulders.js b.wedged: a huge boulder dragged
+  // on into a slot too narrow for it): no use to it there: it crumbles and the troll tears up a new one, round 17's rule.
+  // One lay 66 deep between a crate and a wall for a minute while its troll snatched at it from the far side)
+  if (b.wedged > 0.5) { startRip(w, u); return true; }
   if (!b.held) { rollBoulder(w, u, b, dt); b.rolledAt = w.time; }
   // (round 19, lane troll19: out of its fists: it was knocked away from it, or the boulder caught on something as it
   // was dragged: it lies where it is and the troll goes for it again)
@@ -449,7 +459,9 @@ export function boulderBrain(w, u, dt) {
         b.vx += (Math.cos(a) * want - b.vx) * k; b.vy += (Math.sin(a) * want - b.vy) * k;
       }
     }
-    if (dist(u.x, u.y, b.x, b.y) < u.r + b.r + BOULDER_REACH && (v2 < 3600 || b.recalled)) { // (round 17: a boulder it called back is caught as it comes: it rolled on through the troll and away, back and forth)
+    // (round 19, lane troll19b: and never from further than it can hold it at, CARRY.lose: a big boulder across a wall's
+    // end was taken up and lost again every few steps, for as long as the fight lasted)
+    if (dist(u.x, u.y, b.x, b.y) < Math.min(u.r + b.r + BOULDER_REACH, b.grip + CARRY.lose - 4) && (v2 < 3600 || b.recalled)) { // (round 17: a boulder it called back is caught as it comes: it rolled on through the troll and away, back and forth)
       b.held = true; b.vx = b.vy = 0; b.recalled = false; b.outAt = null; b.spent = null; b.hits.clear(); setAnim(u, 'ability', 0.3); jam.t = 0;
       again(u, 'boulder', ...(u.def.rock ? BOWL.cdRock : BOWL.cd)); u.bStand = null; // (round 19, lane troll19b: "they should bowl more often": the next one this soon after it has it again)
       return false;
@@ -508,7 +520,7 @@ export function boulderBrain(w, u, dt) {
       const near = gap < BOWL.min && S.back < BOWL.back && !S.walled;
       if (ready && off < 1.3 && !near) {
         jam.t = 0; u.bStand = null; again(u, 'boulder', 4, 5); // (the real wait is set when it has the boulder again)
-        if (u.def.rock && gap > 150 && chance(0.3)) { // charge behind it
+        if (u.def.rock && gap > 200 && chance(BOWL.charge)) { // charge behind it
           const len = gap + b.r + 110, sp = u.def.speed * 2.6;
           u.chg = { a: aim, tell: 0.7, t: len / sp, sp };
           addDanger(w, { shape: 'line', x1: b.x, y1: b.y, x2: b.x + Math.cos(aim) * len, y2: b.y + Math.sin(aim) * len, hw: b.r + 8, t: 0.7, team: u.team, src: u, kind: 'bone', cancelled: true });
@@ -589,8 +601,8 @@ function rollBoulder(w, u, b, dt) {
 // Round 19 (lane troll19b; the designer: "Boulder should do heavy knockback. Currently it just barely knocks things to
 // the side. There no strong impact."). It knocked 420 whoever it hit, half a radian off its way to the side: a paladin
 // went about 50. Now the blow throws them on down its way (a third of a radian to the side they were on, so they land
-// clear of it), BOWL.knock for a body of mass 1 at full speed and less for a heavier one (an archer about 255, a
-// paladin 200, another troll 165; BOWL.knockPow), off their feet for a moment (BOWL.stun), with an impact you can see and hear: a
+// clear of it), BOWL.knock for a body of mass 1 at full speed and less for a heavier one (an archer about 290, a
+// paladin 235, another troll 185; BOWL.knockPow), off their feet for a moment (BOWL.stun), with an impact you can see and hear: a
 // burst of dust and grit at the point it struck them (a blast: fxkit.js draws it, audio.js booms), sparks, the room
 // shakes, and a hair of hit-stop. The boulder has spent itself on them: it keeps a share of its speed (BOWL.keep, less
 // off a heavy body) and soon lies still, near the fight; one that hits nobody rolls on across the room.
@@ -598,14 +610,17 @@ function rollBoulder(w, u, b, dt) {
 function boulderHits(w, u, b, sp, a) {
   if (sp < 110) return;
   if (b.recalled && !u.elite) return; // (rolling home: the plain rock troll's only shoulders people aside, boulders.js)
-  const full = u.def.rock ? BOWL.speedRock : BOWL.speed, k = clamp(sp / full, 0.4, 1) * (b.recalled ? 0.6 : 1);
+  const full = u.def.rock ? BOWL.speedRock : BOWL.speed, k = clamp(0.55 + 0.45 * sp / full, 0.55, 1) * (b.recalled ? 0.6 : 1); // (a slower boulder throws less far: from full at full speed to a little over half)
   for (const h of opponents(w, u)) {
     if (b.hits.has(h) || dist(h.x, h.y, b.x, b.y) > b.r + h.r + 6) continue;
     b.hits.add(h);
     const to = angleTo(b.x, b.y, h.x, h.y), side = Math.sign(Math.sin(to - a)) || 1, m = Math.max(0.5, h.mass || 1);
-    hurt(w, h, (u.def.rock ? BOWL.dmgRock : BOWL.dmg) * (b.recalled ? 0.6 : 1) * u.dmgMul, u, { knock: BOWL.knock * k * m ** BOWL.knockPow, kAngle: a + side * 0.33, heavy: true, stagger: 50 });
+    const kx0 = h.kx, ky0 = h.ky, shove = BOWL.knock * k * m ** BOWL.knockPow;
+    hurt(w, h, (u.def.rock ? BOWL.dmgRock : BOWL.dmg) * (b.recalled ? 0.6 : 1) * u.dmgMul, u, { knock: shove, kAngle: a + side * 0.33, heavy: true, stagger: 30 }); // (stagger 50 -> 30: it bowls about twice as often, and three in a row are not to stun for seconds)
+    // (a raised shield takes two fifths of any shove, sim.js hurt; of a boulder's it takes a fifth: BOWL.shield)
+    { const gx = h.kx - kx0, gy = h.ky - ky0, got = Math.hypot(gx, gy), least = shove * 1.6 / m * BOWL.shield; if (got > 1 && got < least) { h.kx = kx0 + gx / got * least; h.ky = ky0 + gy / got * least; } }
     if (h.ballOf) continue; // (another troll's boulder: hurt, no more)
-    if (alive(h) && k > 0.55 && !h.def.boss && !h.def.part) stun(w, h, BOWL.stun);
+    if (alive(h) && k > 0.7 && !h.def.boss && !h.def.part) stun(w, h, BOWL.stun);
     const cx = b.x + Math.cos(to) * b.r, cy = b.y + Math.sin(to) * b.r;
     w.telegraphs.push({ type: 'blast', thud: true, x: cx, y: cy, r: 30 + b.r * 0.6 * k, t: 0.25, max: 0.25, color: '#D8CCB0' }); // (thud: no explosion: a yeti's ball isn't thrown about by it, foes10.js)
     sparks(w, cx, cy, a, 7, '#FFF6DC', 1.4);
@@ -814,7 +829,7 @@ export const FOES9 = {
   boulderBody: { team: 'enemy', name: 'Boulder', r: 41, vr: 41, turn: 0, accel: 0, face: 0, mass: 99, hp: 110, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0,
     temp: 0.2, commit: 1, xp: 0, coins: [0, 0], cost: 99, noElite: true, noCorpse: true, part: true, trap: true /* (never counted as a foe left standing: battle.js, dungeon.js) */, pass: true, ball: 'stone', goo: '#9A9088',
     res: Object.fromEntries(BUILD_IDS.map((id) => [id, 0])), draw: () => {}, brain: () => true },
-  rockTroll: { variantOf: 'troll', name: 'Rock Troll', hue: 0, sat: 0.25, light: -0.02, rock: true, turn: 1.3, face: 1.6, hp: 190, xp: 34,
+  rockTroll: { variantOf: 'troll', name: 'Rock Troll', hue: 0, sat: 0.25, light: -0.02, rock: true, turn: 1.3, face: 1.6, hp: 172, /* (round 19, lane troll19b: 190 -> 172, as the troll's) */ xp: 34,
     brain: boulderBrain, onDeath: (w, u) => dropBoulder(w, u) },
   // ---- the Sewers
   ratPlague: { variantOf: 'rat', name: 'Plague Rat', hue: 70, sat: 1.3, light: -0.04, poison: 14, xp: 5, ratMove: true, res: { poison: 0 },

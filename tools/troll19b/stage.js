@@ -4,7 +4,7 @@
 //   near    the same, the hero up close in front of the boulder (does the troll walk on into him holding it?)
 //   stand   the hero rooted 380 off (how far the boulder goes, how it starts, what it does when it lands on him)
 //   fetch   the boulder lying 300 off, the hero rooted beside the troll's way to it (does it hit back on the way?)
-//   break   two heroes that do hurt (the boulder's health; nobody dies)
+//   break   three heroes that do hurt (the boulder's health; nobody dies)
 (() => {
   const T = globalThis.T19;
   T.stage2 = (name, o = {}) => {
@@ -15,11 +15,13 @@
     const ball = (x, y, held = true) => { if (!b) return; b.x = x; b.y = y; b.vx = b.vy = 0; b.held = held; if (b.lastX != null) { b.lastX = x; b.lastY = y; } };
     const hold = () => { const d = u.snow ? u.r * 0.82 + b.r : u.r * 0.54 + b.r + 8; ball(u.x + Math.cos(u.facing) * d, u.y + Math.sin(u.facing) * d); };
     for (const q of hs) q.rootT = 0;
+    if (u.el) u.el.boulder = 1; // (its wait for the next bowl starts afresh: it may have bowled in the seconds before the staging)
     if (name === 'bowl') { at(u, W / 2 + 200, H / 2); at(h, W / 2 - 200, H / 2); if (b) hold(); }
     if (name === 'near') { at(u, W / 2 + 120, H / 2); if (b) hold(); at(h, (b ? b.x - b.r : u.x - u.r) - h.r - 30, H / 2); h.rootT = 1e9; }
     if (name === 'stand') { at(u, W / 2 + 230, H / 2); at(h, W / 2 - 230, H / 2); h.rootT = 1e9; if (b) hold(); }
     if (name === 'fetch') { at(u, W / 2 + 260, H / 2); if (b) ball(W / 2 - 160, H / 2, false); at(h, W / 2 + 60, H / 2 - u.r - h.r - 6); h.rootT = 1e9; u.facing = u.mvA = Math.PI; }
-    if (name === 'break') { at(u, W / 2 + 200, H / 2); if (b) hold(); at(h, W / 2 - 160, H / 2 - 40); if (hs[1]) at(hs[1], W / 2 - 300, H / 2 + 60); }
+    if (name === 'break') { at(u, W / 2 + 200, H / 2); if (b) hold(); at(h, W / 2 - 160, H / 2 - 40); if (hs[1]) at(hs[1], W / 2 - 300, H / 2 + 60); if (hs[2]) at(hs[2], W / 2 - 180, H / 2 + 110);
+      if (b && b.body && u.def.rock) b.body.hp = b.body.maxHp * 0.5; } // (the rock troll's boulder starts the scene at half its health, so its breaking and the new one fit in one clip)
     for (const q of hs) q.facing = Math.atan2(u.y - q.y, u.x - q.x);
     return S;
   };
