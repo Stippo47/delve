@@ -11,6 +11,7 @@ import { WILDWOOD } from './wildwood.js';
 import { ELDER } from './elderent.js';
 import { FOES9, boulderBrain, dropBoulder } from './foes9.js';
 import { FOES10 } from './foes10.js';
+import { TUMBLE } from './tumble.js'; // (round 19, lane rider19: the tumble troll, a troll riding its boulder)
 import { DUNES } from './dunes.js';
 import { FOUNDRY } from './foundry.js';
 import { BOSS_DEFS } from './bosses.js'; // lane B (bosses2): the designed bosses, one file each (js/boss-*.js)
@@ -273,6 +274,7 @@ export const ENEMIES = {
   ...FOES9, // round 9: the approved additions for the Warren, the Sewers and the Crypt (js/foes9.js)
   ...DUNES, // round 10: the Sunken Dunes (js/dunes.js)
   ...FOUNDRY, // round 10: the Clockwork Foundry (js/foundry.js)
+  ...TUMBLE, // (round 19, lane rider19: the tumble troll, js/tumble.js)
   ...FOES10, // round 10: the Frost Hollow, Ember Deep and Gilded Spire kinds and the shared families (js/foes10.js, js/families.js)
   ...BOSS_DEFS, // lane B (bosses2): the designed bosses and their parts (js/bosses.js)
 };

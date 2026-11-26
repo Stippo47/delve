@@ -290,6 +290,7 @@ export function wallRect(w, r, dur, kind) {
 function blocked(w, ax, ay, bx, by, team) { // (team, round 15 lane N: a shooter of that side sees over walls raised low for it: path.js lineClear)
   if (!lineClear(w, ax, ay, bx, by, 2, team)) return true;
   for (const p of w.pillars) {
+    if (p.rider && Math.abs(p.rider.x - bx) < 1 && Math.abs(p.rider.y - by) < 1) continue; // (round 19, lane rider19: a tumble troll stands on its ball: a shot at it is let fly, and strikes the ball, js/tumble.js)
     const dx = bx - ax, dy = by - ay; const L2 = dx * dx + dy * dy || 1;
     let t = ((p.x - ax) * dx + (p.y - ay) * dy) / L2; t = clamp(t, 0, 1);
     if (dist2(ax + dx * t, ay + dy * t, p.x, p.y) < (p.r + 4) ** 2) return true;
@@ -655,7 +656,7 @@ function approachSpot(w, u, t) {
 
 // A troll's own boulder while it holds it, or while it is still rolling off (it starts inside the troll's collider):
 // they don't push each other apart, and the troll doesn't steer round it (art round 8, foes9.js HOLD).
-function ownBoulder(u, p) { return p.owner === u && (p.held || p.vx * p.vx + p.vy * p.vy > 10000); }
+function ownBoulder(u, p) { return p.owner === u && (p.held || p.rider === u || p.vx * p.vx + p.vy * p.vy > 10000); } // (round 19, lane rider19: p.rider, the tumble troll on its boulder, js/tumble.js)
 // How far u can go along (dx, dy) before a wall, the room's edge or a pillar (up to max).
 function clearance(w, u, dx, dy, max) {
   let t = max;

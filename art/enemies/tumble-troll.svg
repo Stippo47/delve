@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- TUMBLE TROLL (round 19, lane rider19): a troll that rides its boulder the way a log-roller rides a log. Lean and gangly where the troll is a hunched heap: a narrow back with three tufts of moss down the spine, a rope slung across it, long arms thrown out wide to the sides for balance with big open three-fingered hands, a small head with long pointed ears swept back, a long drooping nose, a braided topknot trailing down its back. Big flat splayed feet (their own parts, so the game can walk them on the ball's top). Olive-moss skin, the troll family's moss. Parts: #foot-l, #foot-r (under all), #arm-l, #arm-r (before #body), #body, #top-braid (over the back, swings). Front = DOWN (+y). -->
+<defs>
+<linearGradient id="gSkin" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#AFC287"/><stop offset="1" stop-color="#7A8F5C"/></linearGradient>
+<linearGradient id="gSkinD" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#97AD72"/><stop offset="1" stop-color="#66794C"/></linearGradient>
+<radialGradient id="gHead" cx="0.38" cy="0.3" r="0.8"><stop offset="0" stop-color="#BCCD94"/><stop offset="0.7" stop-color="#A2B67C"/><stop offset="1" stop-color="#83975F"/></radialGradient>
+<linearGradient id="gShade" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.28"/></linearGradient>
+<linearGradient id="gMoss" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#6E8E5A"/><stop offset="1" stop-color="#3E5A3A"/></linearGradient>
+<linearGradient id="gHair" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#7A5A3C"/><stop offset="1" stop-color="#4A3426"/></linearGradient>
+<linearGradient id="gRope" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#D8B06A"/><stop offset="1" stop-color="#A97E40"/></linearGradient>
+<!-- feet: a long flat foot, three fat toes in front, turned a little out -->
+<path id="pFootL" d="M64 86 C73 86 79 96 79 110 C79 124 74 134 64 134 C54 134 49 124 49 110 C49 96 55 86 64 86 Z M55 134 A7.5 7.5 0 1 0 55.1 134 Z M64 138 A8 8 0 1 0 64.1 138 Z M73 134 A7.5 7.5 0 1 0 73.1 134 Z" transform="rotate(14 64 112)"/>
+<path id="pFootR" d="M136 86 C127 86 121 96 121 110 C121 124 126 134 136 134 C146 134 151 124 151 110 C151 96 145 86 136 86 Z M145 134 A7.5 7.5 0 1 0 145.1 134 Z M136 138 A8 8 0 1 0 136.1 138 Z M127 134 A7.5 7.5 0 1 0 127.1 134 Z" transform="rotate(-14 136 112)"/>
+<clipPath id="cFootL"><use href="#pFootL"/></clipPath>
+<clipPath id="cFootR"><use href="#pFootR"/></clipPath>
+<!-- arms: long and thin, thrown out to the sides, a little bent at the elbow -->
+<path id="pArmL" d="M78 84 C66 85 54 88 44 92 C36 95 30 96 22 95 L20 108 C30 109 37 108 45 105 C55 102 67 101 78 102 Z"/>
+<path id="pHandL" d="M14 88 A13 13 0 1 1 13.9 88 Z M7 89 C1 84 -7 84 -9 89 C-10 95 -2 98 5 99 Z M4 97 C-4 97 -11 99 -11 105 C-10 111 -2 109 6 107 Z M7 105 C1 108 -4 114 -2 119 C2 123 9 118 13 111 Z M18 110 C17 117 19 124 24 124 C29 124 29 116 27 109 Z"/>
+<path id="pArmR" d="M122 84 C134 85 146 88 156 92 C164 95 170 96 178 95 L180 108 C170 109 163 108 155 105 C145 102 133 101 122 102 Z"/>
+<path id="pHandR" d="M186 88 A13 13 0 1 0 186.1 88 Z M193 89 C199 84 207 84 209 89 C210 95 202 98 195 99 Z M196 97 C204 97 211 99 211 105 C210 111 202 109 194 107 Z M193 105 C199 108 204 114 202 119 C198 123 191 118 187 111 Z M182 110 C183 117 181 124 176 124 C171 124 171 116 173 109 Z"/>
+<clipPath id="cArmL"><use href="#pArmL"/><use href="#pHandL"/></clipPath>
+<clipPath id="cArmR"><use href="#pArmR"/><use href="#pHandR"/></clipPath>
+<!-- the back: lean, widest at the shoulders -->
+<path id="pBack" d="M100 54 C116 54 127 61 131 71 C135 81 140 91 138 102 C136 114 125 124 100 126 C75 124 64 114 62 102 C60 91 65 81 69 71 C73 61 84 54 100 54 Z"/>
+<clipPath id="cBack"><use href="#pBack"/></clipPath>
+<path id="pRope" d="M68 82 C84 88 108 100 132 114 L128 121 C104 107 80 95 64 89 Z"/>
+<clipPath id="cRope"><use href="#pRope"/></clipPath>
+<path id="pTuft" d="M100 0 C105 0 110 3 111 8 C114 7 117 10 115 13 C112 16 104 16 100 16 C96 16 88 16 85 13 C83 10 86 7 89 8 C90 3 95 0 100 0 Z"/>
+<!-- the head: small, ears swept back, the long nose hanging in front -->
+<path id="pEarL" d="M84 122 C72 116 56 106 42 100 C48 114 64 132 84 142 Z"/>
+<path id="pEarR" d="M116 122 C128 116 144 106 158 100 C152 114 136 132 116 142 Z"/>
+<path id="pHead" d="M100 110 C113 110 122 119 122 131 C122 144 112 154 100 154 C88 154 78 144 78 131 C78 119 87 110 100 110 Z"/>
+<path id="pNose" d="M100 132 C106 132 109.5 140 109.5 151 C109.5 162 105.5 170 100 170 C94.5 170 90.5 162 90.5 151 C90.5 140 94 132 100 132 Z"/>
+<path id="pFringe" d="M80 124 C80 115 89 110 100 110 C111 110 120 115 120 124 C117 121 115 128 112 125 C110 130 106 126 104 131 C101 127 99 127 96 131 C94 126 90 130 88 125 C85 128 83 121 80 124 Z"/>
+<clipPath id="cHead"><use href="#pHead"/></clipPath>
+<clipPath id="cNose"><use href="#pNose"/></clipPath>
+<clipPath id="cEars"><use href="#pEarL"/><use href="#pEarR"/></clipPath>
+<clipPath id="cUnderHead"><use href="#pBack"/><use href="#pEarL"/><use href="#pEarR"/></clipPath>
+<clipPath id="cUnderNose"><use href="#pHead"/></clipPath>
+<!-- the braid: a bun on the crown, four plaits down the back, a tuft at the end -->
+<path id="pBraid" d="M100 74 C103 74 104.5 77 104 80 C106 82 106.5 86 104.5 89 C106.5 91 106.5 96 104.5 98 C107 101 107 106 104.5 108 L95.5 108 C93 106 93 101 95.5 98 C93.5 96 93.5 91 95.5 89 C93.5 86 94 82 96 80 C95.5 77 97 74 100 74 Z"/>
+<path id="pBun" d="M100 104 A8 8 0 1 1 99.9 104 Z"/>
+<path id="pBraidTip" d="M100 78 C96 72 91 68 93 62 C96 66 98 64 100 58 C102 64 104 66 107 62 C109 68 104 72 100 78 Z"/>
+<clipPath id="cBraid"><use href="#pBraid"/><use href="#pBraidTip"/></clipPath>
+<clipPath id="cBun"><use href="#pBun"/></clipPath>
+</defs>
+<g id="sprite">
+<g id="foot-l" data-pivot="56 114"><g transform="translate(56 114) scale(1.2) translate(-64 -112)">
+<use href="#pFootL" fill="url(#gSkinD)"/>
+<g clip-path="url(#cFootL)"><path d="M59.5 131 L59.5 137 M68.5 131 L68.5 137" transform="rotate(14 64 112)" stroke="#5C6C44" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.55"/><rect x="30" y="80" width="60" height="70" fill="url(#gShade)"/></g>
+</g></g>
+<g id="foot-r" data-pivot="144 114"><g transform="translate(144 114) scale(1.2) translate(-136 -112)">
+<use href="#pFootR" fill="url(#gSkinD)"/>
+<g clip-path="url(#cFootR)"><path d="M140.5 131 L140.5 137 M131.5 131 L131.5 137" transform="rotate(-14 136 112)" stroke="#5C6C44" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.55"/><rect x="110" y="80" width="60" height="70" fill="url(#gShade)"/></g>
+</g></g>
+<g id="arm-l" data-pivot="74 93"><g>
+<use href="#pArmL" fill="url(#gSkin)"/>
+<g clip-path="url(#cArmL)"><use href="#pHandL" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#pHandL" fill="url(#gSkin)"/>
+<g clip-path="url(#cArmL)"><rect x="-10" y="80" width="90" height="40" fill="url(#gShade)"/></g>
+<path d="M33 95 L31 108 M38 94 L36 107" stroke="#A97E40" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M33 95 L31 108 M38 94 L36 107" stroke="#D8B06A" stroke-width="2" stroke-linecap="round"/>
+</g></g>
+<g id="arm-r" data-pivot="126 93"><g>
+<use href="#pArmR" fill="url(#gSkin)"/>
+<g clip-path="url(#cArmR)"><use href="#pHandR" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#pHandR" fill="url(#gSkin)"/>
+<g clip-path="url(#cArmR)"><rect x="120" y="80" width="90" height="40" fill="url(#gShade)"/></g>
+<path d="M167 95 L169 108 M162 94 L164 107" stroke="#A97E40" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M167 95 L169 108 M162 94 L164 107" stroke="#D8B06A" stroke-width="2" stroke-linecap="round"/>
+</g></g>
+<g id="body"><g>
+<use href="#pBack" fill="url(#gSkin)"/>
+<g clip-path="url(#cBack)"><use href="#pBack" fill="url(#gShade)"/></g>
+<g clip-path="url(#cBack)"><use href="#pRope" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#pRope" fill="url(#gRope)"/>
+<g clip-path="url(#cRope)" stroke="#8A6432" stroke-width="2" opacity="0.8"><path d="M74 81 L70 92 M84 86 L80 97 M94 91 L90 102 M104 97 L100 108 M114 103 L110 114 M124 109 L120 120"/></g>
+<g clip-path="url(#cBack)"><use href="#pTuft" transform="translate(0 64)" fill="#2B2230" opacity="0.25"/><use href="#pTuft" transform="translate(0 78)" fill="#2B2230" opacity="0.25"/></g>
+<use href="#pTuft" transform="translate(0 60)" fill="url(#gMoss)"/>
+<use href="#pTuft" transform="translate(100 74) scale(0.9) translate(-100 0)" fill="url(#gMoss)"/>
+<g clip-path="url(#cUnderHead)"><use href="#pHead" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#pEarL" fill="url(#gSkin)"/>
+<use href="#pEarR" fill="url(#gSkin)"/>
+<g clip-path="url(#cEars)"><path d="M82 128 C70 120 58 112 48 105" stroke="#6E7F52" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.55"/><path d="M118 128 C130 120 142 112 152 105" stroke="#6E7F52" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.55"/><rect x="40" y="100" width="130" height="50" fill="url(#gShade)"/></g>
+<use href="#pHead" fill="url(#gHead)"/>
+<g clip-path="url(#cHead)"><use href="#pFringe" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/><use href="#pHead" fill="url(#gShade)"/></g>
+<use href="#pFringe" fill="url(#gHair)"/>
+<g clip-path="url(#cUnderNose)"><use href="#pNose" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#pNose" fill="url(#gSkin)"/>
+<g clip-path="url(#cNose)"><use href="#pNose" fill="url(#gShade)"/><ellipse cx="96.5" cy="142" rx="2.2" ry="5" fill="#FFFFFF" opacity="0.35"/></g>
+<circle cx="102.5" cy="161" r="2.4" fill="#5C6C44" opacity="0.7"/>
+</g></g>
+<g id="top-braid" data-pivot="100 110"><g>
+<use href="#pBraid" transform="translate(0 4)" fill="#2B2230" opacity="0.25"/>
+<use href="#pBraidTip" fill="url(#gHair)"/>
+<use href="#pBraid" fill="url(#gHair)"/>
+<g clip-path="url(#cBraid)" stroke="#3A281C" stroke-width="1.8" fill="none" opacity="0.7"><path d="M96 80 C98.5 82 101.5 82 104 80 M95.5 89 C98.5 91 101.5 91 104.5 89 M95.5 98 C98.5 100 101.5 100 104.5 98"/><rect x="80" y="40" width="40" height="90" fill="url(#gShade)" stroke="none"/></g>
+<rect x="94.5" y="75" width="11" height="4.5" rx="2.2" fill="url(#gRope)"/>
+<use href="#pBun" fill="url(#gHair)"/>
+<g clip-path="url(#cBun)"><circle cx="97.5" cy="109" r="2.5" fill="#FFFFFF" opacity="0.18"/><use href="#pBun" fill="url(#gShade)"/></g>
+</g></g>
+</g>
+</svg>

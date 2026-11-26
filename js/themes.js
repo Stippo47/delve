@@ -131,7 +131,7 @@ export const THEMES = {
         ['goblinBomber', 0.8], ['goblinSpear', 0.8]], mini: 'orc',
         hazards: [['oil', 2], ['fire', 1.5], ['snare', 1.5]], mood: { fog: 'rgba(56,18,8,', fogK: 0.5, tint: 'rgba(255,90,40,0.105)' },
         props: [['firepit', 1], ['planks', 1.2], ['straw', 1.2], ['bonepile', 0.5]] },
-      { name: 'The Pit', enemies: [['orc', 3], ['orcShaman', 1.4], ['frostShaman', 1], ['troll', 1.3], ['rockTroll', 1], ['hobgoblin', 1.5], ['goblin', 1.5], ['drummer', 0.8],
+      { name: 'The Pit', enemies: [['orc', 3], ['orcShaman', 1.4], ['frostShaman', 1], ['troll', 1.3], ['rockTroll', 1], ['tumbleTroll', 0.9] /* (round 19, lane rider19) */, ['hobgoblin', 1.5], ['goblin', 1.5], ['drummer', 0.8],
         ['goblinSuicide', 0.8], ['ogre', 0.6]],
         hazards: [['spikes', 3], ['fire', 1.2], ['snare', 1]], mood: { fog: 'rgba(30,14,8,', fogK: 0.62, tint: 'rgba(160,60,30,0.144)' },
         props: [['bonepile', 1.4], ['rubble', 1.6], ['crack', 1], ['firepit', 0.4]] },

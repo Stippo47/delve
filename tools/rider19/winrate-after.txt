@@ -1,0 +1,7 @@
+troll        level  5: trolls won  45/360 (13%), 62s a fight, draws 0, never ended 0 | 1v2 0/40  2v2 3/40  3v2 31/40  1v3 0/40  2v3 0/40  3v3 11/40  1v4 0/40  2v4 0/40  3v4 0/40
+tumbleTroll  level  5: trolls won  67/360 (19%), 36s a fight, draws 0, never ended 0 | 1v2 0/40  2v2 10/40  3v2 36/40  1v3 0/40  2v3 0/40  3v3 19/40  1v4 0/40  2v4 0/40  3v4 2/40
+troll@1      level  9: trolls won 245/360 (68%), 72s a fight, draws 0, never ended 0 | 1v2 10/40  2v2 40/40  3v2 40/40  1v3 20/40  2v3 40/40  3v3 40/40  1v4 0/40  2v4 15/40  3v4 40/40
+tumbleTroll@1 level  9: trolls won 206/360 (57%), 49s a fight, draws 0, never ended 0 | 1v2 4/40  2v2 40/40  3v2 40/40  1v3 0/40  2v3 34/40  3v3 40/40  1v4 0/40  2v4 12/40  3v4 36/40
+troll@2      level 14: trolls won 252/360 (70%), 89s a fight, draws 1, never ended 0 | 1v2 15/40  2v2 40/40  3v2 40/40  1v3 18/40  2v3 40/40  3v3 40/40  1v4 0/40  2v4 19/40  3v4 40/40
+tumbleTroll@2 level 14: trolls won 243/360 (68%), 49s a fight, draws 0, never ended 0 | 1v2 12/40  2v2 40/40  3v2 40/40  1v3 7/40  2v3 40/40  3v3 40/40  1v4 0/40  2v4 24/40  3v4 40/40
+all: trolls won 1058/2160 (49.0%)
