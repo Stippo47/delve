@@ -1,7 +1,7 @@
 // The Goblin Chieftain's war camp and moves, drawn (lane B, bosses3). He is the art lane's sprite (round 10: two axes,
 // war paint, a clipped ear); this is his room (the hide stage, the war drums, the tunnel mouths) and what his axes do,
 // drawn to sit beside him: figures with the one outline, soft gradients, his own reds and steel.
-import { INK, TAU, clamp, OUTLINES } from './util.js';
+import { INK, TAU, clamp, OUTLINES, inkFor } from './util.js'; // (round 19, lane looks19: inkFor)
 import { inked, star } from './fx.js';
 import { dustPuffs } from './fxkit.js';
 import { figure, flashing, lin, rad, ballFill, gloss, glow, shade, ell, circ, rrect, poly, soft, up, BFX, easeOut, sm, k01, hash, slashBand, inkDisc, rgbaOf } from './boss-draw.js';
@@ -84,5 +84,5 @@ BFX.chiefDazed = { air(ctx, f, k, w) { const u = f.u; if (!u || u.dead) return; 
   for (let i = 0; i < 3; i++) { const a = w.time * 4 + i * TAU / 3, x = u.x + Math.cos(a) * u.vr * 0.8 + ux * u.vr, y = u.y + Math.sin(a) * u.vr * 0.3 + uy * u.vr; inked(ctx, () => star(ctx, x, y, 9, 4, 0.35, a), '#FFF7C2'); } } };
 BFX.chiefRoar = { // his roar: dust rolling out along the floor, short lines of sound all round him
   ground(ctx, f, k) { const e = easeOut(k); ctx.globalAlpha = (1 - k) * 0.6; ctx.strokeStyle = '#E9DDC2'; ctx.lineWidth = 22 * (1 - k) + 4; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (0.3 + 0.7 * e), 0, TAU); ctx.stroke(); },
-  air(ctx, f, k) { ctx.lineCap = 'round'; const d = f.r * (0.35 + 0.6 * easeOut(k)); for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = 9 * (1 - k) + 2; ctx.beginPath(); ctx.arc(f.x, f.y, d, a - 0.08, a + 0.08); ctx.stroke(); } ctx.strokeStyle = '#FFF4DC'; ctx.lineWidth = 5.5 * (1 - k) + 1; ctx.beginPath(); ctx.arc(f.x, f.y, d, a - 0.08, a + 0.08); ctx.stroke(); } dustPuffs(ctx, f.x, f.y, f.r * 0.7, k, 3, 9); },
+  air(ctx, f, k) { ctx.lineCap = 'round'; const d = f.r * (0.35 + 0.6 * easeOut(k)); for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; if (OUTLINES) { ctx.strokeStyle = inkFor('#FFF4DC'); /* (round 19, lane looks19) */ ctx.lineWidth = 9 * (1 - k) + 2; ctx.beginPath(); ctx.arc(f.x, f.y, d, a - 0.08, a + 0.08); ctx.stroke(); } ctx.strokeStyle = '#FFF4DC'; ctx.lineWidth = 5.5 * (1 - k) + 1; ctx.beginPath(); ctx.arc(f.x, f.y, d, a - 0.08, a + 0.08); ctx.stroke(); } dustPuffs(ctx, f.x, f.y, f.r * 0.7, k, 3, 9); },
 };

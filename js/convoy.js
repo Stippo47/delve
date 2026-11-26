@@ -20,7 +20,7 @@ import { HEROES } from './heroes.js';
 import { hooksOf } from './kits.js';
 import { freshStatuses } from './statuses.js';
 import { CARRY_MAX } from './potions.js';
-import { rand, rrange, rint, pick, chance, dist, clamp, angleTo, TAU, INK, OUTLINES } from './util.js';
+import { rand, rrange, rint, pick, chance, dist, clamp, angleTo, TAU, INK, OUTLINES, inkFor } from './util.js'; // (round 19, lane looks19: inkFor)
 import { paintRoadGround, drawCanopy, lookOf, paintWagon, paintRock } from './convoy-art.js';
 export { paintWagon }; // (camp-scene.js parks one at the camp's edge)
 
@@ -786,7 +786,7 @@ function paintRoad(g, w) {
   paintRoadGround(g, w, { EDGE, ROAD_HALF, look: C.look });
   w.pillars.forEach((p, i) => { if (p.painted) paintRock(g, p.x, p.y, p.r * 1.05, C.look, i * 13 + 5); });
   const gx = C.gate + 300; // (past the oxen when the wagon stops at the gate)
-  const ink = (fn, fill) => { if (OUTLINES) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = 4.8; g.lineJoin = 'round'; fn(); g.fill(); g.stroke(); } g.fillStyle = fill; fn(); g.fill(); }; // (round 19, lane toggles19)
+  const ink = (fn, fill) => { if (OUTLINES) { g.fillStyle = g.strokeStyle = inkFor(fill); /* (round 19, lane looks19) */ g.lineWidth = 4.8; g.lineJoin = 'round'; fn(); g.fill(); g.stroke(); } g.fillStyle = fill; fn(); g.fill(); }; // (round 19, lane toggles19)
   ink(() => { g.beginPath(); g.rect(gx - 11, mid - ROAD_HALF - 60, 22, ROAD_HALF * 2 + 120); }, C.last ? '#8A6A4A' : '#7A5A3C');
   for (const s of [-1, 1]) ink(() => { g.beginPath(); g.arc(gx, mid + s * (ROAD_HALF + 60), 20, 0, TAU); }, '#6E4A30');
   if (C.last) { // the town: a banner on the beam
@@ -836,7 +836,7 @@ function drawDowned(ctx, run, view) {
   for (const u of w.units) {
     if (!u.forcedGoal || !u.forcedGoal.coin || !gatherer(u) || !alive(u)) continue;
     const up = (u.vr + 16 + 3 * Math.sin(w.time * 6)), cx = view && view.rot ? u.x + up : u.x, cy = view && view.rot ? u.y : u.y - up;
-    ctx.save(); if (OUTLINES) { ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(cx, cy, 10, 0, TAU); ctx.fill(); }
+    ctx.save(); if (OUTLINES) { ctx.fillStyle = inkFor('#F2C14E'); /* (round 19, lane looks19) */ ctx.beginPath(); ctx.arc(cx, cy, 10, 0, TAU); ctx.fill(); }
     ctx.fillStyle = '#F2C14E'; ctx.beginPath(); ctx.arc(cx, cy, 7, 0, TAU); ctx.fill();
     ctx.fillStyle = '#FFE9A0'; ctx.beginPath(); ctx.arc(cx + (view && view.rot ? 2 : -2), cy - 2, 2.6, 0, TAU); ctx.fill(); ctx.restore();
   }

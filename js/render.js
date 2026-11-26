@@ -1,10 +1,10 @@
 // Canvas renderer for one room. Everything is drawn in room units, scaled and (in portrait) turned so the
 // way out is at the top. One screen shows one chunk across (ACROSS units); a camera follows the party both ways.
 import { getSprite, headR, tinted, getProp } from './sprites.js';
-import { getRig, drawRig, poseFor, LIMP, composeRig, drawComposed, bowNock } from './parts.js';
+import { getRig, drawRig, poseFor, LIMP, composeRig, drawComposed, bowNock, inkOf } from './parts.js'; // (round 19, lane looks19: inkOf)
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal, drawBeam, hash } from './fx.js';
-import { INK, TAU, clamp, OUTLINE, OUTLINES } from './util.js';
+import { INK, TAU, clamp, OUTLINE, OUTLINES, OLKEY, inkFor, PIXEL, OUTLINE_BASE, setOutlineWidth } from './util.js'; // (round 19, lane looks19: OLKEY, inkFor: the outline's own colour; PIXEL...: the pixel look)
 import { envId, obstacleFor } from './env.js';
 import { drawBodyFx, drawBodyGround, drawIceWall, HIT_OWN } from './fxkit.js';
 import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
@@ -87,11 +87,16 @@ function upVec() { return view.rot ? [1, 0] : [0, -1]; }
 let floorCache = null;
 // The room's floor, rock and dressing, drawn once into a canvas (scenery.js paints it in the dungeon type's look).
 function floor(w) {
-  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr + ':' + view.rot + ':env' + envId() + ':ol' + OUTLINES; // (lane toggles19: the walls' ink is in it)
-  if (floorCache && floorCache.key === key && floorCache.w === w) return floorCache.c;
+  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr + ':' + view.rot + ':env' + envId() + ':ol' + OUTLINES + OLKEY + OUTLINE; // (lane toggles19: the walls' ink is in it; round 19, lane looks19: its colour and width too)
+  // (round 19, lane looks19: the pixel look caches the floor at the exact pixel scale, zoom and all, so it is laid down
+  // pixel for pixel; while a pinch moves the zoom it is painted again at most four times a second, the last one
+  // standing in, smoothed, meanwhile)
+  const sc = view.scale * view.dpr, pk = view.pixel ? key + ':px' + sc.toFixed(5) : key;
+  if (floorCache && floorCache.key === pk && floorCache.w === w) return floorCache.c;
+  if (view.pixel && floorCache && floorCache.w === w && floorCache.pxl && performance.now() - floorCache.made < 250) { floorCache.exact = false; return floorCache.c; }
   const pad = 48; // the walls round the room and a little rock past them
   const c = document.createElement('canvas');
-  let s = view.base * view.dpr;
+  let s = view.pixel ? sc : view.base * view.dpr;
   const area = (w.W + pad * 2) * (w.H + pad * 2);
   const cap = w.cacheMax || 12e6; // lane W (convoy.js): the wide road's ground is cached smaller (a phone's memory)
   if (area * s * s > cap) s = Math.sqrt(cap / area); // a big room's floor is cached a little softer
@@ -100,7 +105,7 @@ function floor(w) {
   g.scale(s, s); g.translate(pad, pad);
   paintFloor(g, w, pad);
   if (w.paintGround) w.paintGround(g, w); // lane C (convoy.js): the road, painted into the cache
-  floorCache = { key, c, w, pad, s };
+  floorCache = { key: pk, c, w, pad, s, exact: !!view.pixel && s === sc, pxl: !!view.pixel, made: performance.now() };
   return c;
 }
 
@@ -108,7 +113,7 @@ function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(
 // Fill a path twice: ink grown by the outline, then the colour. Keeps every outline the same thickness.
 // (round 19, lane toggles19: outlines off, the colour alone)
 function inked(ctx, pathFn, fill) {
-  if (OUTLINES) { ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round';
+  if (OUTLINES) { const o = inkFor(fill); ctx.save(); ctx.fillStyle = o; ctx.strokeStyle = o; // (round 19, lane looks19: inkFor) ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round';
   pathFn(); ctx.fill(); ctx.stroke(); ctx.restore(); }
   ctx.fillStyle = fill; pathFn(); ctx.fill();
 }
@@ -190,6 +195,52 @@ const SPRITE_KIND = { boss: 'boss', slimeSmall: 'slimeSmall' };
 let w_battle = false; // battle mode (battle.js): both sides carry bars and a ring in their colour
 const SIDE_RING = { a: 'rgba(95,168,255,0.85)', b: 'rgba(255,107,90,0.85)' };
 export function draw(ctx, w) {
+  // round 19 (lane looks19; the designer: "I want to see what they look like pixelated"): the pixel look draws the room
+  // small and scales it up (drawPixel). Only the game's own canvas: the Book's and battle setup's previews stay sharp.
+  if (PIXEL > 0 && ctx.canvas.id === 'game') { drawPixel(ctx, w); return; }
+  const order = drawScene(ctx, w);
+  const d = view.dpr, m = view.m;
+  ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * m[4], d * m[5]);
+  for (const u of order) drawOverlay(ctx, u, w._dt ?? 0);
+  // Words over the arena (damage numbers, ability names) are off: show, don't tell. drawText stays for later use.
+}
+
+// ---------------------------------------------------------------- the pixel look (round 19, lane looks19)
+// The room is drawn into a canvas PIXEL screen points to a pixel (a whole number of the screen's own pixels to one, so
+// every pixel comes out the same size), then scaled up onto the game's canvas without smoothing. The camera, and every
+// unit's middle, are held to whole pixels (no shimmer as they move); the outline is held to at least one pixel (OUTLINE
+// is set for the draw, in 12% steps so a pinch rebuilds the figures' pictures a few times, not every frame); the floor's
+// picture is cached at the exact pixel scale and laid down unsmoothed. The bars over the units, the selection ring and
+// the fades are drawn afterwards on the sharp canvas (they're the HUD's). It is cheaper than the sharp look: a ninth to
+// a sixteenth of the pixels to fill, and one scaled copy.
+const PXL = { c: null, g: null };
+const NEAREST = (() => { try { return new URLSearchParams(location.search).get('pxsmooth') === '0'; } catch { return false; } })(); // (testing: figures sampled unsmoothed too)
+function drawPixel(ctx, w) {
+  const dev = view.dpr, P = Math.max(1, Math.round(PIXEL * dev)), cw = ctx.canvas.width, ch = ctx.canvas.height;
+  const lw = Math.ceil(cw / P), lh = Math.ceil(ch / P);
+  if (!PXL.c) PXL.c = document.createElement('canvas');
+  if (PXL.c.width !== lw || PXL.c.height !== lh || !PXL.g) { PXL.c.width = lw; PXL.c.height = lh; PXL.g = PXL.c.getContext('2d'); }
+  const g = PXL.g;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = voidColor(w); g.fillRect(0, 0, lw, lh);
+  g.imageSmoothingEnabled = !NEAREST;
+  view.dpr = dev / P; view.pixel = true;
+  const one = 1 / (view.scale * view.dpr); // one pixel in room units
+  setOutlineWidth(Math.max(OUTLINE_BASE, OUTLINE_BASE * Math.pow(2, Math.ceil(Math.log2(one / OUTLINE_BASE) * 6) / 6)));
+  let order;
+  try { order = drawScene(g, w); } finally { view.dpr = dev; view.pixel = false; setOutlineWidth(OUTLINE_BASE); }
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.imageSmoothingEnabled = false; ctx.drawImage(PXL.c, 0, 0, lw * P, lh * P); ctx.restore();
+  const m = view.m, k = dev / P, sn = PXL.snap || [0, 0]; // the overlays on the same whole-pixel camera as the room
+  ctx.setTransform(dev * m[0], dev * m[1], dev * m[2], dev * m[3], (Math.round(k * m[4]) + sn[0]) * P, (Math.round(k * m[5]) + sn[1]) * P);
+  for (const u of order) drawOverlay(ctx, u, w._dt ?? 0);
+}
+// (round 19, lane looks19) the pixel look: a unit's middle on a whole pixel (render.js unitFrame)
+function snapPixel(ctx, x, y) {
+  const m = ctx.getTransform(), px = m.a * x + m.c * y + m.e, py = m.b * x + m.d * y + m.f, dx = Math.round(px) - px, dy = Math.round(py) - py, det = m.a * m.d - m.b * m.c;
+  if (!det) return; ctx.translate((m.d * dx - m.c * dy) / det, (-m.b * dx + m.a * dy) / det);
+}
+
+// The room and everything in it (everything but the bars over the units); gives the units in their drawing order.
+function drawScene(ctx, w) {
   const d = view.dpr, m = view.m;
   w_battle = !!w.battle; setHpSides(w.battle ? w.battle.side : null);
   ctx.setTransform(d, 0, 0, d, 0, 0);
@@ -198,10 +249,13 @@ export function draw(ctx, w) {
   const sk = Math.min(w.shake, 8) * 0.45;
   const sh = sk > 0 ? (Math.random() - 0.5) * sk : 0, sv = sk > 0 ? (Math.random() - 0.5) * sk : 0;
   const tf = [d * m[0], d * m[1], d * m[2], d * m[3], d * (m[4] + sh), d * (m[5] + sv)];
+  if (view.pixel) { const ex = Math.round(tf[4]), fy = Math.round(tf[5]); PXL.snap = [ex - Math.round(d * m[4]), fy - Math.round(d * m[5])]; tf[4] = ex; tf[5] = fy; } // (round 19, lane looks19: the camera on whole pixels)
   ctx.setTransform(...tf);
   const fl = floor(w);
   const s = view.scale;
+  if (view.pixel && floorCache.exact) ctx.imageSmoothingEnabled = false; // (round 19, lane looks19: the floor at its own pixels)
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
+  if (view.pixel) ctx.imageSmoothingEnabled = !NEAREST;
   drawDoors(ctx, w);
   for (const r of w.walls) if (r.temp != null) { if (r.kind === 'ice') drawIceWall(ctx, r, w.time); else if (WALL2[r.kind]) WALL2[r.kind](ctx, r, w.time); /* round 15 (lane N): a wall with its own look (the Earth Mage's stone) */ else drawWallThemed(ctx, r, w); } // the rest are in the floor cache
   for (const h of w.hazards) if (!drawHazardPuddle(ctx, h, w.time) && !drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time); // puddles.js: the player's puddle style
@@ -246,9 +300,7 @@ export function draw(ctx, w) {
   // melee swings and blasts are drawn as weapon arcs and bursts by fxkit.js (drawLocal), round 8
   for (const f of w.fx) drawSpikeFx(ctx, f);
   drawMood(ctx, w, view.cw, view.ch, view.dpr);
-  ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * m[4], d * m[5]);
-  for (const u of order) drawOverlay(ctx, u, dt);
-  // Words over the arena (damage numbers, ability names) are off: show, don't tell. drawText stays for later use.
+  return order;
 }
 const screenDepth = (u) => (view.rot ? -u.x : u.y);
 
@@ -380,7 +432,7 @@ function drawHazard(ctx, h, t) {
     for (let i = 0; i < ring; i++) { const a = i / ring * TAU + 0.3; tips.push([Math.cos(a) * h.r * 0.58, Math.sin(a) * h.r * 0.58]); }
     if (h.up !== false) for (const [dx, dy] of tips) { // sunk (no tips) once the room is won
       const x = h.x + dx, y = h.y + dy, r = 4.6;
-      if (OUTLINES) { ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x + 0.8, y + 0.8, r + 1.4, 0, TAU); ctx.fill(); }
+      if (OUTLINES) { ctx.fillStyle = inkFor('#8D949C'); /* (round 19, lane looks19) */ ctx.beginPath(); ctx.arc(x + 0.8, y + 0.8, r + 1.4, 0, TAU); ctx.fill(); }
       ctx.fillStyle = '#8D949C'; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
       ctx.fillStyle = '#D9DEE4'; ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, r, Math.PI * 0.55, Math.PI * 1.55); ctx.closePath(); ctx.fill();
       ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(x - 0.4, y - 0.4, 1.1, 0, TAU); ctx.fill();
@@ -523,6 +575,7 @@ const ease = (k) => Math.sin(k * Math.PI);
 // The motion every unit shares, in its own frame: the hit squash, the turn to its facing, lunges and recoils.
 function unitFrame(ctx, u, w) {
   ctx.translate(u.x, u.y);
+  if (view.pixel) snapPixel(ctx, 0, 0); // (round 19, lane looks19: the pixel look, its middle on a whole pixel)
   const T = w.time;
   // off the ground (a leap): the body lifts up the screen, its shadow stays where it really is (round 9)
   if (u.hop > 0) { const [ux, uy] = upVec(); ctx.translate(ux * u.hop * 0.9, uy * u.hop * 0.9); }
@@ -682,7 +735,7 @@ export function drawHeldWeapon(ctx, u, k = 1) {
   if (!L) return false;
   const s = sizeU / 220 * k * bigOf(u);
   ctx.save(); ctx.scale(s, s); ctx.translate(-(L.x + L.w / 2), -(L.y + L.h / 2));
-  if (OUTLINES) ctx.drawImage(L.ink, L.x, L.y, L.w, L.h); ctx.drawImage(L.img, L.x, L.y, L.w, L.h);
+  if (OUTLINES) ctx.drawImage(inkOf(L, set), L.x, L.y, L.w, L.h); ctx.drawImage(L.img, L.x, L.y, L.w, L.h); // (round 19, lane looks19: inkOf, the look's outline)
   ctx.restore();
   return true;
 }
@@ -781,7 +834,8 @@ function nockedArrow(ctx, u, set, pose, sizeU) {
   const head = () => { ctx.beginPath(); ctx.moveTo(x, y + L); ctx.lineTo(x - 4.5 * s, y + L - 10 * s); ctx.lineTo(x + 4.5 * s, y + L - 10 * s); ctx.closePath(); };
   const fl = () => { ctx.beginPath(); for (const sd of [-1, 1]) { ctx.moveTo(x, y + 7 * s); ctx.lineTo(x + sd * 4.5 * s, y - 1 * s); ctx.lineTo(x + sd * 3 * s, y + 9 * s); ctx.closePath(); } };
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = INK; ctx.fillStyle = INK;
-  if (OUTLINES) { ctx.lineWidth = wd + O * 2; shaft(); ctx.stroke(); ctx.lineWidth = O * 2; head(); ctx.fill(); ctx.stroke(); fl(); ctx.fill(); ctx.stroke(); }
+  // (round 19, lane looks19: in the Own colour look each piece is ringed in a shade of its own colour)
+  if (OUTLINES) { ctx.strokeStyle = inkFor(u.aimCol || '#C99A6A'); ctx.lineWidth = wd + O * 2; shaft(); ctx.stroke(); ctx.lineWidth = O * 2; ctx.fillStyle = ctx.strokeStyle = inkFor(u.aimHead || '#DCE0E6'); head(); ctx.fill(); ctx.stroke(); ctx.fillStyle = ctx.strokeStyle = inkFor('#F1E8DA'); fl(); ctx.fill(); ctx.stroke(); }
   ctx.strokeStyle = u.aimCol || '#C99A6A'; ctx.lineWidth = wd; shaft(); ctx.stroke();
   ctx.fillStyle = u.aimHead || '#DCE0E6'; head(); ctx.fill(); ctx.fillStyle = '#F1E8DA'; fl(); ctx.fill();
   ctx.restore();
@@ -819,7 +873,7 @@ function drawTail(ctx, u, dt) {
   }
   const path = () => { ctx.beginPath(); ctx.moveTo(ax, ay); for (const p of u.tail) ctx.lineTo(p.x, p.y); };
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = 2.2 + OUTLINE * 2; path(); ctx.stroke(); }
+  if (OUTLINES) { ctx.strokeStyle = inkFor('#D8A39A'); /* (round 19, lane looks19) */ ctx.lineWidth = 2.2 + OUTLINE * 2; path(); ctx.stroke(); }
   ctx.strokeStyle = '#D8A39A'; ctx.lineWidth = 2.2; path(); ctx.stroke();
   ctx.restore();
 }
@@ -829,7 +883,7 @@ function drawIce(ctx, u, w) {
   const r = u.vr * 1.35;
   ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.id);
   const path = () => { ctx.beginPath(); for (let i = 0; i < 7; i++) { const a = i / 7 * TAU, rr = r * (i % 2 ? 0.92 : 1.05); i ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); } ctx.closePath(); };
-  if (OUTLINES) { ctx.globalAlpha = 0.85; ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; path(); ctx.stroke(); }
+  if (OUTLINES) { ctx.globalAlpha = 0.85; ctx.strokeStyle = inkFor('#7FC8E8'); /* (round 19, lane looks19: a shade of ice) */ ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; path(); ctx.stroke(); }
   ctx.globalAlpha = 0.45; ctx.fillStyle = '#CFF3FF'; path(); ctx.fill();
   ctx.globalAlpha = 0.7; ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(-r * 0.6, -r * 0.2); ctx.lineTo(-r * 0.2, -r * 0.65); ctx.lineTo(-r * 0.05, -r * 0.5); ctx.lineTo(-r * 0.45, -r * 0.05); ctx.closePath(); ctx.fill();
   ctx.restore();
@@ -841,7 +895,7 @@ function drawIce(ctx, u, w) {
 // A body lies in one pose, so its look is composed once per art and size and then drawn as one image.
 const DEAD_A = 0.42, DEAD_WASH = 'rgba(96,90,106,0.6)';
 function bodyLook(set, dead) {
-  const key = (dead ? '_deadLook' : '_bodyLook') + (OUTLINES ? '' : '0'); // (lane toggles19: composed with or without its ink)
+  const key = (dead ? '_deadLook' : '_bodyLook') + (OUTLINES ? OLKEY : '0'); // (lane toggles19: composed with or without its ink; round 19, lane looks19: and in which colour)
   if (set[key]) return set[key];
   const k = composeRig(set, LIMP, 'normal');
   const c = document.createElement('canvas'); c.width = c.height = k.sx;
@@ -926,23 +980,23 @@ function drawParticle(ctx, p) {
     const [ux, uy] = upVec(), s = p.size * (0.6 + 0.4 * Math.min(1, (1 - k) * 5)), t = s * 0.36;
     ctx.save(); ctx.globalAlpha = Math.min(1, k * 2.2); ctx.translate(p.x + ux * (p.up || 0), p.y + uy * (p.up || 0));
     const cross = () => { ctx.beginPath(); ctx.rect(-s, -t, s * 2, t * 2); ctx.rect(-t, -s, t * 2, s * 2); };
-    if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; cross(); ctx.stroke(); }
+    if (OUTLINES) { ctx.strokeStyle = inkFor(p.color); /* (round 19, lane looks19) */ ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; cross(); ctx.stroke(); }
     ctx.fillStyle = p.color; cross(); ctx.fill(); ctx.restore(); ctx.globalAlpha = 1;
   } else if (p.shape === 'heart') { // round 13: a little inked heart rising (charm)
     const [ux, uy] = upVec(), s = p.size * (0.7 + 0.3 * Math.min(1, (1 - k) * 5));
     upright(ctx, p.x + ux * (p.up || 0), p.y + uy * (p.up || 0), () => { ctx.globalAlpha = Math.min(1, k * 2.2); heartPath(ctx, s);
-      if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; ctx.stroke(); } ctx.fillStyle = p.color; ctx.fill(); });
+      if (OUTLINES) { ctx.strokeStyle = inkFor(p.color); /* (round 19, lane looks19) */ ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; ctx.stroke(); } ctx.fillStyle = p.color; ctx.fill(); });
     ctx.globalAlpha = 1;
   } else if (p.shape === 'drip') { // round 13: a drop of blood falling off the body (bleeding)
     const [ux, uy] = upVec();
     upright(ctx, p.x + ux * (p.up || 0), p.y + uy * (p.up || 0), () => { ctx.globalAlpha = Math.min(1, k * 2);
       const s = p.size; ctx.beginPath(); ctx.moveTo(0, -s * 1.5); ctx.quadraticCurveTo(s, 0, s * 0.9, s * 0.5); ctx.arc(0, s * 0.5, s * 0.9, 0, Math.PI); ctx.quadraticCurveTo(-s, 0, 0, -s * 1.5); ctx.closePath();
-      if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 1.6; ctx.lineJoin = 'round'; ctx.stroke(); } ctx.fillStyle = p.color; ctx.fill(); });
+      if (OUTLINES) { ctx.strokeStyle = inkFor(p.color); /* (round 19, lane looks19) */ ctx.lineWidth = OUTLINE * 1.6; ctx.lineJoin = 'round'; ctx.stroke(); } ctx.fillStyle = p.color; ctx.fill(); });
     ctx.globalAlpha = 1;
   } else if (p.shape === 'spark') {
     const a = Math.atan2(p.vy, p.vx), len = 6 + 10 * k;
     ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(a); ctx.globalAlpha = Math.min(1, k * 1.6);
-    ctx.lineCap = 'round'; if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = p.size + OUTLINE * 2; ctx.beginPath(); ctx.moveTo(-len, 0); ctx.lineTo(0, 0); ctx.stroke(); }
+    ctx.lineCap = 'round'; if (OUTLINES) { ctx.strokeStyle = inkFor(p.color); /* (round 19, lane looks19) */ ctx.lineWidth = p.size + OUTLINE * 2; ctx.beginPath(); ctx.moveTo(-len, 0); ctx.lineTo(0, 0); ctx.stroke(); }
     ctx.strokeStyle = p.color; ctx.lineWidth = p.size; ctx.beginPath(); ctx.moveTo(-len, 0); ctx.lineTo(0, 0); ctx.stroke();
     ctx.restore(); ctx.globalAlpha = 1;
   } else {

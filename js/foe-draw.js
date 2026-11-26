@@ -3,7 +3,7 @@
 //   drawFoeGround   under everything that stands: a yeti's snowball track, a burrower's mound
 //   snowRoll        over a yeti's snowball: it turns as it rolls (two bands round it, moving with the roll)
 //   drawFoe         a chain as one body; the sun blade with its point in a wall; a spirit's tail
-import { INK, TAU, clamp, OUTLINES } from './util.js';
+import { INK, TAU, clamp, OUTLINES, OLCOL, inkFor, inkRGB } from './util.js'; // (round 19, lane looks19: the outline's own colour)
 import { OUTLINE, view } from './render.js';
 import { getRig, paintRig, composeRig, drawComposed, poseFor } from './parts.js';
 
@@ -120,7 +120,7 @@ function drawChain(ctx, h, w, dt, R) {
   const poses = sets.map((s) => pose(s.p));
   const shape = (s) => (s.p.tail && s.p.def.tailShape) || null;
   const ink = (s, i) => { if (!OUTLINES) return; frame(s); const sh = shape(s); // (round 19, lane toggles19: outlines off, no ink pass)
-    if (sh) { taperPath(ctx, sh); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.lineWidth = 10; ctx.fill(); ctx.stroke(); } // (the tail: its own outline round the taper)
+    if (sh) { taperPath(ctx, sh); ctx.fillStyle = ctx.strokeStyle = OLCOL.own && s.set.dom ? inkRGB(...s.set.dom) : INK; /* (round 19, lane looks19) */ ctx.lineJoin = 'round'; ctx.lineWidth = 10; ctx.fill(); ctx.stroke(); } // (the tail: its own outline round the taper)
     else paintRig(ctx, s.set, poses[i], 'ink');
     ctx.restore(); };
   const eth = h.ethereal; h.ethereal = false; const washes = R.washesOf(h, w); h.ethereal = eth; // (its head under the sand is see-through; the links still up are not)
@@ -173,8 +173,8 @@ export function drawSpiritTail(ctx, u, dt, T) {
   const side = (P) => { for (let i = 1; i < P.length - 1; i++) ctx.quadraticCurveTo(P[i][0], P[i][1], (P[i][0] + P[i + 1][0]) / 2, (P[i][1] + P[i + 1][1]) / 2); ctx.lineTo(P[P.length - 1][0], P[P.length - 1][1]); };
   const path = () => { ctx.beginPath(); ctx.moveTo(left[0][0], left[0][1]); side(left); side(right.slice().reverse()); ctx.closePath(); };
   ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; path(); ctx.stroke(); }
   const g = ctx.createLinearGradient(ax, ay, pts[n].x, pts[n].y); g.addColorStop(0, u.def.tail[0]); g.addColorStop(1, u.def.tail[1]);
+  if (OUTLINES) { ctx.strokeStyle = inkFor(g); /* (round 19, lane looks19) */ ctx.lineWidth = OUTLINE * 2; path(); ctx.stroke(); }
   ctx.fillStyle = g; path(); ctx.fill();
   ctx.restore();
 }
