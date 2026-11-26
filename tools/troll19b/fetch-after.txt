@@ -1,0 +1,36 @@
+troll        open     back within 6s 20/20  median   1.8s  never 0
+troll        wall     back within 6s 20/20  median   1.8s  never 0
+troll        corner   back within 6s 20/20  median   2.7s  never 0
+troll        pillar   back within 6s 20/20  median   2.4s  never 0
+troll        pocket   back within 6s 20/20  median   2.4s  never 0
+troll        friends  back within 6s 20/20  median   2.1s  never 0
+troll        ring     back within 6s 20/20  median   5.4s  never 0  a new one 20
+troll        knocked  back within 6s 20/20  median   2.3s  never 0
+rockTroll    open     back within 6s 20/20  median   2.2s  never 0
+rockTroll    wall     back within 6s 20/20  median   1.7s  never 0
+rockTroll    corner   back within 6s 20/20  median   2.5s  never 0
+rockTroll    pillar   back within 6s 20/20  median   2.6s  never 0
+rockTroll    pocket   back within 6s 20/20  median   2.3s  never 0
+rockTroll    friends  back within 6s 20/20  median   2.4s  never 0
+rockTroll    ring     back within 6s 20/20  median   5.4s  never 0  a new one 20
+rockTroll    knocked  back within 6s 20/20  median   2.7s  never 0
+rockTroll@1  open     back within 6s 20/20  median   1.8s  never 0
+rockTroll@1  wall     back within 6s 20/20  median   1.3s  never 0
+rockTroll@1  corner   back within 6s 20/20  median   1.8s  never 0
+rockTroll@1  pillar   back within 6s 20/20  median   2.1s  never 0
+rockTroll@1  pocket   back within 6s 20/20  median   1.7s  never 0
+rockTroll@1  friends  back within 6s 20/20  median   2.0s  never 0
+rockTroll@1  ring     back within 6s 20/20  median   1.0s  never 0
+rockTroll@1  knocked  back within 6s 20/20  median   2.2s  never 0
+yeti         open     back within 6s 20/20  median   4.8s  never 0
+yeti         wall     back within 6s  0/20  median   8.1s  never 0
+yeti         corner   back within 6s  0/20  median  11.6s  never 0
+yeti         pillar   back within 6s 20/20  median   5.5s  never 0
+yeti         pocket   back within 6s 20/20  median   1.9s  never 0  a new one 20
+yeti         friends  back within 6s  0/20  median   7.4s  never 0
+yeti         ring     back within 6s 20/20  median   1.9s  never 0  a new one 20
+yeti         knocked  back within 6s 10/20  median   6.0s  never 0
+fights troll        let go 192, taken up again 180 (within 6s 179, mean 3.8s), still loose at the end 12, broken while loose 0
+fights rockTroll    let go 201, taken up again 194 (within 6s 194, mean 2.2s), still loose at the end 7, broken while loose 0
+fights rockTroll@1  let go 213, taken up again 205 (within 6s 204, mean 1.9s), still loose at the end 8, broken while loose 0
+fights yeti         let go 206, taken up again 141 (within 6s 119, mean 2.7s), still loose at the end 15, broken while loose 50

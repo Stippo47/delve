@@ -203,6 +203,7 @@ function material(u) {
   if (!u) return 'flesh';
   if (u.team === 'hero' && !u.summon) return u.def.heroRole === 'tank' || u.kind === 'knight' ? 'armor' : 'flesh';
   const k = u.kind;
+  if (u.def.ball) return u.def.ball === 'snow' ? 'slime' : 'bone'; // (round 19, lane troll19b: a boulder struck is a knock on stone, a snowball a soft thump)
   if (/slime/i.test(k)) return 'slime';
   if (/ghost|banshee|wraith|spirit/i.test(k) || u.ethereal) return 'ghost';
   if (/rattler|skeleton|gaper|brute|bone|grave|^boss$/i.test(k) || u.def.undead) return 'bone';

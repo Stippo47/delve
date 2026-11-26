@@ -11,7 +11,7 @@ import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; //
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
 import { bodiesCollide, anchored, heldFast, softPush, softRock, pushCap } from './layers.js'; // (round 19, lane physics19: collision layers and soft separation in one place; it was height.js bodiesMeet)
 import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
-import { isBall, ballPass, bodyOutOfWalls } from './boulders.js'; // (round 19, lane troll19: a troll's boulder and a yeti's snowball are solid bodies)
+import { isBall, ballPass, bodyOutOfWalls, ballTarget } from './boulders.js'; // (round 19, lane troll19: a troll's boulder and a yeti's snowball are solid bodies; lane troll19b: with health, and who goes for them)
 import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf, isArmed, isDisarmed, FOE_WEAPON_ABILITY } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
 
 let NEXT_ID = 1;
@@ -122,7 +122,7 @@ export function restoreSide(w, u) {
 const alive = (u) => !u.dead && !u.downed;
 // Ethereal units (a Wraith Veil ghost) are nobody's opponent or ally: they can't be targeted, hit or helped.
 const opponents = (w, u) => w.units.filter((o) => alive(o) && o.team !== u.team && !o.ethereal);
-const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u && !o.ethereal && !o.def.rig && !mobLead(o)); // (round 15, the Mob: its other bodies are not more friends: the lead is the hero) // (lane W, round 14: def.rig = the wagon's body circles, convoy.js: nobody's friend)
+const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u && !o.ethereal && !o.def.rig && !o.ballOf /* (round 19, lane troll19b: a boulder's health is nobody's friend to mend or cheer on) */ && !mobLead(o)); // (round 15, the Mob: its other bodies are not more friends: the lead is the hero) // (lane W, round 14: def.rig = the wagon's body circles, convoy.js: nobody's friend)
 const hpRatio = (u) => u.hp / u.maxHp;
 const speedOf = (u) => {
   let s = u.def.speed * (u.moveMul || 1);
@@ -325,6 +325,7 @@ function chooseTarget(w, u) {
   }
   let opp = opponents(w, u);
   if (u.team === 'hero') opp = opp.filter((o) => o.aggro || dist(u.x, u.y, o.x, o.y) < SIGHT);
+  opp = opp.filter((o) => !o.ballOf); // (round 19, lane troll19b: a boulder is never the pick here, nor one of the crowd: boulders.js ballTarget, below)
   if (!opp.length) { u.target = null; return; }
   const k = roleAlias(u);
   let best = null, bestS = -Infinity;
@@ -367,7 +368,7 @@ function chooseTarget(w, u) {
     if (u.outOfReach && u.outOfReach.get(o) > w.time) s -= REACH_PENALTY; // round 14 (lane L): one it couldn't get at (reachCheck)
     if (s > bestS) { bestS = s; best = o; }
   }
-  u.target = best;
+  u.target = ballTarget(w, u, best) || best; // (round 19, lane troll19b: or the boulder standing between it and that pick: boulders.js)
 }
 // Round 14, lane L (rooms that dragged on for minutes): a unit that gets no nearer to its target, and can't hit it from
 // where it is, for REACH_T seconds (a troll after a shooter behind a wall it is too big to get round, a knight after a bee

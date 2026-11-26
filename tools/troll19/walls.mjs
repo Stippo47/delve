@@ -57,7 +57,7 @@ function audit(w, C, tag) {
     if (on) { E.steps++; E.worst = Math.max(E.worst, worst || 0); if (!(C.seen.get(k) > w.time - 0.5)) { E.times++; if (C.ex.length < 400) C.ex.push({ key, tag, t: +w.time.toFixed(2), kind: who.kind || (who.snowball ? 'snowball' : 'boulder'), x: Math.round(who.x), y: Math.round(who.y), worst: Math.round(worst || 0) }); } C.seen.set(k, w.time); }
   };
   for (const u of w.units) {
-    if (u.dead || u.downed || u.ethereal || u.fixed || u.team === 'neutral' || u.def.boss) continue;
+    if (u.dead || u.downed || u.ethereal || u.fixed || u.team === 'neutral' || u.def.boss || u.ballOf) continue; // (lane troll19b: u.ballOf, a boulder's health is no body)
     if ((u.hop || 0) > 10 || u.flyT > 0 || u.airborne) continue; // (up in the air: over the walls)
     const near = balls.some((b) => Math.hypot(u.x - b.x, u.y - b.y) < u.r + b.r + 14);
     const { pen, inW, out } = wallPen(w, u.x, u.y, u.r);

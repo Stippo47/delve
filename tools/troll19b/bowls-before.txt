@@ -1,0 +1,15 @@
+troll       bowl   bowls 8.3/min  launch 315  rolled 332 (most 346)  room 0 (least 0)  pressed 17.7s/min  thrown 52 (n 49)  wait 3.5s  fists 0.0/min bare (50% bare)  breaks 0.0/min first -
+troll       stand  bowls 8.3/min  launch 315  rolled 330 (most 337)  room 0 (least 0)  pressed 14.2s/min  thrown 76 (n 48)  wait 3.4s  fists 0.0/min bare (49% bare)  breaks 0.0/min first -
+troll       near   bowls 8.3/min  launch 315  rolled 330 (most 339)  room 0 (least 0)  pressed 16.7s/min  thrown 76 (n 48)  wait 3.4s  fists 0.0/min bare (45% bare)  breaks 0.0/min first -
+troll       fetch  bowls 7.3/min  launch 315  rolled 330 (most 339)  room 42 (least 0)  pressed 14.0s/min  thrown 75 (n 41)  wait 3.4s  fists 0.0/min bare (52% bare)  breaks 0.0/min first -
+troll       break  bowls 7.3/min  launch 315  rolled 336 (most 342)  room 0 (least 0)  pressed 16.6s/min  thrown 52 (n 42)  wait 4.0s  fists 6.0/min bare (56% bare)  breaks 0.8/min first 23.7s
+rockTroll   bowl   bowls 7.0/min  launch 355  rolled 381 (most 387)  room 0 (least 0)  pressed 21.3s/min  thrown 48 (n 39)  wait 4.1s  fists 0.0/min bare (43% bare)  breaks 0.0/min first -
+rockTroll   stand  bowls 6.5/min  launch 355  rolled 381 (most 383)  room 0 (least 0)  pressed 14.2s/min  thrown 77 (n 38)  wait 4.3s  fists 0.0/min bare (45% bare)  breaks 0.0/min first -
+rockTroll   near   bowls 6.5/min  launch 355  rolled 379 (most 384)  room 0 (least 0)  pressed 18.1s/min  thrown 77 (n 36)  wait 4.1s  fists 0.0/min bare (41% bare)  breaks 0.0/min first -
+rockTroll   fetch  bowls 5.5/min  launch 355  rolled 379 (most 384)  room 0 (least 0)  pressed 13.5s/min  thrown 76 (n 33)  wait 4.1s  fists 0.0/min bare (49% bare)  breaks 0.0/min first -
+rockTroll   break  bowls 6.0/min  launch 355  rolled 383 (most 386)  room 0 (least 0)  pressed 19.9s/min  thrown 52 (n 35)  wait 4.6s  fists 0.0/min bare (43% bare)  breaks 0.0/min first -
+yeti        bowl   bowls 5.8/min  launch 321  rolled 153 (most 251)  room 1 (least -5)  pressed 17.5s/min  thrown 66 (n 23)  wait 3.7s  fists 12.1/min bare (59% bare)  breaks 3.2/min first 2.4s
+yeti        stand  bowls 7.0/min  launch 301  rolled 182 (most 233)  room -4 (least -5)  pressed 4.8s/min  thrown 67 (n 42)  wait 3.2s  fists 4.0/min bare (54% bare)  breaks 0.0/min first -
+yeti        near   bowls 8.7/min  launch 294  rolled 140 (most 280)  room -4 (least -6)  pressed 4.3s/min  thrown 58 (n 47)  wait 4.0s  fists 3.6/min bare (60% bare)  breaks 0.2/min first 2.3s
+yeti        fetch  bowls 6.0/min  launch 283  rolled 154 (most 251)  room -4 (least -6)  pressed 4.6s/min  thrown 62 (n 49)  wait 4.5s  fists 5.2/min bare (58% bare)  breaks 2.2/min first 0.0s
+yeti        break  bowls 5.2/min  launch 331  rolled 184 (most 314)  room 3 (least -5)  pressed 12.9s/min  thrown 64 (n 23)  wait 4.2s  fists 14.3/min bare (67% bare)  breaks 3.8/min first 2.5s

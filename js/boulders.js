@@ -30,6 +30,8 @@
 //  4. a rolling ball stopped that way bounces off as off a wall;
 //  5. the owner is kept at the rod's length from it (never inside its own boulder): a stopped boulder stops the troll.
 import { circleRect } from './path.js';
+import { BUILD_IDS } from './statuses.js'; // (round 19, lane troll19b: the ball's health)
+import { softRock } from './layers.js'; // (round 19, lane troll19b, after lane physics19: a body found deep in a ball eases out of it)
 
 export const isBall = (p) => !!(p.boulder || p.snowball);
 // what is solid to a ball: every other round thing (a snowball keeps its old rule for the wagon road's painted rocks: foes10.js)
@@ -141,7 +143,7 @@ export function ballPass(w, dt, slam) {
       ballStatics(w, b);
       let again = false;
       for (const o of w.units) {
-        if (o.dead || o.downed || (b.owner === o && own(o, b))) continue;
+        if (o.dead || o.downed || o.ballOf || (b.owner === o && own(o, b))) continue; // (round 19, lane troll19b: o.ballOf, a ball's health is nobody's body)
         let dx = o.x - b.x, dy = o.y - b.y, d2 = dx * dx + dy * dy;
         const m = o.r + b.r;
         if (d2 >= (m + 1) * (m + 1)) continue;
@@ -161,16 +163,25 @@ export function ballPass(w, dt, slam) {
           }
         }
         if (d2 >= m * m) continue;
-        const d = Math.sqrt(d2), nx = d > 1e-4 ? dx / d : 1, ny = d > 1e-4 ? dy / d : 0, over = m - d;
+        const d = Math.sqrt(d2), nx = d > 1e-4 ? dx / d : 1, ny = d > 1e-4 ? dy / d : 0; let over = m - d;
         const fixedBall = still && b.owner !== o;
         if (o.fixed) { if (!fixedBall) { b.x -= nx * over; b.y -= ny * over; bx -= nx * over; by -= ny * over; again = true; } continue; }
+        // (round 19, lane troll19b, after lane physics19's rule for rocks, layers.js softRock: what is new of the overlap
+        // this step, its own walk, a knock, the ball's roll, is put right at once and in full (a rock's rule caps that
+        // at a pace; a ball rolls and bodies are thrown at it, and with the cap they were found deep in boulders seven
+        // times as often), so nothing gets through a ball; depth that was there already at the end of the last step (a
+        // new boulder torn up under somebody) eases out over a few steps instead of throwing the body a boulder's width
+        // in one. `left` is the depth left in for now; the ball is not asked to give it back either)
+        if (pass === 0) { const old = Math.min(over, Math.max(0, m - Math.hypot((o.wasX ?? o.x) - (b.px ?? b.x), (o.wasY ?? o.y) - (b.py ?? b.y)))); o.ballLeft = globalThis.NOEASE19 ? 0 : old - softRock(old, 0, dt); o.ballLeftOf = b; } // (NOEASE19: a test's switch, tools/troll19/walls.mjs with it set counts the overlaps without the easing)
+        const left = o.ballLeftOf === b ? o.ballLeft : 0;
+        over -= left; if (over <= 0.001) continue;
         const share = fixedBall ? 1 : M / (M + (o.mass || 1)), ox = o.x, oy = o.y;
         o.x += nx * over * share; o.y += ny * over * share;
         if (share < 1) { b.x -= nx * over * (1 - share); b.y -= ny * over * (1 - share); bx -= nx * over * (1 - share); by -= ny * over * (1 - share); again = true; }
         // the body against the room: what it can't give, the ball gives back
         if (outOfSolids(w, o, (p) => p === b || (p.owner === o && isBall(p) && own(o, p)))) {
           if (inWalls(w, o)) { o.x = ox; o.y = oy; } // (pushed into a slot too narrow for it: it stays where it was, and the ball gives all of it)
-          const ex = o.x - b.x, ey = o.y - b.y, e = Math.hypot(ex, ey), rem = m - e;
+          const ex = o.x - b.x, ey = o.y - b.y, e = Math.hypot(ex, ey), rem = m - e - left;
           // (a ball lying still gives too, for this: it is a rock to walk into, not one to be crushed against a wall by)
           if (rem > 0.01) { const qx = e > 1e-4 ? ex / e : nx, qy = e > 1e-4 ? ey / e : ny; b.x -= qx * rem; b.y -= qy * rem; bx -= qx * rem; by -= qy * rem; again = true; }
         }
@@ -206,8 +217,12 @@ export function ballPass(w, dt, slam) {
     // push it out of both sides, and each step's shove took it further in: back to where it last fitted
     if (inWalls(w, b)) { if (b.okx != null && Math.hypot(b.okx - b.x, b.oky - b.y) < 80 && !inWalls(w, { x: b.okx, y: b.oky, r: b.r })) { b.x = b.okx; b.y = b.oky; } }
     else { b.okx = b.x; b.oky = b.y; }
+    // (round 19, lane troll19b: b.wedged, how long it has been in a wall all the same: dragged on down a slot too narrow
+    // for it, further than that from where it last fitted. Its owner makes an end of it: foes9.js boulderBrain)
+    b.wedged = inWalls(w, b, 6) ? (b.wedged || 0) + dt : 0;
     b.px = b.x; b.py = b.y;
     b.mvx = b.x - x0; b.mvy = b.y - y0; // how it moved this step (the rod, the room and the bodies; not its own roll)
+    bodySync(w, b, dt); // (round 19, lane troll19b: its health, below)
   }
 }
 // A body pushed out of the walls and the room's edge once more (sim.js physics: after a rock has thrown it out of
@@ -220,4 +235,66 @@ export function bodyOutOfWalls(w, u) {
     if (u.x < r.x - R || u.x > r.x + r.w + R || u.y < r.y - R || u.y > r.y + r.h + R) continue;
     const q = circleRect(u.x, u.y, R, r); if (q) { u.x += q.nx * q.over; u.y += q.ny * q.over; }
   }
+}
+
+// ---------------------------------------------------------------- a ball's health (round 19, lane troll19b)
+// The designer: "Boulder should have hp and can be destroyed and targeted."
+// A ball with health has a body: a unit of its owner's side (b.body; its kind is foes9.js boulderBody or foes10.js
+// snowBody) that sits on the ball, is the ball's size, and carries the ball's health. Being a unit, everything that
+// can hurt a unit hurts the ball: a swing, a shot (the ball stops the shot and passes it on: b.onShot), a blast, an
+// ability, and it shows a health bar like any other foe once it is hurt (hpstyle.js, so the Health bars switch and
+// the picked style hold for it). It is nobody's body otherwise: it pushes nobody and nobody pushes it (def.pass; the
+// ball itself is the solid thing, above), it draws nothing (def.draw), takes no status and no shove, can't be
+// charmed, dragged or swallowed (def.part), leaves nothing when it goes, and is gone with the ball or its owner.
+// Who goes for it: sim.js chooseTarget leaves a ball out of the usual pick and asks ballTarget below.
+const BODY_HOOK = {
+  knockImmune: true, immune: [...BUILD_IDS],
+  // out of health: no death of a unit (no body, no loot, no kill counted): the ball breaks (b.onBreak, next ballPass)
+  downed(w, me) { me.dead = true; me.hp = 0; if (me.ballOf && me.ballOf.broken == null) me.ballOf.broken = w.time; return true; },
+};
+export function giveBody(w, b, spawn, kind, hp) {
+  const u = b.owner, s = spawn(w, kind, b.x, b.y, { team: u.team });
+  s.maxHp = s.hp = Math.max(1, Math.round(hp)); s.r = s.vr = b.r; s.ballOf = b; s.summon = true; s.minion = true; s.aggro = true; s.adopt = false; s.hexSeen = true;
+  s.shadowK = 0; s.bkey = u.bkey; s.trinketHooks = [BODY_HOOK]; s.armor = 0; s.facing = 0;
+  b.body = s; b.hp = s.hp; b.maxHp = s.maxHp; b.broken = null;
+  return s;
+}
+export function retireBody(b) { if (b.body) { b.body.dead = true; b.body.ballOf = null; b.body = null; } }
+function bodySync(w, b, dt) {
+  if (b.hitT > 0) b.hitT = Math.max(0, b.hitT - dt);
+  const s = b.body;
+  if (s) {
+    const u = b.owner;
+    if (!u || u.dead || s.dead) { if (!s.dead) retireBody(b); else b.body = null; } // (nobody's ball is nobody's target: a dead yeti's ball rolls on and melts)
+    else {
+      s.x = b.x; s.y = b.y; s.r = s.vr = b.r; s.vx = s.vy = s.kx = s.ky = s.dvx = s.dvy = 0; s.spd = 0; s.team = b.team = u.team; // (a charmed troll's boulder is its new side's)
+      if (s.hitT > 0.1 && !(b.hitT > 0.06)) b.hitT = 0.12; // (struck: the ball flashes, boulder-roll.js)
+      b.hp = s.hp; b.maxHp = s.maxHp; // (for the drawing: its cracks)
+    }
+  }
+  if (b.broken != null && b.onBreak) { const f = b.onBreak; b.onBreak = null; f(w, b); }
+}
+// Who goes for a ball (sim.js chooseTarget, once it has picked the foe `t` a unit would go for): the ball that stands
+// between the two, if it is near enough to be worth breaking through: a fighter when the ball is within a few steps
+// and his foe is out of his reach behind it; a shooter when the ball is in its owner's hands on his line of fire, in
+// range. Anything else in the fight comes first, and a ball lying loose off to one side is left alone. (Swings, blasts
+// and shots that catch it on their way hurt it whoever they were meant for.)
+export function ballTarget(w, u, t) {
+  if (!t || t.ballOf) return null;
+  const ranged = u.def.role === 'ranged', dx = t.x - u.x, dy = t.y - u.y, L2 = dx * dx + dy * dy;
+  if (L2 < 1) return null;
+  const reach = u.def.range || 20;
+  if (!ranged && Math.sqrt(L2) - u.r - t.r <= reach + 6) return null; // (his foe is in reach: the foe)
+  let best = null, bd = Infinity;
+  for (const p of w.pillars) {
+    const s = p.body; if (!s || s.dead || s.team === u.team || p.packing) continue;
+    if (ranged && !p.held) continue;
+    const k = ((p.x - u.x) * dx + (p.y - u.y) * dy) / L2; if (k <= 0 || k >= 1) continue;
+    const off = Math.hypot(u.x + dx * k - p.x, u.y + dy * k - p.y);
+    if (off > p.r + (ranged ? 2 : u.r * 0.7)) continue;
+    const gap = Math.hypot(p.x - u.x, p.y - u.y) - p.r - u.r;
+    if (gap > (ranged ? reach - p.r : reach + 70)) continue;
+    if (gap < bd) { bd = gap; best = s; }
+  }
+  return best;
 }

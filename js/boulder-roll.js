@@ -183,7 +183,7 @@ export function tileFor(A, T, hurt) {
   }
   g.putImageData(id, 0, 0);
   if (hurt > 0) { // cracks (a chipped snowball), on all four patches
-    g.strokeStyle = 'rgba(90,120,150,0.75)'; g.lineJoin = 'round'; g.lineCap = 'round'; g.lineWidth = 0.065 * k;
+    g.strokeStyle = A.snow ? 'rgba(90,120,150,0.75)' : 'rgba(52,46,42,0.85)'; g.lineJoin = 'round'; g.lineCap = 'round'; g.lineWidth = (A.snow ? 0.065 : 0.075) * k; // (round 19, lane troll19b: dark cracks in stone)
     for (const at of [[Math.PI, Math.PI], ...S.map((s) => s.at)]) for (const [i, cr] of [CRACK1, CRACK2].entries()) {
       if (i === 1 && hurt < 2) continue;
       wrap(at[0], at[1], () => { g.rotate(at[0] * 0.7 + at[1] * 1.3); g.beginPath(); cr.forEach(([x, y], j) => (j ? g.lineTo(x * k, y * k) : g.moveTo(x * k, y * k))); g.stroke(); });
@@ -276,10 +276,11 @@ export function drawRolled(ctx, p, w, name, look = p.look19 || BOULDER_LOOK) {
   const Rr = ballR(p, name), want = Rr * view.scale * view.dpr;
   const Rp = want > 40 ? Math.ceil(want / 4) * 4 : Math.max(3, Math.ceil(want / 2) * 2);
   const b = bucketFor(A, Rp);
-  const hurt = A.snow && p.maxHp ? (1 - p.hp / p.maxHp > 0.65 ? 2 : 1 - p.hp / p.maxHp > 0.35 ? 1 : 0) : 0;
+  const hurt = p.maxHp ? (1 - p.hp / p.maxHp > 0.65 ? 2 : 1 - p.hp / p.maxHp > 0.35 ? 1 : 0) : 0; // (round 19, lane troll19b: a troll's boulder has health now too, and cracks as it loses it)
   const T = Math.min(1024, Math.max(128, 2 ** Math.ceil(Math.log2(TAU * Rp * 0.75))));
   const tile = tileFor(A, T, hurt);
-  const flash = A.snow && p.hitT > 0 ? Math.round(clamp(p.hitT / 0.12, 0, 1) * 0.6 * 255) : 0; // (a snowball's white flash when a shot lands, as before; a troll's boulder never had one: its hitT is set by a shot and never runs down, sim.js)
+  const flash = Math.max(p.hitT > 0 ? Math.round(clamp(p.hitT / 0.12, 0, 1) * (A.snow ? 0.6 : 0.4) * 255) : 0, p.wind19 ? Math.round(p.wind19 * 5) * 7 : 0); // (and it pales as the troll winds up to bowl it, in six steps so it isn't painted afresh every frame) // (round 19, lane troll19b: a boulder flashes when it is struck too; boulders.js runs its hitT down)
+  // (before that: a snowball's white flash when a shot lands; a troll's boulder never had one: its hitT was set by a shot and never ran down, sim.js)
   const R = s.R, sig = look + Rp + ':' + T + ':' + hurt + ':' + flash + ':' + (look === 'a' ? R.join(',') : s.pu + ',' + s.pv);
   if (!s.cv || s.cv.width !== b.S) { s.cv = document.createElement('canvas'); s.cv.width = s.cv.height = b.S; s.cx = s.cv.getContext('2d'); s.img = s.cx.createImageData(b.S, b.S); s.u32 = new Uint32Array(s.img.data.buffer); s.sig = ''; }
   if (s.sig !== sig) {
@@ -290,7 +291,9 @@ export function drawRolled(ctx, p, w, name, look = p.look19 || BOULDER_LOOK) {
     PERF19.ms += performance.now() - t0; PERF19.n++; PERF19.px += b.n;
   }
   const f = Rr / Rp; // room units per pixel of the bucket
-  ctx.save(); ctx.translate(p.x, p.y); if (view.rot) ctx.rotate(Math.PI / 2);
+  const wk = p.wind19 || 0; // (round 19, lane troll19b: the troll winding up to bowl it: it shakes in its fists, harder towards the heave, swells and pales)
+  ctx.save(); ctx.translate(p.x + (wk ? Math.sin(w.time * 61) * 2.4 * wk : 0), p.y + (wk ? Math.cos(w.time * 47) * 1.9 * wk : 0)); if (view.rot) ctx.rotate(Math.PI / 2);
+  if (wk) ctx.scale(1 + 0.1 * wk, 1 + 0.1 * wk); // (and swells a little)
   if (OUTLINES && A.path) { // the outline: the picture's own outline shape, OUTLINE outside it whatever the ball's size (as getProp's,
     // drawn here so a growing snowball never shows another size's picture standing in with its thicker ring)
     // (looks19's inkFor(fill) gives the outline its own colour: the lead wires it at merge; INK as every prop had)
