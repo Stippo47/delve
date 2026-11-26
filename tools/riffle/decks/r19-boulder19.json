@@ -1,0 +1,118 @@
+{
+  "title": "Boulders that roll",
+  "topic": "art",
+  "stack": "r19b",
+  "order": 3,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Boulders roll now",
+      "text": "Both of your ways are in: a turning picture and a sliding texture. Standing still, both are the old boulder.",
+      "why": "You asked for two ways to make the boulders roll, the same look as now, and a dirt trail. Each film puts the old ball and the two new ones side by side on the same path. Mark any part that's off.",
+      "videos": [
+        "../../../docs/clips/boulder19/troll-compare-directions.mp4",
+        "../../../docs/clips/boulder19/snow-compare-directions.mp4"
+      ],
+      "parts": [
+        {
+          "id": "a",
+          "title": "A: the turning picture",
+          "text": "The round picture turns over the way the ball rolls: what's on top goes over the front, what was underneath comes up the back. Works the same in every direction and round a turn, unlike a flat spin, which only looks right one way.",
+          "videos": [
+            "../../../docs/clips/boulder19/troll-compare-directions.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/boulder19/moving-troll-a.png"
+          ]
+        },
+        {
+          "id": "b",
+          "title": "B: the sliding texture",
+          "text": "A flat stone texture that repeats, cut out by the ball's outline, slides the way it rolls by the distance rolled. A fish-eye makes the middle move faster than the edges, so it reads round.",
+          "videos": [
+            "../../../docs/clips/boulder19/troll-compare-directions.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/boulder19/moving-troll-b.png"
+          ]
+        },
+        {
+          "id": "same",
+          "title": "Same look as now",
+          "text": "Both are made from the old boulder's own picture: same colours, chips, moss and outline. The light, highlight and shade stay put while the stone turns under them. Standing still, all three match.",
+          "images": [
+            "../../../docs/clips/boulder19/still-troll-before.png",
+            "../../../docs/clips/boulder19/still-troll-a.png",
+            "../../../docs/clips/boulder19/still-troll-b.png"
+          ]
+        },
+        {
+          "id": "yeti",
+          "title": "Yeti's ball",
+          "text": "The two thin lines that went round it are gone; its own picture turns instead. Gone too: the fat dark ring it flashed while growing as it rolled.",
+          "videos": [
+            "../../../docs/clips/boulder19/snow-compare-directions.mp4",
+            "../../../docs/clips/boulder19/snow-grow-chipped.mp4"
+          ]
+        },
+        {
+          "id": "trail",
+          "title": "Dirt trail",
+          "text": "Dust puffs, small clods and faint scuffs behind a rolling boulder; snow spray and clumps behind a snowball. More the faster it goes; almost nothing at a push, nothing standing still.",
+          "videos": [
+            "../../../docs/clips/boulder19/dirt-trail.mp4",
+            "../../../docs/clips/boulder19/snow-trail.mp4"
+          ]
+        },
+        {
+          "id": "fights",
+          "title": "In real fights",
+          "text": "The same troll fight and yeti fight three times: before, A, B. The fights play out the same; only the drawing changes.",
+          "videos": [
+            "../../../docs/clips/boulder19/fight-troll-before.mp4",
+            "../../../docs/clips/boulder19/fight-troll-b.mp4",
+            "../../../docs/clips/boulder19/fight-yeti-before.mp4",
+            "../../../docs/clips/boulder19/fight-yeti-b.mp4"
+          ]
+        },
+        {
+          "id": "switch",
+          "title": "Try it in game",
+          "text": "Settings, Dev: Rolling boulders (sliding texture, turning picture, or before) and a switch for the dirt trail.",
+          "images": [
+            "../../../docs/clips/boulder19/settings-dev.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "which",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Which way to keep?",
+      "text": "Rolling in a line they look alike. A is truer in tight turns; B costs a bit less to draw.",
+      "why": "B is your sliding texture: four stone patches, so more variety as it rolls, and a quarter to a third cheaper per boulder. A really turns the ball, so on a tight turn the picture twists the way a real ball does. Both are well under a millisecond a boulder.",
+      "pick": "B, the sliding texture. It's on by default; A is one tap away in Settings, Dev."
+    },
+    {
+      "id": "moss",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Moss rolls off the top",
+      "text": "Once it has rolled, the moss cap can be anywhere on the ball, and its other side shows smaller moss patches.",
+      "why": "A ball that really rolls can't keep its moss on top. The old picture only had one side, so the other side is new: the same chips and moss, smaller, in the same colours.",
+      "pick": "Keep it: that's what rolling looks like."
+    },
+    {
+      "id": "dust",
+      "kind": "question",
+      "rarity": "common",
+      "title": "One dust colour",
+      "text": "The dust is the game's usual pale dust on every floor. It could take the floor's colour instead.",
+      "why": "The game's other dust (dashes, landings) is the same pale colour everywhere, so the trail matches it. Sand-coloured dust in the Dunes or dark dust in the Ember Deep would be a small change.",
+      "pick": "Keep one colour, like the rest of the game's dust."
+    }
+  ]
+}

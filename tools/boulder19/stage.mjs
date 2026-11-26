@@ -1,7 +1,8 @@
 // Round 19, lane boulder19: film boulders and snowballs rolling on a cleared arena, close up, the camera riding with them.
 //   node tools/boulder19/stage.mjs <out.mp4|out.png> [--port 8973] [--kind troll|snow] [--looks old,a,b] [--zoom 2.2]
 //     [--prog dirs|push|still|turn] [--secs S] [--fps 30] [--at T (a still at T s)] [--perf] [--arena crypt] [--w 390 --h 844]
-// Each look in --looks is one ball, side by side on the screen (top to bottom), all on the same path, labelled.
+// Each look in --looks is one ball, side by side on the screen (top to bottom), all on the same path, labelled. The
+// 'old' ball is the game as it was: no dirt trail.
 // The path is in screen directions (right, up ...): in portrait the room is turned, the tool turns it back.
 import { openEdge } from '../edge.mjs';
 import { execFileSync } from 'node:child_process';
@@ -22,6 +23,7 @@ const PROGS = {
   push: [['wait', 0.5], ['right', 140, 46], ['up', 90, 46], ['left', 140, 46], ['wait', 0.5]],
   still: [['wait', 2]],
   fast: [['wait', 0.4], ['right', 420, 340], ['wait', 0.2], ['up', 420, 340], ['wait', 0.4]],
+  trail: [['wait', 0.4], ['right', 110, 46], ['wait', 0.3], ['left', 420, 330], ['turn', 1, 150, 300], ['up', 300, 160], ['wait', 0.8]],
   slow: [['wait', 0.3], ['up', 160, 80], ['wait', 0.3], ['right', 160, 80], ['wait', 0.3]],
 };
 const P = PROGS[prog];
@@ -46,7 +48,7 @@ function place(t) {
 const total = P.reduce((s, seg) => s + (seg[0] === 'wait' ? seg[1] : seg[0] === 'turn' ? 2 * Math.PI * seg[2] / seg[3] : seg[1] / seg[2]), 0);
 const secs = +opt('secs', still ? at + 0.05 : total);
 
-const edge = await openEdge({ port: 9700 + (port % 50) });
+const edge = await openEdge(); // (its own debugging port, so several can run at once)
 const frames = still ? null : fs.mkdtempSync(path.join(path.dirname(out), '.frames-'));
 try {
   const page = await (await edge.browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 })).newPage();
@@ -63,7 +65,7 @@ try {
     const w = GAME.run.world;
     w.units.length = 0; w.pillars.length = 0; for (let i = w.walls.length - 1; i >= 0; i--) if (w.walls[i].prop) w.walls.splice(i, 1); /* (the grid's crates) */ w.hazards.length = 0; w.telegraphs.length = 0; GAME.run.fade = 0; // (no steps run here: the fade-in would stay)
     const r = kind === 'snow' ? 34 : 41;
-    w._st = { balls: looks.map((lk) => kind === 'snow' ? { x: 0, y: 0, r, snowball: true, roll: 0, rollA: 0, hp: 10, maxHp: 10, team: 'enemy', look19: lk } : { x: 0, y: 0, r, prop: 'troll-boulder', boulder: true, team: 'enemy', vx: 0, vy: 0, look19: lk }) };
+    w._st = { balls: looks.map((lk) => kind === 'snow' ? { x: 0, y: 0, r, snowball: true, roll: 0, rollA: 0, hp: 10, maxHp: 10, team: 'enemy', look19: lk, dirt19: lk !== 'old' } : { x: 0, y: 0, r, prop: 'troll-boulder', boulder: true, team: 'enemy', vx: 0, vy: 0, look19: lk, dirt19: lk !== 'old' }) };
     w.pillars.push(...w._st.balls);
     R.view.zoom = zoom;
     window.__st = { R, B, w, grow, hurt };

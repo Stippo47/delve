@@ -395,7 +395,8 @@ function drawHazard(ctx, h, t) {
 function drawPillar(ctx, p, w) {
   if (p.snowball) { // round 10: a yeti's snowball (foes10.js): packed snow, a blue shade and a few clumps
     noteRoll(p, w, 'yeti-snowball'); // (round 19, lane boulder19: its turn and its trail, from how far it moved)
-    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) { if (!drawRolled(ctx, p, w, 'yeti-snowball')) snowRoll(ctx, p); return; } // (round 19, lane boulder19: ?boulder=a|b over the prop's outline; old: the two bands) // art round 9: its own prop, like the troll's boulder; round 13 (lane E): it turns as it rolls
+    if (drawRolled(ctx, p, w, 'yeti-snowball')) return; // (round 19, lane boulder19: ?boulder=a|b, the ball drawn rolling, its picture's two bands gone)
+    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) { snowRoll(ctx, p); return; } // art round 9: its own prop, like the troll's boulder; round 13 (lane E): it turns as it rolls
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#F4FAFF');
     ctx.fillStyle = 'rgba(150,190,225,0.45)'; ctx.beginPath(); ctx.arc(p.x + p.r * 0.18, p.y + p.r * 0.2, p.r * 0.78, 0, TAU); ctx.fill();
     ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.25, p.y - p.r * 0.28, p.r * 0.42, 0, TAU); ctx.fill();
@@ -414,8 +415,8 @@ function drawPillar(ctx, p, w) {
   if (name === 'rock') name = obstacleFor({ x: p.x, y: p.y, r: 99 }, w); // the style's boulder
   // grid obstacles (layout.js) fill their cell: a barrel 47 across at sc 1, a boulder ~60 at r 30
   const sc = p.grid ? (name === 'barrel' ? 1.5 : name === 'brazier' ? 1.25 : 1.2) : name === 'crate' || name === 'barrel' ? 1 : p.r / 30;
-  if (p.boulder) noteRoll(p, w, name); // (round 19, lane boulder19: a troll's boulder rolls, and leaves a dirt trail)
-  if (name !== 'pipe' && prop(ctx, name, p.x, p.y, PROP_BOX, { sc })) { if (p.boulder) drawRolled(ctx, p, w, name); return; } // (round 19, lane boulder19: ?boulder=a|b, over the prop's outline)
+  if (p.boulder) { noteRoll(p, w, name); if (drawRolled(ctx, p, w, name)) return; } // (round 19, lane boulder19: a troll's boulder drawn rolling, ?boulder=a|b, and its dirt trail)
+  if (name !== 'pipe' && prop(ctx, name, p.x, p.y, PROP_BOX, { sc })) return;
   drawPillarThemed(ctx, p, w);
 }
 

@@ -79,6 +79,7 @@ function variants(text) {
   out.F = text;
   out.moss = make((d) => { const s = sort(d); s.base.remove(); for (const e of [...s.light, ...s.marks]) if (!s.moss.includes(e)) e.remove(); for (const e of s.moss) { e.setAttribute('fill', '#000000'); e.setAttribute('opacity', '1'); } });
   out.hasMoss = sort(doc).moss.length > 0;
+  out.outline = (doc.getElementById('p2') || {}).getAttribute ? doc.getElementById('p2').getAttribute('d') : null; // the ball's own outline shape
   // the chips' and streaks' own shapes, to scatter more of them round the ball
   out.marks = sort(doc).marks.filter((e) => e.tagName === 'path').map((e) => ({ d: e.getAttribute('d'), fill: e.getAttribute('fill'), stroke: e.getAttribute('stroke'), sw: +(e.getAttribute('stroke-width') || 0), op: +(e.getAttribute('opacity') || 1) }));
   return out;
@@ -114,11 +115,11 @@ export function loadBoulderArt(name) {
         mossStamp = document.createElement('canvas'); mossStamp.width = mossStamp.height = HI; const mg = mossStamp.getContext('2d');
         mg.drawImage(MO, 0, 0); mg.globalCompositeOperation = 'source-in'; mg.drawImage(sc, 0, 0);
       }
-      art[name] = { ready: true, G, OB, OW, surf: sc, B0, Rhi, far: far / Rhi, Rsvg: Rhi * SVGU / HI, mossStamp, marks: v.marks, snow: KIND[name].snow, tiles: new Map(), buckets: new Map() };
+      art[name] = { ready: true, path: v.outline ? new Path2D(v.outline) : null, G, OB, OW, surf: sc, B0, Rhi, far: far / Rhi, Rsvg: Rhi * SVGU / HI, mossStamp, marks: v.marks, snow: KIND[name].snow, tiles: new Map(), buckets: new Map() };
     } catch (e) { console.warn('boulder art', name, e); }
   })());
 }
-for (const n of Object.keys(KIND)) setTimeout(() => loadBoulderArt(n), 0);
+if (typeof document !== 'undefined') for (const n of Object.keys(KIND)) setTimeout(() => loadBoulderArt(n), 0); // (in the game only: the tools run the fights in node)
 
 // ---------------------------------------------------------------- the surface, laid flat: one repeating tile
 // The tile is 2 pi across each way, in the ball's own radius (one turn of the ball rolls one tile). Four round patches on
@@ -253,7 +254,7 @@ export function noteRoll(p, w, name) {
   for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) N[i * 3 + j] = Q[i * 3] * R[j] + Q[i * 3 + 1] * R[3 + j] + Q[i * 3 + 2] * R[6 + j];
   if (++s.n % 40 === 0) orthonormal(N);
   s.R = N;
-  if (DIRT) laySoil(w, p, s, L, dt, name);
+  if (DIRT && p.dirt19 !== false) laySoil(w, p, s, L, dt, name); // (p.dirt19: a test's own switch, tools/boulder19)
   return s;
 }
 function orthonormal(R) { // Gram-Schmidt on the columns, so rounding never skews the ball
@@ -265,7 +266,8 @@ function orthonormal(R) { // Gram-Schmidt on the columns, so rounding never skew
 }
 
 // ---------------------------------------------------------------- drawing the ball
-// Over the prop's own picture (drawn first by render.js: its outline stays round it), the rolled ball, the same size.
+// The rolled ball in place of the prop's picture, the same size, with the same outline round it (false: not drawn, the
+// caller draws the prop as before)
 export const PERF19 = { ms: 0, n: 0, px: 0 };
 export function drawRolled(ctx, p, w, name, look = p.look19 || BOULDER_LOOK) {
   if (look !== 'a' && look !== 'b') return false;
@@ -289,6 +291,12 @@ export function drawRolled(ctx, p, w, name, look = p.look19 || BOULDER_LOOK) {
   }
   const f = Rr / Rp; // room units per pixel of the bucket
   ctx.save(); ctx.translate(p.x, p.y); if (view.rot) ctx.rotate(Math.PI / 2);
+  if (OUTLINES && A.path) { // the outline: the picture's own outline shape, OUTLINE outside it whatever the ball's size (as getProp's,
+    // drawn here so a growing snowball never shows another size's picture standing in with its thicker ring)
+    // (looks19's inkFor(fill) gives the outline its own colour: the lead wires it at merge; INK as every prop had)
+    const k = Rr / A.Rsvg; ctx.save(); ctx.scale(k, k); ctx.translate(-100, -100);
+    ctx.fillStyle = ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.lineWidth = OUTLINE * 2 / k; ctx.fill(A.path); ctx.stroke(A.path); ctx.restore();
+  }
   ctx.drawImage(s.cv, -b.half * f, -b.half * f, b.S * f, b.S * f);
   ctx.restore();
   return true;
@@ -332,10 +340,10 @@ function laySoil(w, p, s, L, dt, name) {
     const side = (h(1) - 0.5) * 2;
     // a puff: most steps at a roll, now and then at a push; left behind where the ball's back was, drifting out to its
     // side a little, so the puffs make a wake behind it
-    if (h(2) < 0.12 + 0.55 * k) {
-      const off = side * Rr * 0.45, out = (10 + 40 * k) * (0.5 + 0.5 * h(3)), back = 8 + 24 * k;
-      list.push({ type: 'puff', x: bx + px * off, y: by + py * off, vx: -s.ux * back + px * side * out, vy: -s.uy * back + py * side * out, z: 0, vz: 6 + 14 * k,
-        t: 0, max: 0.35 + 0.4 * k + 0.15 * h(4), s: (3.5 + 7 * k) * (0.7 + 0.3 * h(5)) * sz * (snow ? 1.05 : 1), col: (snow ? SNOWP : DUST)[Math.floor(h(6) * 3)], n });
+    if (h(2) < 0.1 + 0.65 * k) {
+      const off = side * Rr * 0.38, out = (8 + 26 * k) * (0.5 + 0.5 * h(3)), back = 6 + 16 * k;
+      list.push({ type: 'puff', x: bx + px * off, y: by + py * off, vx: -s.ux * back + px * side * out, vy: -s.uy * back + py * side * out, z: 0, vz: 5 + 10 * k,
+        t: 0, max: 0.3 + 0.38 * k + 0.12 * h(4), s: (4.5 + 8.5 * k) * (0.7 + 0.3 * h(5)) * sz * (snow ? 1.05 : 1), col: (snow ? SNOWP : DUST)[Math.floor(h(6) * 3)], n });
     }
     // a clod: only rolling, not pushed at a walk
     if (k > 0.2 && h(7) < 0.32 * k) {
