@@ -172,9 +172,9 @@ const gripOf = (u, b) => u.r * (1 + HOLD) + b.r + 8; // the rod: the boulder's m
 // still holding the boulder. Boulder should do heavy knockback. Currently it just barely knocks things to the side.
 // There no strong impact. Rock troll should have a huge boulder and the boulder comes back to them."
 //  speed / speedRock  how fast it is let go (was 320 / 360), and fric, how fast it slows (was 0.9 a second): with
-//              nobody in its way it rolls about 670 before it lies still (was 355), hitting hard for the first 480 of
-//              that (was 230). A boulder that has struck somebody has spent itself on them: it keeps `keep` of its
-//              speed (less off a heavy body) and slows at fricSpent from then on, so it comes to rest near the fight
+//              nobody in its way it rolls about 650 before it lies still (was 350), hitting hard for the first 480 of
+//              that (was 230). Each body it strikes takes some of its speed (it keeps `keep` of it, less off a heavy
+//              body) and it slows a little quicker from then on (fricSpent): through one hero it still goes about 380
 //  wind        the wind-up before it is let go: the troll rears back with it (windPose): a step back at `rear` a
 //              second, the boulder `pull` nearer its chest
 //  min         room to roll: the boulder's face this far from its mark before it bowls; nearer, the troll backs off
@@ -183,7 +183,8 @@ const gripOf = (u, b) => u.r * (1 + HOLD) + b.r + 8; // the rod: the boulder's m
 //  range       how far off (the boulder's face to its mark) it bowls from; further, it walks the boulder nearer
 //  cd / cdRock seconds between taking the boulder up and the next bowl (the wait was 5 to 7 s from the last one, and
 //              3 s more standing with the boulder against its mark)
-//  fetch       its pace going for its boulder, of its walk (it rolls further now, and the troll hurries after it)
+//  fetch       its pace going for its boulder, of its walk (it rolls further now, and the troll hurries after it:
+//              twice its walk, about a berserker's pace)
 //  knock / knockPow  the blow's shove for a body of mass 1 at full speed (it was 420 for everybody, and half of it
 //              sideways), times its mass to the knockPow: a heavier body is thrown less far, but not by its whole
 //              weight (an archer about 290, a paladin 235, another troll 185; a fifth less behind a raised shield)
@@ -194,13 +195,14 @@ const gripOf = (u, b) => u.r * (1 + HOLD) + b.r + 8; // the rod: the boulder's m
 //  rockR       the rock troll's boulder (the troll's is BOULDER_R, 41)
 //  charge      how often the rock troll runs behind its boulder instead of bowling it (it was 2 in 5; now from further
 //              off only, and it lets the boulder go on at the end of its run)
-//  ret / retSlow / retAfter / retGive  the rock troll's boulder rolls back to it at `ret` (the elite's at retElite),
-//              once it has slowed to retSlow (it no longer hurts) or has struck somebody, or retAfter seconds out; not
-//              back in retGive seconds (a wall between them), the troll goes for it on foot
+//  ret / retSlow / retSpent / retAfter / retGive  the rock troll's boulder rolls back to it at `ret` (the elite's at
+//              retElite), once it has slowed to retSlow (it no longer hurts), or retSpent seconds after it struck
+//              somebody, or retAfter seconds out; not back in retGive seconds (a wall between them), the troll goes
+//              for it on foot
 //  swat / swatRest  fists on its way to its boulder: at most this long over one blow, then this long before the next
-const BOWL = { speed: 400, speedRock: 420, fric: 0.6, fricSpent: 1.6, keep: [0.4, 0.8], wind: 0.7, pull: 13, rear: 44, min: 120, back: 1.3, backPace: 1.5, range: 470, line: 520, cd: [1.6, 2.4], cdRock: [1.8, 2.6],
-  fetch: 1.6, knock: 900, knockPow: 0.75, shield: 0.8, stun: 0.2, hitstop: 0.04, dmg: 8, dmgRock: 9, hp: 0.35, hpRock: 0.9, regrow: 7, rockR: 54, charge: 0.15,
-  ret: 330, retElite: 400, retSlow: 120, retAfter: 2.4, retGive: 5, swat: 0.9, swatRest: 1.2 };
+const BOWL = { speed: 400, speedRock: 420, fric: 0.6, fricSpent: 0.8, keep: [0.7, 0.9], wind: 0.7, pull: 13, rear: 44, min: 120, back: 1.3, backPace: 1.5, range: 470, line: 520, cd: [1.4, 2.0], cdRock: [2.4, 3.2],
+  fetch: 2.0, knock: 900, knockPow: 0.75, shield: 0.8, stun: 0.2, hitstop: 0.04, dmg: 6, dmgRock: 7, hp: 0.25, hpRock: 0.7, regrow: 7, rockR: 54, charge: 0.15,
+  ret: 330, retElite: 400, retSlow: 120, retSpent: 1.3, retAfter: 2.4, retGive: 5, swat: 0.9, swatRest: 1.2 };
 if (globalThis.BOWL19) Object.assign(BOWL, globalThis.BOWL19); // (for the tools: tools/troll19b, a test's own numbers)
 function boulderOf(w, u) {
   if (u.bould === undefined) {
@@ -215,7 +217,7 @@ function boulderOf(w, u) {
     ballSweep(w, b, u.x + Math.cos(u.facing) * b.grip, u.y + Math.sin(u.facing) * b.grip);
     // (round 19, lane troll19b: every boulder has health, and a body that carries it: boulders.js giveBody. A swing, a
     // shot, a blast: all of it lands on that. Its health is a share of its troll's own (so it grows as the troll does,
-    // elite, major, deeper floors): a troll's a third of the troll's, a rock troll's nine tenths of the rock troll's)
+    // elite, major, deeper floors): a troll's a quarter of the troll's, a rock troll's seven tenths of the rock troll's)
     giveBody(w, b, spawn, 'boulderBody', u.maxHp * (u.def.rock ? BOWL.hpRock : BOWL.hp));
     b.onShot = (w2, b2, p) => { const s = b2.body; if (s && !s.dead && p.team !== s.team && !(p.hitSet && p.hitSet.has(s))) hurt(w2, s, p.dmg || 0, p.owner && alive(p.owner) ? p.owner : null, { shot: true, kAngle: Math.atan2(p.vy, p.vx), knock: 0 }); };
     b.onBreak = (w2, b2) => breakBoulder(w2, u, b2);
@@ -451,7 +453,7 @@ export function boulderBrain(w, u, dt) {
     // in BOWL.retGive seconds (a wall between them, a doorway too narrow), the troll goes and gets it, as a troll does.
     // The plain one's only shoulders people aside on its way home; the elite's hits them again (boulderHits).)
     const v2 = b.vx * b.vx + b.vy * b.vy;
-    if (u.def.rock && b.outAt != null && !b.recalled && w.time - b.outAt > 0.45 && (v2 < BOWL.retSlow * BOWL.retSlow || (b.spent && w.time - b.spent > 0.35) || w.time - b.outAt > BOWL.retAfter)) { b.recalled = true; b.backAt = w.time; b.hits.clear(); }
+    if (u.def.rock && b.outAt != null && !b.recalled && w.time - b.outAt > 0.45 && (v2 < BOWL.retSlow * BOWL.retSlow || (b.spent && w.time - b.spent > BOWL.retSpent) || w.time - b.outAt > BOWL.retAfter)) { b.recalled = true; b.backAt = w.time; b.hits.clear(); }
     if (b.recalled) {
       if (w.time - b.backAt > BOWL.retGive) { b.recalled = false; b.outAt = null; b.vx = b.vy = 0; }
       else {
@@ -604,8 +606,8 @@ function rollBoulder(w, u, b, dt) {
 // clear of it), BOWL.knock for a body of mass 1 at full speed and less for a heavier one (an archer about 290, a
 // paladin 235, another troll 185; BOWL.knockPow), off their feet for a moment (BOWL.stun), with an impact you can see and hear: a
 // burst of dust and grit at the point it struck them (a blast: fxkit.js draws it, audio.js booms), sparks, the room
-// shakes, and a hair of hit-stop. The boulder has spent itself on them: it keeps a share of its speed (BOWL.keep, less
-// off a heavy body) and soon lies still, near the fight; one that hits nobody rolls on across the room.
+// shakes, and a hair of hit-stop. The boulder loses some of its speed to each (BOWL.keep, more to a heavy body) and
+// rolls on.
 // Walls stop a thrown body as they stop any knocked body (sim.js physics, and its wallHit).
 function boulderHits(w, u, b, sp, a) {
   if (sp < 110) return;
@@ -626,7 +628,7 @@ function boulderHits(w, u, b, sp, a) {
     sparks(w, cx, cy, a, 7, '#FFF6DC', 1.4);
     for (let i = 0; i < 5; i++) { const q = a + rrange(-1.2, 1.2), v = rrange(140, 300) * k; w.particles.push({ x: cx, y: cy, vx: Math.cos(q) * v, vy: Math.sin(q) * v, life: 0.5, max: 0.5, size: rrange(4, 7), color: i % 2 ? '#8C8270' : '#B9AE9C' }); }
     w.shake = Math.max(w.shake, 4 + 4 * k); w.hitstop = Math.max(w.hitstop || 0, BOWL.hitstop * k);
-    if (!b.held) { const keep = clamp(1 - m / 5, ...BOWL.keep); b.vx *= keep; b.vy *= keep; if (!b.spent) b.spent = w.time; } // (it has spent itself on them)
+    if (!b.held) { const keep = clamp(1 - m / 9, ...BOWL.keep); b.vx *= keep; b.vy *= keep; if (!b.spent) b.spent = w.time; } // (it has spent some of itself on them)
   }
 }
 

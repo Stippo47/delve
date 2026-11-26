@@ -325,13 +325,13 @@ function chooseTarget(w, u) {
   }
   let opp = opponents(w, u);
   if (u.team === 'hero') opp = opp.filter((o) => o.aggro || dist(u.x, u.y, o.x, o.y) < SIGHT);
+  opp = opp.filter((o) => !o.ballOf); // (round 19, lane troll19b: a boulder is never the pick here, nor one of the crowd: boulders.js ballTarget, below)
   if (!opp.length) { u.target = null; return; }
   const k = roleAlias(u);
   let best = null, bestS = -Infinity;
   const mates = allies(w, u);
   const pick = w.pick && u.team === 'hero' ? w.pick : null; // lane W (round 14, convoy.js): each hero keeps to its own side of the wagon
   for (const o of opp) {
-    if (o.ballOf) continue; // (round 19, lane troll19b: a boulder is never the pick here: boulders.js ballTarget, below)
     const d = dist(u.x, u.y, o.x, o.y);
     let s = -d / (k === 'rogue' ? 900 : 300);
     if (pick) { const b = pick(u, o); if (b == null) continue; s += b; } // (null: not this hero's to fight)

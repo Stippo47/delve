@@ -1,0 +1,10 @@
+troll        level  5: trolls won  39/180 (22%), 63s a fight, draws 0, never ended 0 | 1v2 0/20  2v2 7/20  3v2 20/20  1v3 0/20  2v3 0/20  3v3 12/20  1v4 0/20  2v4 0/20  3v4 0/20
+rockTroll    level  5: trolls won  30/180 (17%), 114s a fight, draws 0, never ended 0 | 1v2 0/20  2v2 4/20  3v2 19/20  1v3 0/20  2v3 0/20  3v3 7/20  1v4 0/20  2v4 0/20  3v4 0/20
+yeti         level  5: trolls won  90/180 (50%), 61s a fight, draws 0, never ended 0 | 1v2 4/20  2v2 19/20  3v2 20/20  1v3 0/20  2v3 19/20  3v3 20/20  1v4 0/20  2v4 0/20  3v4 8/20
+troll@1      level  9: trolls won 125/180 (69%), 68s a fight, draws 0, never ended 0 | 1v2 13/20  2v2 20/20  3v2 20/20  1v3 3/20  2v3 20/20  3v3 20/20  1v4 0/20  2v4 9/20  3v4 20/20
+rockTroll@1  level  9: trolls won 129/180 (72%), 132s a fight, draws 0, never ended 0 | 1v2 13/20  2v2 20/20  3v2 20/20  1v3 4/20  2v3 20/20  3v3 20/20  1v4 0/20  2v4 12/20  3v4 20/20
+yeti@1       level  9: trolls won 160/180 (89%), 49s a fight, draws 0, never ended 0 | 1v2 19/20  2v2 20/20  3v2 20/20  1v3 20/20  2v3 20/20  3v3 20/20  1v4 1/20  2v4 20/20  3v4 20/20
+troll@2      level 14: trolls won 131/180 (73%), 87s a fight, draws 0, never ended 0 | 1v2 7/20  2v2 20/20  3v2 20/20  1v3 13/20  2v3 20/20  3v3 20/20  1v4 0/20  2v4 11/20  3v4 20/20
+rockTroll@2  level 14: trolls won 133/180 (74%), 135s a fight, draws 1, never ended 0 | 1v2 16/20  2v2 20/20  3v2 20/20  1v3 6/20  2v3 20/20  3v3 20/20  1v4 0/20  2v4 11/20  3v4 20/20
+yeti@2       level 14: trolls won 170/180 (94%), 50s a fight, draws 0, never ended 0 | 1v2 20/20  2v2 20/20  3v2 20/20  1v3 20/20  2v3 20/20  3v3 20/20  1v4 10/20  2v4 20/20  3v4 20/20
+all: trolls won 1007/1620 (62.2%)
