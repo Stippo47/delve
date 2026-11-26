@@ -281,7 +281,7 @@ export function zone(w, z) { return fx(w, { type: 'zone', ...z, max: z.dur, acc:
 // A wall that melts away after a while (the A* grid is rebuilt when it comes and goes).
 export function wallRect(w, r, dur, kind) {
   const wl = { ...r, temp: dur, kind }; w.walls.push(wl); buildGrid(w);
-  for (const u of w.units) { const c = circleRect(u.x, u.y, u.r, wl); if (c) { u.x += c.nx * c.over; u.y += c.ny * c.over; } }
+  for (const u of w.units) { if (u.downed) continue; /* (round 19, lane corpses19: a downed hero is a body: the wall stands over it) */ const c = circleRect(u.x, u.y, u.r, wl); if (c) { u.x += c.nx * c.over; u.y += c.ny * c.over; } }
   return wl;
 }
 
@@ -2096,8 +2096,15 @@ function corpses(w, dt) {
     const r = c.r * 0.6;
     if (c.x < r) { c.x = r; c.kx = Math.abs(c.kx) * 0.4; } if (c.x > w.W - r) { c.x = w.W - r; c.kx = -Math.abs(c.kx) * 0.4; }
     if (c.y < r) { c.y = r; c.ky = Math.abs(c.ky) * 0.4; } if (c.y > w.H - r) { c.y = w.H - r; c.ky = -Math.abs(c.ky) * 0.4; }
-    for (const wl of w.walls) { const h = circleRect(c.x, c.y, r, wl); if (h) { c.x += h.nx * h.over; c.y += h.ny * h.over; const into = c.kx * h.nx + c.ky * h.ny; if (into < 0) { c.kx -= 1.4 * into * h.nx; c.ky -= 1.4 * into * h.ny; } } }
-    for (const p of w.pillars) { const d = dist(c.x, c.y, p.x, p.y), m = p.r + r; if (d < m && d > 0) { c.x = p.x + (c.x - p.x) / d * m; c.y = p.y + (c.y - p.y) / d * m; } }
+    // (round 19, lane corpses19; the designer: "Also corpses should not collide or render ontop of anything": nothing
+    // pushes a body. A body still flying or sliding from its killing blow stops against what stands still (a wall, a
+    // rock, a crate), so it never lands inside one; once it lies still nothing moves it, and nothing that moves ever
+    // does: a troll's boulder or a yeti's ball rolls over it (they plowed bodies along), a wall raised on it stands
+    // over it. render.js draws the bodies first, under everything.)
+    if (c.z > 0 || c.vz > 0 || c.kx * c.kx + c.ky * c.ky > 1) {
+      for (const wl of w.walls) { const h = circleRect(c.x, c.y, r, wl); if (h) { c.x += h.nx * h.over; c.y += h.ny * h.over; const into = c.kx * h.nx + c.ky * h.ny; if (into < 0) { c.kx -= 1.4 * into * h.nx; c.ky -= 1.4 * into * h.ny; } } }
+      for (const p of w.pillars) { if (p.owner) continue; const d = dist(c.x, c.y, p.x, p.y), m = p.r + r; if (d < m && d > 0) { c.x = p.x + (c.x - p.x) / d * m; c.y = p.y + (c.y - p.y) / d * m; } }
+    }
   }
   w.corpses = w.corpses.filter((c) => c.t > 0);
 }
