@@ -11,6 +11,7 @@ import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; //
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
 import { bodiesMeet } from './height.js'; // round 19 (lane sys19): height off the floor, one shadow system
 import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
+import { isBall, ballPass, bodyOutOfWalls } from './boulders.js'; // (round 19, lane troll19: a troll's boulder and a yeti's snowball are solid bodies)
 import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf, isArmed, isDisarmed, FOE_WEAPON_ABILITY } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
 
 let NEXT_ID = 1;
@@ -1919,16 +1920,20 @@ function physics(w, dt) {
       const into = -(u.kx * c.nx + u.ky * c.ny);
       if (into > 0) { wallHit(w, u, into); u.kx += c.nx * into * 1.25; u.ky += c.ny * into * 1.25; }
     }
+    let thrown = false;
     for (const p of w.pillars) {
-      if (ownBoulder(u, p)) continue; // art round 8: a troll's boulder rests in its fists, inside its collider
+      // (round 19, lane troll19: a troll's boulder or a yeti's snowball is not a rock: it throws nobody out of itself
+      // into whatever stands behind them. boulders.js ballPass, below, has them push each other by their masses)
+      if (isBall(p)) continue;
       const d = dist(u.x, u.y, p.x, p.y), m = u.r + p.r;
       if (d < m && d > 0) {
         const nx = (u.x - p.x) / d, ny = (u.y - p.y) / d;
-        u.x = p.x + nx * m; u.y = p.y + ny * m;
+        u.x = p.x + nx * m; u.y = p.y + ny * m; thrown = true;
         const into = -(u.kx * nx + u.ky * ny);
         if (into > 0) { wallHit(w, u, into); u.kx += nx * into * 1.25; u.ky += ny * into * 1.25; }
       }
     }
+    if (thrown) bodyOutOfWalls(w, u); // (round 19, lane troll19: thrown out of a rock, it is never left inside a wall for it)
   }
   // unit-unit
   for (let i = 0; i < us.length; i++) {
@@ -1942,6 +1947,7 @@ function physics(w, dt) {
       const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d;
       const ta = a.fixed ? 0 : b.fixed ? 1 : b.mass / (a.mass + b.mass), tb = 1 - ta;
       a.x -= nx * over * ta; a.y -= ny * over * ta; b.x += nx * over * tb; b.y += ny * over * tb;
+      if (w.walls.length || a.x < a.r || b.x < b.r || a.y < a.r || b.y < b.r || a.x > w.W - a.r || b.x > w.W - b.r || a.y > w.H - a.r || b.y > w.H - b.r) { if (!a.fixed) bodyOutOfWalls(w, a); if (!b.fixed) bodyOutOfWalls(w, b); } // (round 19, lane troll19: nor is a body left in a wall or past the room's edge for another body's shove: a troll's own bulk did it too)
       // bowling: a fast knocked body transfers momentum
       const ka = Math.hypot(a.kx, a.ky), kb = Math.hypot(b.kx, b.ky);
       if (ka > 200 && a.kx * nx + a.ky * ny > 0) { b.kx += nx * ka * 0.6 * a.mass / b.mass; b.ky += ny * ka * 0.6 * a.mass / b.mass; a.kx *= 0.5; a.ky *= 0.5;
@@ -1950,6 +1956,7 @@ function physics(w, dt) {
         if (a.team !== b.team || b.team === 'enemy') hurt(w, a, 3 + kb * 0.02, null, { noDodge: true }); }
     }
   }
+  ballPass(w, dt, wallHit); // (round 19, lane troll19: boulders and snowballs, after the bodies: boulders.js)
 }
 
 // ---------------------------------------------------------------- projectiles, hazards, pickups
@@ -2142,9 +2149,12 @@ export function step(w, dt) {
     u.thinkT -= dt;
     if (u.thinkT <= 0) { u.thinkT = 0.4 + rand() * 0.08; think(w, u); }
     if (u.act) { const charging = u.act.type === 'charge' || u.act.type === 'dash'; if (u.act.type !== 'dash') u.spd *= Math.exp(-dt * 10); if (u.act.type === 'charge') { u.mvA = u.act.a; u.spd = u.def.speed * 1.5; } runAction(w, u, dt); if (!charging) updateFacing(u, dt); continue; }
-    if (u.def.hops) slimeMove(w, u, dt); else movement(w, u, dt); // (round 16: a slime only moves in hops)
+    // (round 19, lane troll19: u.carryAt, a troll with its boulder in its fists walks as the boulder lets it, round it
+    // or behind it, its face to it: foes9.js carry has set its steps this tick)
+    const carrying = u.carryAt === w.time;
+    if (u.def.hops) slimeMove(w, u, dt); else if (!carrying) movement(w, u, dt); // (round 16: a slime only moves in hops)
     if (u.rootT > 0) { u.dvx = u.dvy = 0; u.spd = 0; }
-    updateFacing(u, dt);
+    if (!carrying) updateFacing(u, dt);
     // confused (round 13; round 14, "Should also make them turn randomly"): now and then it swings round to a random
     // heading and walks off that way for a moment (movement and updateFacing follow u.lurchA while u.lurchT lasts)
     if (u.st.confuse > 5 && !(u.lurchT > 0) && chance(dt * CONFUSE.turn * fillOf(u, 'confuse'))) { u.lurchA = wrapAngle(u.facing + rrange(1.5, 3.1) * (chance(0.5) ? 1 : -1)); u.lurchT = rrange(...CONFUSE.lurchT); }
@@ -2221,5 +2231,5 @@ export function step(w, dt) {
   w.units = w.units.filter((u) => !u.dead);
 }
 
-export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape, fearOf };
+export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape, fearOf, speedOf };
 export { useAbility as unitAbility }; // (round 18, lane dash18: a plain unit's own ability, set off by hand: tools/dash18/clips.mjs)
