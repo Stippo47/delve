@@ -40,7 +40,7 @@ export const BEASTS = {
   orcShaman: { fun: 'Shakes a stick with feathers on it, then throws fire. The feathers are mostly for show.',
     habit: 'Hangs back and lobs fireballs that burst and burn.' },
   troll: { fun: 'Heals faster than you can be rude to it. Very rude, very fast.',
-    habit: 'Huge and slow. Left alone, it grows back what it lost, unless it has been burned.' },
+    habit: 'Huge and slow. Left alone, it grows back what it lost, unless it has been burned. It bowls its boulder at you and lumbers after it; break the boulder and it has only its fists.' }, // (round 19, lane troll19b: the boulder's line)
   graveWarden: { fun: 'Keeps the crypt\'s keys and the crypt\'s rules. Rule one: nobody leaves.',
     habit: 'Guards the way down. Heavy, patient, cruel.' },
   lizardChief: { fun: 'Wears the biggest blade and the smuggest face in the drains.',
@@ -109,7 +109,7 @@ export const BEASTS = {
     habit: 'Frost balls that chill, and ice totems that freeze everyone near them.' },
   iceTotem: { fun: 'A lump of ice with a face carved on it. The face is judging you.', habit: 'Chills everyone near it until it breaks or melts.' },
   rockTroll: { fun: 'Rolls a boulder everywhere it goes. Has never once wondered why.',
-    habit: 'Pushes a boulder before it. Rolls it at you, or charges behind it. The boulder can\'t be hurt.' },
+    habit: 'Stands off behind a huge boulder, rears back (a line shows) and bowls it at you: it throws whoever it hits. The boulder rolls home to it by itself. Break the boulder and it has only its fists, until it tears up another.' }, // (round 19, lane troll19b: it said the boulder could not be hurt)
   ratPlague: { fun: 'Green, damp, and coughing. Do not let it sneeze on you.', habit: 'Its bite poisons; it bursts into a cloud of poison when it dies.' },
   ratKing: { fun: 'Ten rats with one idea, all of them knotted at the tail.',
     habit: 'Rats break loose from it as it\'s hurt, and three more when it dies.' },
@@ -134,7 +134,7 @@ export const BEASTS = {
   spiderFrost: { fun: 'Spins its webs out of frost. They are beautiful. They are also a trap. Mostly a trap.',
     habit: 'Its bite chills, and the web it dies into chills whoever walks through.' },
   yeti: { fun: 'Has never seen a snowball fight it didn\'t win. Has never seen a snowball fight end.',
-    habit: 'Pushes a heavy snowball before it, slow to get going and slow to turn, then runs it at you and lets it go (a line shows first): it bowls over whoever is in its way (heavy cold, a big shove) and bursts on a wall it hits hard. Shots knock the ball off course and chip it. Without one it fights with its fists (they stagger) and stoops to pack another; hit it hard while it packs and the snow falls apart.' },
+    habit: 'Pushes a heavy snowball before it, slow to get going and slow to turn, then runs it at you and lets it go (a line shows first): it bowls over whoever is in its way (heavy cold, a big shove) and bursts on a wall it hits hard. Shots knock the ball off course, and shots and blows chip it. Without one it fights with its fists (they stagger) and stoops to pack another; hit it hard while it packs and the snow falls apart.' },
   frostWraith: { fun: 'Haunts the roof of the cave. Drops by now and then, sharply.',
     habit: 'Hangs back and drops icicles from above: a shadow shows where.' },
   spiritFrost: { fun: 'A breath of winter that decided to help. It is not helping you.',

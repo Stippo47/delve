@@ -129,9 +129,9 @@ function totemBrain(w, u, dt) {
 // turned slowly "like a car", the boulder swinging round the troll: see CARRY below); with a hero in
 // front it either lets it go (it rolls at them, heavy knockback and stagger, slowing as it goes) or charges behind it;
 // then it walks over and takes it up again. The boulder is a round obstacle (w.pillars, so it has its own hit box and
-// blocks shots and bodies); it's gone when the troll dies. The rock troll's can't be hurt; the base troll's has its own
-// health and breaks (then it fights bare-handed). The elite rock troll calls its boulder back, and its boulder is 25%
-// bigger.
+// blocks shots and bodies); it's gone when the troll dies. Round 19 (lane troll19b: BOWL, below): every boulder has
+// health and breaks (the troll then fights bare-handed; the rock troll tears up a new one); the rock troll's is huge and
+// rolls home to it after each bowl (the elite's faster, hitting again on its way).
 // Art round 8: the troll holds its boulder in both fists, so a held boulder sits HOLD of the troll's radius inside the
 // troll's collider, against the fists (the troll and its own held or rolling boulder don't push each other: sim.js).
 export const HOLD = -0.46;
@@ -874,7 +874,7 @@ Object.assign(ELITES, {
   wolfRider: { tick() { return false; } },      // charges more often, and its goblin gets up elite too
   // Frost shaman: a blizzard where the party stands.
   frostShaman: { tick(w, u, dt) { every(w, u, dt, 'blizz', 5, 7, 420, (t) => lob(w, u, t.x, t.y, { r: 90, tell: 1.0, proj: 'bolt', color: '#F4FBFF', pr: 12, kind: 'ice', dust: '#F4FBFF', hit: { dmg: 8, chill: 50 } })); return false; } },
-  rockTroll: { tick() { return false; } },      // calls its boulder back, and it's 25% bigger (boulderOf / boulderBrain read u.elite)
+  rockTroll: { tick() { return false; } },      // its boulder comes home faster and hits again on its way (boulderBrain / boulderHits read u.elite)
   ratPlague: { tick(w, u, dt) { return ELITES.rat.tick(w, u, dt); } }, // a trail of sickly gas, like an elite rat
   // Rat king: sheds a ring of rats at once when it's hurt badly.
   ratKing: { tick(w, u, dt) { if (u.hp < u.maxHp * 0.5 && !u.burst) { u.burst = true; looseRats(w, u, 4); } return false; } },

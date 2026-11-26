@@ -65,7 +65,7 @@ export const ELITE_MOVE = {
   rattlerHarrow: "A cold, cursing aura while it walks.",
   rattlerMace: "Brings the mace down so hard the floor jumps: a quake round it that staggers.",
   rattlerSpear: "Hurls a spear down a long line.",
-  rockTroll: "Calls its boulder back, and it's 25% bigger.",
+  rockTroll: "A bigger boulder that comes home faster and hits again on its way back.", // (round 19, lane troll19b: every rock troll's boulder comes back now)
   sandMage: "Two dust devils at a time.",
   sandSerpent: "Its coils spit sand darts out to the sides.",
   scarab: "A ring of sand that staggers when it surfaces.",

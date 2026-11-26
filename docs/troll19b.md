@@ -41,7 +41,8 @@ clips and numbers are with it; "before" is 0.41.0.
    dust. `after-stand-troll.mp4` 0:00-0:01 (and every bowl in every after clip).
 5. **"Boulder should have hp and can be destroyed and targeted."** Every boulder has health now, and so has the yeti's
    ball. Anything that hurts a unit hurts it: swings, shots, blasts, abilities. It shows the same health bar as any
-   foe once it is hurt (the picked style; nothing with Health bars off), flashes when struck, cracks at two thirds and
+   foe once it is hurt (it is drawn by the game's own bar code: the picked style, and nothing with Health bars off; read
+   in the code, not filmed with the switch off), flashes when struck, cracks at two thirds and
    one third, and bursts into rock and dust when it breaks. Who goes for it: a fighter whose enemy is behind it, when
    the boulder is within a few steps and the enemy is out of his reach; a shooter when the troll is holding it up on
    his line of fire, in range. Nobody goes out of his way for a boulder lying to one side, and anything else in the
@@ -50,9 +51,13 @@ clips and numbers are with it; "before" is 0.41.0.
    troll's. Broken: the troll fights bare-handed for the rest of the fight, as before; the rock troll, bare-handed for
    7 s, then tears a new one out of the floor (the stoop it already had). With two heroes on a troll its boulder
    lasts half a minute or more; with three, about a quarter of one. `after-break-troll.mp4` (three heroes that do hurt;
-   the boulder starts the clip at two fifths of its health so the break fits; the camera goes with the troll):
-   the boulder starts cracked, its bar part empty; the paladin and the berserker strike it at 0:03 and 0:04 where it lies between them and the troll; bowled again at 0:10, it bursts into rock and dust on them at 0:10.5; from 0:11 the troll fights with its fists; against `before-break-troll.mp4` (only the archer's arrows chip it). `after-break-rocktroll.mp4` (its
-   boulder starts at half health): bowls at 0:01.5 and 0:07.5 (the boulder home again each time); at 0:14 it breaks on the third; 0:14.5-0:21.5 the rock troll fights bare-handed; at 0:22 it stoops, at 0:23 it has a new one.
+   the boulder starts the clip at two fifths of its health so the break fits; the camera goes with the troll): the
+   boulder starts cracked, its bar part empty; the paladin and the berserker strike it at 0:03 and 0:04 where it lies
+   between them and the troll; bowled again at 0:10, it bursts into rock and dust on them at 0:10.5; from 0:11 the
+   troll fights with its fists. Against `before-break-troll.mp4` (nothing but arrows could chip it).
+   `after-break-rocktroll.mp4` (its boulder starts at half health): bowls at 0:01.5 and 0:07.5 (the boulder home again
+   each time); at 0:14 it breaks on the third; 0:14.5-0:21.5 the rock troll fights bare-handed; at 0:22 it stoops, at
+   0:23 it has a new one.
 6. **"idk why spikes come out when the boulder is bowled."** Found by filming a bowl and going through it frame by
    frame: `before-near-troll.mp4` 0:01 (and `before-bowl-troll.mp4` 0:01 and 0:12). The red line on the floor before a
    bowl was a danger zone of the game's "bone" kind with no blow of its own, and every danger zone "strikes" when its
@@ -69,7 +74,7 @@ clips and numbers are with it; "before" is 0.41.0.
    against the hero: 14 to 18 before, 0.3 to 5.6 after. `after-near-troll.mp4` 0:00-0:01 against `before-near-troll.mp4`
    (0:06 to the end: it stands with the boulder pressed to him).
 8. **"Boulder should do heavy knockback. Currently it just barely knocks things to the side. There no strong impact."**
-   It knocked everybody 420, half of it sideways: a paladin went about 50. Now it throws them on down its way (a
+   It knocked everybody 420, half of it sideways: a paladin went about 70. Now it throws them on down its way (a
    little to the side they were on, so they land clear of it), by their weight: an archer about 210 (was 130), a paladin
    about 140 (was 70; a raised shield takes a fifth of it, not two fifths). A hero who cannot be shoved at that moment
    (the Berserker in his rage) still isn't. They are off their feet for a fifth
@@ -198,8 +203,8 @@ within 6 s 179 of 180 (134 of 134 at 0.41.0; it rolls further now), mean 3.8 s; 
 
 **Checks.** `node --check` on every js file: clean (it does not see a name declared twice in a module; the tools,
 which load the modules, do). `node tools/preview-check.mjs`: threw 0 / never fired 0 / not offered 0.
-`node tools/battles.mjs`: 535 battles, 0 problems, 8 ran out of time (535 is what 0.41.0 and main give too; COMMON's
-532 is older).
+`node tools/battles.mjs`: 535 battles, 0 problems, 9 ran out of time (535 is what 0.41.0 and main give too, with 8
+out of time; COMMON's 532 is older).
 
 ## Clips (docs/clips/troll19b/)
 
@@ -216,7 +221,7 @@ which load the modules, do). `node tools/preview-check.mjs`: threw 0 / never fir
 | **Rock troll's boulder broken, and the new one** (the camera goes with the troll) | `before-break-rocktroll.mp4` (it can't be hurt) | `after-break-rocktroll.mp4`: bowls at 0:01.5 and 0:07.5 (the boulder home again each time); at 0:14 it breaks on the third; 0:14.5-0:21.5 the rock troll fights bare-handed; at 0:22 it stoops, at 0:23 it has a new one |
 | **Yeti** | `before-bowl-yeti.mp4` | `after-bowl-yeti.mp4`: 0:02 the ball's blow (a burst of snow, the paladin thrown), again at 0:07 and 0:15; 0:12 its fists on him as it goes round its ball; the ball's own health bar |
 | **Whole fights** against a paladin and an archer, 20 s (the rock troll's with the camera going with it) | `before-live-troll.mp4`, `before-live-rocktroll.mp4`, `before-live-yeti.mp4` | `after-live-troll.mp4` (bowls at 0:04.5, 0:11.5, 0:18.5; fists at 0:06.5 and 0:08.5), `after-live-rocktroll.mp4`, `after-live-yeti.mp4` (heaves at 0:07 and 0:19, the ball's bar, fists at 0:13) |
-| **A dungeon room** (the Warren, trolls and rock trolls only, a paladin, an archer and a cleric at level 5, phone size) | `before-dungeon.mp4` | `after-dungeon.mp4`: DUNGEON_NOTE |
+| **A dungeon room** (the Warren, trolls and rock trolls only, a paladin, an archer and a cleric at level 5, phone size) | `before-dungeon.mp4` | `after-dungeon.mp4`: the troll at the bottom bowls at 0:03, 0:13, 0:18 and 0:25, its fists in between (0:06, 0:19, 0:22); its boulder shows a bar once it has been hit (from 0:10); a second troll up the room has not noticed the party |
 
 ## Calls made (say if any is wrong)
 
@@ -265,19 +270,24 @@ which load the modules, do). `node tools/preview-check.mjs`: threw 0 / never fir
   no deeper in a wall than the test allows. Not looked into.
 - **Heroes do not yet dodge better for the longer warning** than any danger line makes them; a rooted or stunned hero
   takes it full.
-- **The Book's pages** for the troll, rock troll and yeti: checked only by the preview test (they run), not rewritten;
-  their words may want a line about the boulder's health.
+- **The Book's words** had to change in three places, because they were no longer true (js/bestiary.js,
+  js/movetext.js): the rock troll's page said "The boulder can't be hurt" (now: it bowls, the boulder rolls home,
+  break it and it has only its fists until it tears up another); the troll's page gained one sentence about its
+  boulder; the elite rock troll's move said "Calls its boulder back, and it's 25% bigger" (now: a bigger boulder
+  that comes home faster and hits again on its way back); the yeti's says blows chip its ball as well as shots. Say
+  if you want other words. The pages' films are the game's own previews (they run; not looked at one by one).
 - **js/boulders.js** was already loaded; no new file the game loads. sw.js not rebuilt, the version not bumped.
 
 ## Try it
 
 - `bash tools/troll19b/serve.sh` (port 8976), then `bash tools/troll19b/clip.sh after-x troll bowl` (scene: bowl,
   near, stand, fetch, break, live; kind: troll, rockTroll, yeti, with @1 elite or @2 major; then seconds, zoom,
-  camera, the heroes).
+  camera (room, or follow to go with the troll), the heroes). `bash tools/troll19b/film-all.sh` films both sets.
 - Battle mode: Troll, Rock Troll or Yeti against anyone. Health bars: Settings, Health bars (?hpbars=0).
 - The feel is the numbers in js/foes9.js `BOWL` (each one explained above it): `cd` / `cdRock` how soon it bowls again,
   `speed`, `fric` how far, `wind` the wind-up, `min` / `back` the backing off, `knock` how far people fly, `hp` /
   `hpRock` the boulder's health, `rockR` the rock troll's boulder, `ret` its way home, `charge` the rock troll's run,
   `fetch` the troll's hurry. A test can set them: `globalThis.BOWL19 = { knock: 600 }` before the game loads.
+  `globalThis.NOEASE19 = 1` the same way switches off the easing out of a boulder.
 - Tests: `node tools/troll19b/bowls.mjs` (the table above); lane troll19's `walls.mjs`, `glue.mjs`, `winrate.mjs`;
   round 17's `node tools/foes17/boulders.mjs`.

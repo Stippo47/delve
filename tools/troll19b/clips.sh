@@ -14,5 +14,5 @@ run stand-rocktroll rockTroll stand 14 0.85 room
 run break-rocktroll rockTroll break 26 0.85 follow paladin,archer,berserker
 run bowl-yeti yeti bowl 16 0.85 room
 run live-troll troll live 20 0.9 room paladin,archer
-run live-rocktroll rockTroll live 20 0.9 room paladin,archer
+run live-rocktroll rockTroll live 20 0.9 follow paladin,archer
 run live-yeti yeti live 20 0.9 room paladin,archer

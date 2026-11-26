@@ -1656,4 +1656,6 @@ js/foes9.js `BOWL`.
 - **The lane's calls** (docs/troll19b.md): the troll's broken boulder stays broken; who goes for a boulder; how far a
   body is thrown; the rock troll's run kept, rare; the troll's hurry; a boulder rolls on through whoever it strikes;
   in battle mode a boulder carries a bar and a side ring like every unit there.
-- Checks: battles 535, 0 problems, 8 out of time; preview-check 0 / 0 / 0. No new file the game loads.
+- Checks: battles 535, 0 problems, 9 out of time (main: 8); preview-check 0 / 0 / 0. No new file the game loads. The
+  Book's words for the rock troll ("The boulder can't be hurt"), its elite's move, the troll and the yeti were
+  corrected to match (bestiary.js, movetext.js).
