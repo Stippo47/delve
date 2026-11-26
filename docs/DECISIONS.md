@@ -1492,3 +1492,17 @@ stands), three phases, its fire the game's fire.
 - Slow speeds take one smaller step every frame (frame time × speed, at most 1/60 s) instead of a full step every second or fourth frame, so ¼× moves smoothly rather than at 15 updates a second. 1×, 2× and 4× are unchanged.
 - Checked: in the browser ¼× moved the game 0.51 s in 2 s and ½× moved it 1.01 s, with the picture changing every frame. `node tools/battles.mjs --steps 240` (new flag, quarter-size step): 532 battles, 0 problems, 11 out of time, the same as at the normal step.
 - Sounds play at normal pitch in slow motion; only the game slows.
+
+## Round 19b (2026-11-26): looks, trolls, boulders, plain folk (requests, lanes started)
+The designer, in chat, word for word:
+- "This might be easier said than done. But tried coloured outlines depending on the colour of the entity. I'm exploring looks."
+- "I want to see what they look like pixelated"
+- "get a fable agent to fix the troll shaped units. The troll should rotate more around the boulder when turning. Many times the boulder just pushes entities through walls and stuff as it supposedly doesnt get pushed back when being held."
+- "visual overhaul of bolders. I want you to try 2 methods, it seems u are already trying 1 of them with the yeti where you have a circular texture just needs the placeholder removed. Second is getting a flat repeating texture, put a mask on the boulder to cut out from the texture, as it moves it pans the texture, and maybe it gets a fish eye like distortion to make it seem round. Should have the same look as the current boulder. Also give the boulder particle effect. A dirt trail."
+- "I want you to make some "normal" looking bases. No armour or equipment, maybe just a basic sack tunic, then a bunch of hair styles and skin colours, facial hair, jewelry. U can also play around with different body types like fat, brutish, skinny, feminine if u can, etc."
+
+Lanes (worktrees ~/Dev/delve-wt/, shared rules in ../COMMON-r19b.md):
+- looks19 (Opus xhigh): outlines in a dark shade of each thing's own colour, and a pixelated look; both are Settings switches and URL flags, to try on the phone.
+- troll19 (Fable high, as asked): trolls and yetis turn by walking round the boulder; a held or rolling boulder is a solid that never pushes anything through walls; problems listed with before/after films.
+- boulder19 (Opus xhigh): method A, a round texture that rolls (the yeti's placeholder removed); method B, a masked, panned texture with a fish-eye bend; same look as today's boulder; a dirt trail (snow for the yeti); ?boulder=a|b.
+- bases19 (Fable high, art with big design calls): one plain sack-tunic base first, then layers (skin, hair, facial hair, jewellery, tunics, body types), a test villager kind in battle mode, boards with the base card first.
