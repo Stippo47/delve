@@ -9,7 +9,7 @@
 // Three things live here, so the sim, the renderer and the effects all ask the same place:
 //   airTier(u)      how high a unit is for drawing and for bodies: 0 on the floor, 1 hovering, 2 flying. Drawn floor
 //                   first, then hovering, then flying (render.js); bodies on different tiers never push or block each
-//                   other (sim.js physics). Anything with u.hop (a leap, a pounce's hang, Toss's flung foe, a sky dive)
+//                   other (sim.js physics; js/layers.js has the whole table of what touches what). Anything with u.hop (a leap, a pounce's hang, Toss's flung foe, a sky dive)
 //                   is up while it is AIR_HOP or more off the floor; u.flyT (tags.js layerOf: flying) and u.airborne (a
 //                   slime mid-hop: hovering) count too; kinds that always hover (the imps) are tier 1, kinds that always
 //                   fly (tags.js flier: bats, spirits, drones; not the winged heroes, who walk) tier 2 for drawing.
@@ -35,12 +35,14 @@ export function airTier(u) {
   if (!u || u.dead || u.downed) return 0;
   return Math.max(upNow(u), isFlier(u) ? 2 : isHover(u) ? 1 : 0);
 }
-// The height a body is at for touching other bodies (sim.js physics): what leapt, was thrown or hops, and the kinds that
-// always hover (the imps). Kinds that always fly (bats, spirits) stay on the floor here, as they do for hits (tags.js
-// layerOf: every slam and floor zone would miss them for good).
-export const bodyTier = (u) => (!u || u.dead || u.downed ? 0 : upNow(u) ? 1 : isHover(u) ? 1 : 0);
-// do these two bodies meet? Not while one is up in the air and the other on the floor, until it lands.
-export const bodiesMeet = (a, b) => bodyTier(a) === bodyTier(b);
+// The height a body is at for touching other bodies (sim.js physics): the same three heights it is drawn at.
+// (round 19, lane physics19: it was a rule of its own. Everything off the floor was one height, so a boss's flying head
+// shoved its own lifted feet about; and the kinds that always fly (bats, ghosts, spirits) were on the floor, so a bat
+// drawn over a hero pushed him. The designer: "Many times when things are on layers where they shouldn't collide they
+// do." Who touches whom is js/layers.js now; what a blow or a zone reaches is still tags.js layerOf, unchanged: a
+// blade reaches a bat as before.)
+export const bodyTier = airTier;
+export const bodiesMeet = (a, b) => airTier(a) === airTier(b);
 
 // ---------------------------------------------------------------- lobs
 // How high each lobbed kind arcs (what fx2.js lobUp was handed per kind; a lob's peak is also capped by how long it
