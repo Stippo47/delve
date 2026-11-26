@@ -127,7 +127,7 @@ function crash(w, u, b, sp) {
   puff(w, fx0, fy0, '#CDBFA6', 12, 150, 6, 0.45); w.shake = Math.max(w.shake, 5);
   w.telegraphs.push({ type: 'blast', thud: true, x: fx0, y: fy0, r: 34, t: 0.25, max: 0.25, color: '#D8CCB0' }); // (the boom: audio.js)
   for (let i = 0; i < 6; i++) { const q = R.head + Math.PI + rrange(-1.1, 1.1), v = rrange(120, 260); w.particles.push({ x: fx0, y: fy0, vx: Math.cos(q) * v, vy: Math.sin(q) * v, life: 0.5, max: 0.5, size: rrange(4, 7), color: i % 2 ? '#8C8270' : '#B9AE9C' }); }
-  if (b.body && alive(b.body)) hurt(w, b.body, b.body.maxHp * RIDE.chip * clamp(sp / RIDE.top, 0.5, 1.2), null, { knock: 0 });
+  if (b.body && alive(b.body)) hurt(w, b.body, b.body.maxHp * RIDE.chip * clamp(sp / RIDE.top, 0.5, 1.2), null, { noDodge: true }); // (a wall slam: as sim.js wallHit)
 }
 
 // The ball gone under it: thrown off forwards, down in a heap a moment, then on foot.
