@@ -10,7 +10,7 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const verbose = args.includes('--v');
 globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
-const DT = 1 / 60;
+const DT = 1 / (+opt('steps', 60)); // --steps 240: a quarter-size step, as slow motion takes
 const B = await import('../js/battle.js');
 const { setSeed } = await import('../js/util.js');
 const { freshSave } = await import('../js/save.js');

@@ -27,7 +27,8 @@ if (params.get('seed')) setSeed(+params.get('seed'));
 let save = loadSave();
 let state = 'camp';
 let run = null;
-const SPEEDS = [1, 2, 4];
+const speedLabel = (v) => (v === 0.25 ? '¼×' : v === 0.5 ? '½×' : v + '×');
+const SPEEDS = [1, 2, 4, 0.25, 0.5]; // (round 19: slow motion, ¼× and ½×, after 4×)
 
 function show(s) {
   state = s;
@@ -158,7 +159,7 @@ function updateHud() {
   if (isBattle()) { // no map, no purse, no boss bar: the time, and the strip below (battle-ui.js)
     if (!updateBattleDock(run)) buildChips();
     $('where').textContent = battleTitle(run);
-    $('speedBtn').textContent = save.speed + '×';
+    $('speedBtn').textContent = speedLabel(save.speed);
     const rb = $('retreatBtn'); if (rb.dataset.on !== 'battle') { rb.dataset.on = 'battle'; rb.innerHTML = I.flag; rb.classList.remove('leaving'); }
     $('bossBar').classList.add('hidden'); $('banner').classList.add('hidden');
     return;
@@ -167,7 +168,7 @@ function updateHud() {
   noteBeasts(w);
   if (isConvoy()) { // lane C: the wagon's strip, the purse; no floor map
     convoyHud(run);
-    $('speedBtn').textContent = save.speed + '×';
+    $('speedBtn').textContent = speedLabel(save.speed);
     const rb = $('retreatBtn'); if (rb.dataset.on !== 'convoy') { rb.dataset.on = 'convoy'; rb.innerHTML = I.flag; rb.classList.remove('leaving'); }
     const chief = w.units.find((u) => u.chief && !u.dead && u.aggro);
     $('bossBar').classList.toggle('hidden', !chief || !HPBARS); // (round 19, lane toggles19: health bars off hides the boss's too)
@@ -182,7 +183,7 @@ function updateHud() {
   { const g = $('hGems'); if (g) { g.textContent = run.gems || 0; g.parentNode.classList.toggle('hidden', !run.gems); } } // gems (round 9)
   const rb = $('retreatBtn'), leaving = !!run.leaving;
   if (rb.dataset.on !== String(leaving)) { rb.dataset.on = String(leaving); rb.innerHTML = leaving ? 'Stay' : I.door; rb.classList.toggle('leaving', leaving); }
-  $('speedBtn').textContent = save.speed + '×';
+  $('speedBtn').textContent = speedLabel(save.speed);
   const boss = w.units.find((u) => (u.def.boss || u.floorFoe) && !u.dead); // (a floor's last foe can be a major now: round 9)
   $('bossBar').classList.toggle('hidden', !boss || !HPBARS); // (round 19, lane toggles19: health bars off hides the boss's too)
   if (boss) { $('bossName').textContent = boss.def.name; $('bossBar').querySelector('i').style.width = Math.max(0, 100 * boss.hp / boss.maxHp) + '%'; }
@@ -333,7 +334,10 @@ function drawRun(dt, live) {
     const bottom = paused ? panelHeight() : view.ch - $('dock').getBoundingClientRect().top;
     layout(canvas, run.world, Math.round(hud.bottom) + 6, Math.max(10, Math.round(bottom) + 6));
     if (!paused) {
-      acc += dt * (live ? save.speed : 1);
+      if (live && save.speed < 1) { // slow motion (round 19): a smaller step every frame, so it stays smooth, not 15 a second
+        const h = Math.min(STEP, dt * save.speed); acc = 0;
+        if (h > 0) stepOf(run)(run, h);
+      } else acc += dt * (live ? save.speed : 1);
       let n = 0;
       while (acc >= STEP && n < 16) { stepOf(run)(run, STEP); acc -= STEP; n++; if (run.summary || run.phase === 'roadside') break; } // (lane C: stepOf)
       if (acc > STEP * 16) acc = 0;

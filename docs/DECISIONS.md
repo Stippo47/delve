@@ -1486,3 +1486,9 @@ stands), three phases, its fire the game's fire.
   (that's the party panel, not over the fight), and battle mode's side totals in its bottom strip. While bars are off
   the "Enemy health, once hurt" picker is greyed and says so.
 - With outlines off and bars on, the bars drop their ink rims too (they sit in the arena).
+
+## Round 19: slow motion (lead, 0.37.0)
+- Designer: "Slow mo timescale. 0.5 and 0.25x". The speed button now cycles 1× → 2× → 4× → ¼× → ½× → 1×, labelled ¼× and ½×, and the choice is saved like the others.
+- Slow speeds take one smaller step every frame (frame time × speed, at most 1/60 s) instead of a full step every second or fourth frame, so ¼× moves smoothly rather than at 15 updates a second. 1×, 2× and 4× are unchanged.
+- Checked: in the browser ¼× moved the game 0.51 s in 2 s and ½× moved it 1.01 s, with the picture changing every frame. `node tools/battles.mjs --steps 240` (new flag, quarter-size step): 532 battles, 0 problems, 11 out of time, the same as at the normal step.
+- Sounds play at normal pitch in slow motion; only the game slows.
