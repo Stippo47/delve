@@ -187,7 +187,8 @@ const gripOf = (u, b) => u.r * (1 + HOLD) + b.r + 8; // the rod: the boulder's m
 //              twice its walk, about a berserker's pace)
 //  knock / knockPow  the blow's shove for a body of mass 1 at full speed (it was 420 for everybody, and half of it
 //              sideways), times its mass to the knockPow: a heavier body is thrown less far, but not by its whole
-//              weight (an archer about 290, a paladin 235, another troll 185; a fifth less behind a raised shield)
+//              weight (at full speed an archer about 290, a paladin 235, another troll 185; a fifth less behind a raised
+//              shield; as it usually lands, a little slowed: an archer about 210, was 130; a paladin 140, was 70)
 //  dmg / dmgRock  the blow (was 14 / 18: less, for what a wall does to a body thrown this hard, and for how often it comes)
 //  hp / hpRock the boulder's health, of its troll's own (a troll's was a flat 55, a fifteenth of the troll's in a
 //              battle, and only shots took it; the rock troll's could not be hurt)
@@ -603,8 +604,8 @@ function rollBoulder(w, u, b, dt) {
 // Round 19 (lane troll19b; the designer: "Boulder should do heavy knockback. Currently it just barely knocks things to
 // the side. There no strong impact."). It knocked 420 whoever it hit, half a radian off its way to the side: a paladin
 // went about 50. Now the blow throws them on down its way (a third of a radian to the side they were on, so they land
-// clear of it), BOWL.knock for a body of mass 1 at full speed and less for a heavier one (an archer about 290, a
-// paladin 235, another troll 185; BOWL.knockPow), off their feet for a moment (BOWL.stun), with an impact you can see and hear: a
+// clear of it), BOWL.knock for a body of mass 1 at full speed and less for a heavier one (as it usually
+// lands an archer about 210, a paladin 140; BOWL.knockPow), off their feet for a moment (BOWL.stun), with an impact you can see and hear: a
 // burst of dust and grit at the point it struck them (a blast: fxkit.js draws it, audio.js booms), sparks, the room
 // shakes, and a hair of hit-stop. The boulder loses some of its speed to each (BOWL.keep, more to a heavy body) and
 // rolls on.

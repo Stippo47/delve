@@ -1,0 +1,194 @@
+{
+ "title": "Trolls bowl harder",
+ "topic": "art",
+ "stack": "r19b",
+ "order": 3,
+ "priority": 1,
+ "cards": [
+  {
+   "id": "report",
+   "kind": "report",
+   "rarity": "rare",
+   "title": "Trolls bowl harder",
+   "text": "Your nine notes on the trolls, each with a before and after film of the same set-up.",
+   "why": "You wrote them after seeing the solid boulders. Each part below is one of your notes, in your words, with what changed and the films. Before is the last release, after is this work. Mark any part that is off.",
+   "videos": [
+    "../../../docs/clips/troll19b/before-bowl-troll.mp4",
+    "../../../docs/clips/troll19b/after-bowl-troll.mp4"
+   ],
+   "parts": [
+    {
+     "id": "fists",
+     "title": "Fights back on the way",
+     "text": "\"the troll should fight back while going to boulder\": anyone in reach on its way gets its fists, one blow, then it walks on. It used to walk past them. The rock troll and the yeti do the same.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-fetch-troll.mp4",
+      "../../../docs/clips/troll19b/after-fetch-troll.mp4"
+     ]
+    },
+    {
+     "id": "often",
+     "title": "Bowls more often",
+     "text": "\"they should bowl more often\": about 9 to 13 bowls a minute, was 7 to 8 (rock troll 8 to 10, was 6 to 7). The 3 second wait with the boulder against you is gone, and it hurries after its boulder.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-bowl-troll.mp4",
+      "../../../docs/clips/troll19b/after-bowl-troll.mp4"
+     ]
+    },
+    {
+     "id": "further",
+     "title": "Further, and faster off",
+     "text": "\"Boulder should go further and start a bit faster\": it leaves a quarter faster and slows less. With nobody in its way it rolls nearly twice as far (about 650, was 350). It rolls on through whoever it hits.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-stand-troll.mp4",
+      "../../../docs/clips/troll19b/after-stand-troll.mp4",
+      "../../../docs/clips/troll19b/after-live-troll.mp4"
+     ]
+    },
+    {
+     "id": "windup",
+     "title": "Charge up",
+     "text": "\"Should show a charge up animation\": before every bowl the troll steps back and rears, the boulder drawn in to its chest, shaking, swelling and turning pale, grit flying. Then it lunges and the floor goes up in dust.",
+     "videos": [
+      "../../../docs/clips/troll19b/after-stand-troll.mp4",
+      "../../../docs/clips/troll19b/after-near-troll.mp4"
+     ]
+    },
+    {
+     "id": "health",
+     "title": "Boulder health",
+     "text": "\"Boulder should have hp and can be destroyed and targeted\": every boulder has a health bar, cracks as it is hurt and bursts. Heroes go for it when it stands between them and the troll. Then the troll is bare-handed.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-break-troll.mp4",
+      "../../../docs/clips/troll19b/after-break-troll.mp4"
+     ]
+    },
+    {
+     "id": "spikes",
+     "title": "The spikes",
+     "text": "\"idk why spikes come out when the boulder is bowled\": the red warning line was set up as a bone attack, and bone attacks end in a row of spikes. It did no harm; it was a mistake. The line only warns now.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-near-troll.mp4",
+      "../../../docs/clips/troll19b/after-near-troll.mp4"
+     ]
+    },
+    {
+     "id": "back",
+     "title": "Backs away first",
+     "text": "\"They should back away from enemies to a min distance before the bowl\": with you close it steps back, dragging the boulder, then winds up and bowls. It no longer walks the boulder into you and holds it there.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-near-troll.mp4",
+      "../../../docs/clips/troll19b/after-near-troll.mp4"
+     ]
+    },
+    {
+     "id": "knock",
+     "title": "Heavy knockback",
+     "text": "\"Boulder should do heavy knockback ... There no strong impact\": you are thrown on down its way: a paladin twice as far as before, an archer further still. A burst of dust, sparks, a shake and a boom where it lands.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-stand-archer.mp4",
+      "../../../docs/clips/troll19b/after-stand-archer.mp4",
+      "../../../docs/clips/troll19b/after-bowl-troll.mp4"
+     ]
+    },
+    {
+     "id": "rock",
+     "title": "Rock troll",
+     "text": "\"Rock troll should have a huge boulder and the boulder comes back to them\": its boulder is a third wider, as wide as the troll, and rolls home to it after every bowl. It fights with its fists while it waits.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-stand-rocktroll.mp4",
+      "../../../docs/clips/troll19b/after-stand-rocktroll.mp4",
+      "../../../docs/clips/troll19b/before-bowl-rocktroll.mp4",
+      "../../../docs/clips/troll19b/after-bowl-rocktroll.mp4"
+     ]
+    },
+    {
+     "id": "rockbreak",
+     "title": "Rock boulder broken",
+     "text": "Its boulder has much more health than the troll's. When it breaks the rock troll fights bare-handed for 7 seconds, then tears a new one out of the floor. (The boulder starts this film at half health.)",
+     "videos": [
+      "../../../docs/clips/troll19b/before-break-rocktroll.mp4",
+      "../../../docs/clips/troll19b/after-break-rocktroll.mp4"
+     ]
+    },
+    {
+     "id": "yeti",
+     "title": "Yeti",
+     "text": "What fits it: its snowball has health and can be gone for, it throws people the same way, and the yeti hits back on its way to its ball. Its own run-up and heave are as they were.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-bowl-yeti.mp4",
+      "../../../docs/clips/troll19b/after-bowl-yeti.mp4"
+     ]
+    },
+    {
+     "id": "fights",
+     "title": "Whole fights",
+     "text": "A troll, a rock troll and a yeti against a paladin and an archer, 20 seconds each, nothing staged.",
+     "videos": [
+      "../../../docs/clips/troll19b/before-live-troll.mp4",
+      "../../../docs/clips/troll19b/after-live-troll.mp4",
+      "../../../docs/clips/troll19b/before-live-rocktroll.mp4",
+      "../../../docs/clips/troll19b/after-live-rocktroll.mp4",
+      "../../../docs/clips/troll19b/before-live-yeti.mp4",
+      "../../../docs/clips/troll19b/after-live-yeti.mp4"
+     ]
+    },
+    {
+     "id": "fair",
+     "title": "Still fair",
+     "text": "Trolls that bowl this much won far more fights, so the bowl itself hurts less (the throw and the wall do the work), and the troll and rock troll have a little less health and weaker fists. Who wins is back within a few points."
+    }
+   ]
+  },
+  {
+   "id": "run",
+   "kind": "question",
+   "rarity": "uncommon",
+   "title": "Rock troll's run",
+   "text": "The rock troll sometimes runs behind its boulder instead of bowling. Keep that move?",
+   "why": "You said they \"charge forwards still holding the boulder\". That may have meant trolls walking the boulder into you, which is gone, or this run, which is an older move of the rock troll. It is rare now (about one bowl in seven) and lets the boulder go at the end.",
+   "pick": "Keep the run, rare, with the boulder let go at the end.",
+   "videos": [
+    "../../../docs/clips/troll19b/after-live-rocktroll.mp4"
+   ]
+  },
+  {
+   "id": "broken",
+   "kind": "question",
+   "rarity": "uncommon",
+   "title": "A broken boulder",
+   "text": "The troll's broken boulder stays broken. The rock troll tears up a new one after 7 seconds.",
+   "why": "Breaking the troll's boulder should be worth the effort, so it fights bare-handed for the rest of the fight, as it always has. The rock troll has nothing but its boulder, so it gets a new one. The other way: the troll gets a new one after a while too.",
+   "pick": "Keep: troll stays bare-handed, rock troll gets a new one.",
+   "videos": [
+    "../../../docs/clips/troll19b/after-break-troll.mp4",
+    "../../../docs/clips/troll19b/after-break-rocktroll.mp4"
+   ]
+  },
+  {
+   "id": "far",
+   "kind": "question",
+   "rarity": "uncommon",
+   "title": "How far they fly",
+   "text": "A struck archer goes about three body widths (was two), a paladin two (was one). Enough?",
+   "why": "It is one number. Further looks stronger but throws heroes into walls more, and walls hurt: that is already most of what a bowl does to you. Less far is safer and tamer.",
+   "pick": "Keep it as filmed.",
+   "videos": [
+    "../../../docs/clips/troll19b/before-stand-archer.mp4",
+    "../../../docs/clips/troll19b/after-stand-archer.mp4"
+   ]
+  },
+  {
+   "id": "aim",
+   "kind": "question",
+   "rarity": "uncommon",
+   "title": "Who hits the boulder",
+   "text": "Heroes go for a boulder only when it stands between them and the troll. Others ignore it.",
+   "why": "If every hero treated it as one more enemy they would waste the fight on a rock: in tests the troll then won three times as often. Stray swings and blasts still hurt it when it is in the way.",
+   "pick": "Keep: only when it is in their way.",
+   "videos": [
+    "../../../docs/clips/troll19b/after-break-troll.mp4"
+   ]
+  }
+ ]
+}

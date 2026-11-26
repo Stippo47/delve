@@ -8,7 +8,8 @@
 //   rolled             how far it went from where it was let go, until it lay still, was taken up or turned for home
 //   room               the gap between the boulder's face and the hero when it was let go
 //   pressed            seconds a minute the troll held the boulder up against the hero (within 6 of touching)
-//   thrown             how far a struck hero went in the 0.8 s after the blow (rooted heroes: nothing)
+//   thrown             how far a struck hero went in the 0.8 s after the blow; and the first blow of each run alone
+//                      (a rooted hero is thrown towards the room's edge blow after blow, and the edge stops him)
 //   wait               from letting go to having it in its fists again
 //   fists              blows the troll struck with no boulder in its fists, a minute of such time
 //   breaks             boulders broken (a minute), and the first one's time
@@ -43,7 +44,7 @@ function one(kind, scene, seed) {
   for (let i = 0; i < 30; i++) B.updateBattle(run, DT);
   if (u.yt) for (let i = 0; i < 300 && !(u.snow && !u.snow.packing); i++) B.updateBattle(run, DT);
   const S = T19.stage2(scene), w = S.w, h = S.h;
-  const R = { bowls: 0, launch: [], rolled: [], room: [], pressed: 0, thrown: [], wait: [], fists: 0, bare: 0, breaks: 0, first: null, held: 0, secs: 0 };
+  const R = { thrown1: null, bowls: 0, launch: [], rolled: [], room: [], pressed: 0, thrown: [], wait: [], fists: 0, bare: 0, breaks: 0, first: null, held: 0, secs: 0 };
   let was = true, cur = null, hp = h.hp, fly = null, atk = u.lastAttackT, ball = ballOf(u), out = null;
   for (let t = 0; t < SECS; t += DT) {
     B.updateBattle(run, DT); R.secs += DT;
@@ -63,7 +64,7 @@ function one(kind, scene, seed) {
     atk = u.lastAttackT;
     for (const q of S.hs) if (q.hp < 5e5) q.hp = q.maxHp = 1e6;
     if (u.hp < 5e5) u.hp = u.maxHp = 1e6;
-    if (fly) { fly.far = Math.max(fly.far, Math.hypot(h.x - fly.x, h.y - fly.y)); if (t - fly.t > 0.8) { R.thrown.push(fly.far); fly = null; } }
+    if (fly) { fly.far = Math.max(fly.far, Math.hypot(h.x - fly.x, h.y - fly.y)); if (t - fly.t > 0.8) { R.thrown.push(fly.far); if (R.thrown1 == null) R.thrown1 = fly.far; fly = null; } }
     else if (h.hp < hp - 0.5 && b && Math.hypot(b.x - h.x, b.y - h.y) < b.r + h.r + 30 && Math.hypot(b.vx, b.vy) > 60) fly = { x: h.x, y: h.y, t, far: 0 };
     hp = h.hp;
     was = held;
@@ -72,13 +73,14 @@ function one(kind, scene, seed) {
 }
 const KINDS = opt('kinds', 'troll,rockTroll,yeti').split(','), SCENES = opt('scenes', 'bowl,stand,near,fetch,break').split(',');
 for (const kind of KINDS) for (const scene of SCENES) {
-  const A = { bowls: 0, launch: [], rolled: [], room: [], pressed: 0, thrown: [], wait: [], fists: 0, bare: 0, breaks: 0, first: [], secs: 0, held: 0 };
+  const A = { thrown1: [], bowls: 0, launch: [], rolled: [], room: [], pressed: 0, thrown: [], wait: [], fists: 0, bare: 0, breaks: 0, first: [], secs: 0, held: 0 };
   for (let i = 0; i < N; i++) {
     const r = one(kind, scene, 700 + i * 13);
     for (const k of ['bowls', 'pressed', 'fists', 'bare', 'breaks', 'secs', 'held']) A[k] += r[k];
     for (const k of ['launch', 'rolled', 'room', 'thrown', 'wait']) A[k].push(...r[k]);
     if (r.first != null) A.first.push(r.first);
+    if (r.thrown1 != null) A.thrown1.push(r.thrown1);
   }
   const m = A.secs / 60;
-  console.log(`${kind.padEnd(11)} ${scene.padEnd(6)} bowls ${(A.bowls / m).toFixed(1)}/min  launch ${Math.round(mean(A.launch))}  rolled ${Math.round(med(A.rolled))} (most ${Math.round(Math.max(0, ...A.rolled))})  room ${Math.round(med(A.room))} (least ${Math.round(Math.min(999, ...A.room))})  pressed ${(A.pressed / m).toFixed(1)}s/min  thrown ${Math.round(med(A.thrown))} (n ${A.thrown.length})  wait ${med(A.wait).toFixed(1)}s  fists ${A.bare > 1 ? (A.fists / (A.bare / 60)).toFixed(1) : '-'}/min bare (${Math.round(A.bare / A.secs * 100)}% bare)  breaks ${(A.breaks / m).toFixed(1)}/min first ${A.first.length ? med(A.first).toFixed(1) + 's' : '-'}`);
+  console.log(`${kind.padEnd(11)} ${scene.padEnd(6)} bowls ${(A.bowls / m).toFixed(1)}/min  launch ${Math.round(mean(A.launch))}  rolled ${Math.round(med(A.rolled))} (most ${Math.round(Math.max(0, ...A.rolled))})  room ${Math.round(med(A.room))} (least ${Math.round(Math.min(999, ...A.room))})  pressed ${(A.pressed / m).toFixed(1)}s/min  thrown ${Math.round(med(A.thrown))} (n ${A.thrown.length}; the first of each run ${Math.round(med(A.thrown1))})  wait ${med(A.wait).toFixed(1)}s  fists ${A.bare > 1 ? (A.fists / (A.bare / 60)).toFixed(1) : '-'}/min bare (${Math.round(A.bare / A.secs * 100)}% bare)  breaks ${(A.breaks / m).toFixed(1)}/min first ${A.first.length ? med(A.first).toFixed(1) + 's' : '-'}`);
 }

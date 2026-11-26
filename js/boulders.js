@@ -31,6 +31,7 @@
 //  5. the owner is kept at the rod's length from it (never inside its own boulder): a stopped boulder stops the troll.
 import { circleRect } from './path.js';
 import { BUILD_IDS } from './statuses.js'; // (round 19, lane troll19b: the ball's health)
+import { softRock } from './layers.js'; // (round 19, lane troll19b, after lane physics19: a body found deep in a ball eases out of it)
 
 export const isBall = (p) => !!(p.boulder || p.snowball);
 // what is solid to a ball: every other round thing (a snowball keeps its old rule for the wagon road's painted rocks: foes10.js)
@@ -162,16 +163,25 @@ export function ballPass(w, dt, slam) {
           }
         }
         if (d2 >= m * m) continue;
-        const d = Math.sqrt(d2), nx = d > 1e-4 ? dx / d : 1, ny = d > 1e-4 ? dy / d : 0, over = m - d;
+        const d = Math.sqrt(d2), nx = d > 1e-4 ? dx / d : 1, ny = d > 1e-4 ? dy / d : 0; let over = m - d;
         const fixedBall = still && b.owner !== o;
         if (o.fixed) { if (!fixedBall) { b.x -= nx * over; b.y -= ny * over; bx -= nx * over; by -= ny * over; again = true; } continue; }
+        // (round 19, lane troll19b, after lane physics19's rule for rocks, layers.js softRock: what is new of the overlap
+        // this step, its own walk, a knock, the ball's roll, is put right at once and in full (a rock's rule caps that
+        // at a pace; a ball rolls and bodies are thrown at it, and with the cap they were found deep in boulders seven
+        // times as often), so nothing gets through a ball; depth that was there already at the end of the last step (a
+        // new boulder torn up under somebody) eases out over a few steps instead of throwing the body a boulder's width
+        // in one. `left` is the depth left in for now; the ball is not asked to give it back either)
+        if (pass === 0) { const old = Math.min(over, Math.max(0, m - Math.hypot((o.wasX ?? o.x) - (b.px ?? b.x), (o.wasY ?? o.y) - (b.py ?? b.y)))); o.ballLeft = globalThis.NOEASE19 ? 0 : old - softRock(old, 0, dt); o.ballLeftOf = b; } // (NOEASE19: a test's switch, tools/troll19/walls.mjs with it set counts the overlaps without the easing)
+        const left = o.ballLeftOf === b ? o.ballLeft : 0;
+        over -= left; if (over <= 0.001) continue;
         const share = fixedBall ? 1 : M / (M + (o.mass || 1)), ox = o.x, oy = o.y;
         o.x += nx * over * share; o.y += ny * over * share;
         if (share < 1) { b.x -= nx * over * (1 - share); b.y -= ny * over * (1 - share); bx -= nx * over * (1 - share); by -= ny * over * (1 - share); again = true; }
         // the body against the room: what it can't give, the ball gives back
         if (outOfSolids(w, o, (p) => p === b || (p.owner === o && isBall(p) && own(o, p)))) {
           if (inWalls(w, o)) { o.x = ox; o.y = oy; } // (pushed into a slot too narrow for it: it stays where it was, and the ball gives all of it)
-          const ex = o.x - b.x, ey = o.y - b.y, e = Math.hypot(ex, ey), rem = m - e;
+          const ex = o.x - b.x, ey = o.y - b.y, e = Math.hypot(ex, ey), rem = m - e - left;
           // (a ball lying still gives too, for this: it is a rock to walk into, not one to be crushed against a wall by)
           if (rem > 0.01) { const qx = e > 1e-4 ? ex / e : nx, qy = e > 1e-4 ? ey / e : ny; b.x -= qx * rem; b.y -= qy * rem; bx -= qx * rem; by -= qy * rem; again = true; }
         }
