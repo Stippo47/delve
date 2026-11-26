@@ -96,6 +96,8 @@ colour group is greyed like the health-bar styles are. The two combine. Settings
 - "Own colour, deep" looked too close to ink to be its own choice (clips only).
 - "One colour each" picks the commonest colour, which is not always the one you'd name: the Canopy Idol's comes out
   bamboo khaki (its many stilt pieces), so its leaves get a khaki edge.
+- The clips were filmed just before our summons' outlines were switched to the shade of their blue-grey look; in them
+  the Necromancer's skeletons are edged from their bone colour (near ink either way). The idol close-up stills have it.
 - The pixel look is the game drawn small, not hand-made pixel art: figures still turn to any angle, so a turning
   figure's pixels change shape as it turns.
 - In the idol clips at exactly 3.0 s the idol flashes pale for a frame as it is struck (the game's hit flash, the same in
