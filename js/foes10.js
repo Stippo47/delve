@@ -87,7 +87,7 @@ function newSnow(w, u, r0) {
   const hp = Math.round(SNOW.hp * (r0 / 26) ** 2 * (w.mult || 1) ** 0.7);
   const b = { x: p.x, y: p.y, r: 4, r0, snowball: true, owner: u, team: u.team, vx: 0, vy: 0, roll: 0, rollA: u.facing, held: true, packing: true, big: !!u.elite,
     hp, maxHp: hp, hits: new Map(), onShot: snowShot, seen: new Set(), lastX: p.x, lastY: p.y,
-    grip: u.r * SNOW.reach + 4, onPush: snowPush }; // (round 19, lane troll19: boulders.js keeps it at its hands, pushed along by them, solid)
+    grip: u.r * SNOW.reach + 4, onPush: snowPush, onBlocked: (w2, b2, sp) => { if (sp >= SNOW.hurtSp && !b2.packing) { b2.rollA = Math.atan2(b2.vy, b2.vx); snowHits(w2, b2, sp); } } }; // (round 19, lane troll19: boulders.js keeps it at its hands, pushed along by them, solid)
   w.pillars.push(b); u.snow = b;
   b.drv = fx(w, { type: 'snowDrive', every: 1 / 60, max: 1e9, tick: () => snowTick(w, b, 1 / 60) });
   return b;
@@ -171,6 +171,12 @@ function snowTick(w, b, dt) {
   if (sp > 120 && rand() < dt * 30) { const s = rand() < 0.5 ? 1 : -1, a = b.rollA + Math.PI + s * 0.6; w.particles.push({ x: b.x - Math.cos(b.rollA) * b.r * 0.8 + Math.cos(a + s) * b.r * 0.6, y: b.y - Math.sin(b.rollA) * b.r * 0.8 + Math.sin(a + s) * b.r * 0.6, vx: Math.cos(a) * 50, vy: Math.sin(a) * 50, life: 0.45, max: 0.45, size: rrange(3, 6), color: 'rgba(244,250,255,0.9)' }); }
   // bodies in its way: fast, it bowls them over (each once a run); it is slowed and turned a little by each
   if (sp < SNOW.hurtSp) return;
+  snowHits(w, b, sp);
+}
+// (round 19, lane troll19: its own function, so a ball stopped dead by somebody with his back to a wall still strikes
+// him: boulders.js calls b.onBlocked before it bounces it)
+function snowHits(w, b, sp) {
+  const u = b.owner, up = u && alive(u);
   for (const h of opponents(w, b)) {
     const d = dist(h.x, h.y, b.x, b.y); if (d > b.r + h.r + 2) continue;
     if ((b.hits.get(h) || -9) > w.time - 1) continue;

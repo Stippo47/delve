@@ -155,7 +155,9 @@ export function ballPass(w, dt, slam) {
     // 4. rolling, and stopped by somebody who couldn't get out of its way: it bounces off as off a wall
     if (!u && sp2 > 400) {
       const sp = Math.sqrt(sp2), step = sp * dt, back = -(bx * b.vx + by * b.vy) / sp;
-      if (back > step * 0.6 && back > 0.5) { b.vx *= -0.25; b.vy *= -0.25; if (b.hits && b.hits.clear) b.hits.clear(); b.stopped = w.time; }
+      // (b.onBlocked: it strikes whoever stopped it first, as it would have a step later had it rolled on: a boulder
+      // let go point blank at a hero with his back to a wall)
+      if (back > step * 0.6 && back > 0.5) { if (b.onBlocked) b.onBlocked(w, b, sp); b.vx *= -0.25; b.vy *= -0.25; if (b.hits && b.hits.clear) b.hits.clear(); b.stopped = w.time; }
     }
     // 5. its owner: never nearer than the rod's length. With its back to a wall it can't give way: then the ball gives
     // (out of it again), and where neither can, b.squeeze says by how much the rod is too long for the room there is

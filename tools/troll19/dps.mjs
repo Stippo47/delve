@@ -5,7 +5,6 @@
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 globalThis.location = { search: '?x' };
-if (opt('carry')) globalThis.T19C = JSON.parse(opt('carry'));
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const B = await import('../../js/battle.js');
 const { setSeed } = await import('../../js/util.js');

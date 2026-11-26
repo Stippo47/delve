@@ -69,15 +69,17 @@ function audit(w, C, tag) {
     let ib = 0; for (const b of balls) if (b.owner !== u) ib = Math.max(ib, u.r + b.r - Math.hypot(u.x - b.x, u.y - b.y));
     mark('inBall', u, ib > 14, ib);
   }
-  // stuck: a troll-shaped unit with somebody to fight that for 15 s has not moved 50, been hurt, struck, or let its
-  // boulder go at speed
+  // stuck: a troll-shaped unit with somebody to fight that for 15 s has not moved 50, been hurt, struck, hurt its
+  // mark, changed its mark, or let its boulder go at speed
   for (const u of w.units) {
     if (u.dead || !(u.kind === 'troll' || u.kind === 'rockTroll' || u.kind === 'yeti')) continue;
     const b = ballOf(u), fast = b && Math.hypot(b.vx, b.vy) > 150;
     let K = C.stall.get(u);
-    if (!K || Math.hypot(u.x - K.x, u.y - K.y) > 50 || u.hp < K.hp - 0.5 || u.lastAttackT !== K.atk || fast || !u.aggro || !u.target || u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0) C.stall.set(u, (K = { x: u.x, y: u.y, t: w.time, hp: u.hp, atk: u.lastAttackT }));
+    const tg = u.target && !u.target.dead ? u.target : null;
+    if (!K || Math.hypot(u.x - K.x, u.y - K.y) > 50 || u.hp < K.hp - 0.5 || u.lastAttackT !== K.atk || fast || K.tg !== tg || (tg && tg.hp < K.thp - 0.5) || !u.aggro || !u.target || u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0) C.stall.set(u, (K = { x: u.x, y: u.y, t: w.time, hp: u.hp, atk: u.lastAttackT, tg, thp: tg ? tg.hp : 0 }));
     K.hp = Math.max(K.hp, u.hp);
     mark('stuck', u, w.time - K.t > 15, w.time - K.t);
+    if (V && w.time - K.t > 15 && !K.said) { K.said = true; const t = u.target, J = u.bJam, Cc = u.bCar || {}; console.log('   stuck', tag, 't', w.time.toFixed(1), JSON.stringify({ kind: u.kind, at: [Math.round(u.x), Math.round(u.y)], r: Math.round(u.r), ball: b ? [Math.round(b.x), Math.round(b.y), Math.round(b.r)] : null, held: b && b.held, sq: b && +(b.squeeze || 0).toFixed(1), bsp: b ? Math.round(Math.hypot(b.vx, b.vy)) : 0, tgt: t ? [t.kind, Math.round(t.x), Math.round(t.y)] : null, gap: t ? Math.round(Math.hypot(t.x - u.x, t.y - u.y) - u.r - t.r) : null, jam: J && +J.t.toFixed(1), rest: +(u.bouldRest || 0).toFixed(1), rip: u.ripT, way: Cc.way, dir: Cc.dir, dv: [Math.round(u.dvx), Math.round(u.dvy)], mode: u.mode, root: u.rootT > 0, hold: u.el && u.el.holdT, W: [w.W, w.H], yt: u.yt ? { st: u.yt.st, haul: !!u.yt.haul, lost: u.yt.lost } : undefined })); }
   }
   for (const b of balls) {
     const { pen, inW, out } = wallPen(w, b.x, b.y, b.r);

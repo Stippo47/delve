@@ -12,12 +12,12 @@
    "out": {
     "steps": 473,
     "times": 15,
-    "worst": 77.81319223547166
+    "worst": 77.73998111048058
    },
    "deep": {
     "steps": 909,
     "times": 24,
-    "worst": 77.81319223547166
+    "worst": 77.73998111048058
    },
    "inRock": {
     "steps": 0,
@@ -40,9 +40,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 46,
+    "steps": 45,
     "times": 9,
-    "worst": 11.93230820284839
+    "worst": 11.92133811607141
    },
    "ballInRock": {
     "steps": 0,
@@ -50,6 +50,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -108,12 +113,17 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll/thin": {
    "runs": 12,
-   "bad": 12,
-   "crossed": 12,
+   "bad": 11,
+   "crossed": 0,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -122,12 +132,12 @@
    "out": {
     "steps": 210,
     "times": 8,
-    "worst": 56.62313453855016
+    "worst": 56.6134344409958
    },
    "deep": {
     "steps": 428,
     "times": 16,
-    "worst": 56.62313453855016
+    "worst": 56.6134344409958
    },
    "inRock": {
     "steps": 0,
@@ -160,6 +170,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -182,7 +197,7 @@
    "deep": {
     "steps": 22,
     "times": 3,
-    "worst": 24.046854842952143
+    "worst": 24.038833234533513
    },
    "inRock": {
     "steps": 0,
@@ -215,6 +230,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -273,6 +293,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll/door": {
@@ -315,9 +340,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 1021,
+    "times": 18,
+    "worst": 27.17562513428163
    },
    "ballInRock": {
     "steps": 0,
@@ -325,6 +350,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -340,14 +370,14 @@
     "worst": 0
    },
    "out": {
-    "steps": 304,
+    "steps": 306,
     "times": 12,
-    "worst": 61.43432355310824
+    "worst": 61.43164481956387
    },
    "deep": {
     "steps": 575,
     "times": 12,
-    "worst": 61.43432355310824
+    "worst": 61.43164481956387
    },
    "inRock": {
     "steps": 0,
@@ -357,7 +387,7 @@
    "inBall": {
     "steps": 12,
     "times": 12,
-    "worst": 62.36404577168621
+    "worst": 62.69538667840265
    },
    "ballInWall": {
     "steps": 0,
@@ -380,6 +410,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -397,12 +432,12 @@
    "out": {
     "steps": 511,
     "times": 11,
-    "worst": 74.27606626964157
+    "worst": 74.16769007793464
    },
    "deep": {
-    "steps": 966,
+    "steps": 965,
     "times": 24,
-    "worst": 74.27606626964157
+    "worst": 74.16769007793464
    },
    "inRock": {
     "steps": 0,
@@ -425,7 +460,7 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 161,
+    "steps": 159,
     "times": 11,
     "worst": 14.69399914721108
    },
@@ -435,6 +470,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -493,12 +533,17 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll/thin": {
    "runs": 12,
-   "bad": 12,
-   "crossed": 12,
+   "bad": 11,
+   "crossed": 0,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -537,7 +582,7 @@
    "ballDeep": {
     "steps": 6,
     "times": 3,
-    "worst": 12.681940450219827
+    "worst": 12.671940450219836
    },
    "ballInRock": {
     "steps": 0,
@@ -545,6 +590,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -562,12 +612,12 @@
    "out": {
     "steps": 8,
     "times": 1,
-    "worst": 46.385983256052896
+    "worst": 46.37823492157054
    },
    "deep": {
     "steps": 46,
     "times": 4,
-    "worst": 46.385983256052896
+    "worst": 46.37823492157054
    },
    "inRock": {
     "steps": 3,
@@ -592,7 +642,7 @@
    "ballDeep": {
     "steps": 1,
     "times": 1,
-    "worst": 9.326279074803097
+    "worst": 9.327388285449388
    },
    "ballInRock": {
     "steps": 541,
@@ -600,6 +650,11 @@
     "worst": 73.68702732182993
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -658,6 +713,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll/door": {
@@ -700,9 +760,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 4445,
+    "times": 13,
+    "worst": 32.558568149796315
    },
    "ballInRock": {
     "steps": 0,
@@ -710,6 +770,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -725,14 +790,14 @@
     "worst": 0
    },
    "out": {
-    "steps": 327,
+    "steps": 326,
     "times": 12,
-    "worst": 76.83695809959454
+    "worst": 76.84829564908432
    },
    "deep": {
     "steps": 607,
     "times": 18,
-    "worst": 76.83695809959454
+    "worst": 76.84829564908432
    },
    "inRock": {
     "steps": 0,
@@ -742,7 +807,7 @@
    "inBall": {
     "steps": 6,
     "times": 6,
-    "worst": 62.690307647010385
+    "worst": 62.59796094181319
    },
    "ballInWall": {
     "steps": 0,
@@ -755,9 +820,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 81,
+    "steps": 82,
     "times": 9,
-    "worst": 14.709633443792427
+    "worst": 14.71037790516084
    },
    "ballInRock": {
     "steps": 0,
@@ -765,6 +830,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -780,14 +850,14 @@
     "worst": 0
    },
    "out": {
-    "steps": 245,
+    "steps": 244,
     "times": 16,
-    "worst": 96.14390947581592
+    "worst": 96.91855905164908
    },
    "deep": {
-    "steps": 584,
+    "steps": 585,
     "times": 26,
-    "worst": 96.14390947581592
+    "worst": 96.91855905164908
    },
    "inRock": {
     "steps": 0,
@@ -797,7 +867,7 @@
    "inBall": {
     "steps": 1,
     "times": 1,
-    "worst": 67.4449495066294
+    "worst": 67.38719193137902
    },
    "ballInWall": {
     "steps": 0,
@@ -812,7 +882,7 @@
    "ballDeep": {
     "steps": 1328,
     "times": 26,
-    "worst": 55.5602341569122
+    "worst": 55.56042685096736
    },
    "ballInRock": {
     "steps": 0,
@@ -820,6 +890,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -878,26 +953,31 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll@1/thin": {
    "runs": 12,
    "bad": 12,
-   "crossed": 10,
+   "crossed": 0,
    "inWall": {
     "steps": 0,
     "times": 0,
     "worst": 0
    },
    "out": {
-    "steps": 218,
+    "steps": 217,
     "times": 9,
-    "worst": 93.77225869232848
+    "worst": 93.63840102739869
    },
    "deep": {
     "steps": 469,
     "times": 20,
-    "worst": 93.77225869232848
+    "worst": 93.63840102739869
    },
    "inRock": {
     "steps": 0,
@@ -930,6 +1010,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -988,6 +1073,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "rockTroll@1/crate": {
@@ -1030,7 +1120,7 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 1002,
+    "steps": 1000,
     "times": 26,
     "worst": 56.60607828979653
    },
@@ -1040,6 +1130,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1060,9 +1155,9 @@
     "worst": 0
    },
    "deep": {
-    "steps": 2,
-    "times": 1,
-    "worst": 16.03125727628378
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "inRock": {
     "steps": 0,
@@ -1075,9 +1170,9 @@
     "worst": 0
    },
    "ballInWall": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 1373,
+    "times": 16,
+    "worst": 83.9820440104719
    },
    "ballOut": {
     "steps": 0,
@@ -1085,9 +1180,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 469,
-    "times": 12,
-    "worst": 44.704791518969714
+    "steps": 7572,
+    "times": 14,
+    "worst": 83.9820440104719
    },
    "ballInRock": {
     "steps": 0,
@@ -1095,6 +1190,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1112,12 +1212,12 @@
    "out": {
     "steps": 217,
     "times": 12,
-    "worst": 78.3162739179337
+    "worst": 78.31831455069266
    },
    "deep": {
     "steps": 459,
     "times": 12,
-    "worst": 78.3162739179337
+    "worst": 78.31831455069266
    },
    "inRock": {
     "steps": 0,
@@ -1142,7 +1242,7 @@
    "ballDeep": {
     "steps": 761,
     "times": 19,
-    "worst": 37.72964721834944
+    "worst": 37.7267297384991
    },
    "ballInRock": {
     "steps": 0,
@@ -1150,6 +1250,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1208,6 +1313,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/corner": {
@@ -1263,12 +1373,17 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/thin": {
    "runs": 12,
    "bad": 12,
-   "crossed": 12,
+   "crossed": 0,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -1277,12 +1392,12 @@
    "out": {
     "steps": 158,
     "times": 6,
-    "worst": 95.93890429159778
+    "worst": 95.88899742797963
    },
    "deep": {
-    "steps": 374,
+    "steps": 375,
     "times": 14,
-    "worst": 95.93890429159778
+    "worst": 95.88899742797963
    },
    "inRock": {
     "steps": 0,
@@ -1292,7 +1407,7 @@
    "inBall": {
     "steps": 1,
     "times": 1,
-    "worst": 93.8321662640228
+    "worst": 93.83277134500128
    },
    "ballInWall": {
     "steps": 0,
@@ -1307,7 +1422,7 @@
    "ballDeep": {
     "steps": 517,
     "times": 14,
-    "worst": 54.3079160788634
+    "worst": 53.960883014176716
    },
    "ballInRock": {
     "steps": 0,
@@ -1315,6 +1430,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1332,12 +1452,12 @@
    "out": {
     "steps": 22,
     "times": 1,
-    "worst": 60.82406536335938
+    "worst": 60.821063612761264
    },
    "deep": {
     "steps": 57,
     "times": 3,
-    "worst": 60.82406536335938
+    "worst": 60.821063612761264
    },
    "inRock": {
     "steps": 0,
@@ -1362,7 +1482,7 @@
    "ballDeep": {
     "steps": 36,
     "times": 1,
-    "worst": 38.48335692704168
+    "worst": 38.48805059599857
    },
    "ballInRock": {
     "steps": 319,
@@ -1370,6 +1490,11 @@
     "worst": 48.603743936587186
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1428,6 +1553,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/door": {
@@ -1445,9 +1575,9 @@
     "worst": 0
    },
    "deep": {
-    "steps": 6,
-    "times": 2,
-    "worst": 18.037525750164292
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "inRock": {
     "steps": 0,
@@ -1460,9 +1590,9 @@
     "worst": 0
    },
    "ballInWall": {
-    "steps": 0,
-    "times": 0,
-    "worst": 0
+    "steps": 1801,
+    "times": 41,
+    "worst": 83.97174279158514
    },
    "ballOut": {
     "steps": 0,
@@ -1470,9 +1600,9 @@
     "worst": 0
    },
    "ballDeep": {
-    "steps": 5,
-    "times": 1,
-    "worst": 37.5195617987729
+    "steps": 6742,
+    "times": 19,
+    "worst": 83.97174279158514
    },
    "ballInRock": {
     "steps": 0,
@@ -1480,9 +1610,14 @@
     "worst": 0
    },
    "ownerInBall": {
-    "steps": 49,
-    "times": 1,
-    "worst": 14.357098950199429
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "troll@2/friends": {
@@ -1497,12 +1632,12 @@
    "out": {
     "steps": 798,
     "times": 10,
-    "worst": 96.14484588285029
+    "worst": 96.17515054011585
    },
    "deep": {
     "steps": 1027,
     "times": 17,
-    "worst": 96.14484588285029
+    "worst": 96.17515054011585
    },
    "inRock": {
     "steps": 0,
@@ -1527,7 +1662,7 @@
    "ballDeep": {
     "steps": 1135,
     "times": 10,
-    "worst": 58.97125856087541
+    "worst": 58.94665367708296
    },
    "ballInRock": {
     "steps": 0,
@@ -1537,7 +1672,12 @@
    "ownerInBall": {
     "steps": 48,
     "times": 1,
-    "worst": 14.337114596591078
+    "worst": 14.33713460670333
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti/wall": {
@@ -1590,6 +1730,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1648,6 +1793,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti/thin": {
@@ -1700,6 +1850,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1758,6 +1913,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti/crate": {
@@ -1813,12 +1973,17 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti/door": {
    "runs": 12,
-   "bad": 1,
-   "crossed": 1,
+   "bad": 0,
+   "crossed": 0,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -1865,6 +2030,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -1923,6 +2093,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/wall": {
@@ -1975,6 +2150,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -2033,12 +2213,17 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/thin": {
    "runs": 12,
    "bad": 12,
-   "crossed": 3,
+   "crossed": 0,
    "inWall": {
     "steps": 0,
     "times": 0,
@@ -2085,6 +2270,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -2143,6 +2333,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/crate": {
@@ -2195,6 +2390,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -2253,6 +2453,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    }
   },
   "yeti@1/friends": {
@@ -2305,6 +2510,11 @@
     "worst": 0
    },
    "ownerInBall": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
+   "stuck": {
     "steps": 0,
     "times": 0,
     "worst": 0
@@ -2367,6 +2577,11 @@
     "steps": 70,
     "times": 40,
     "worst": 44.90742629768046
+   },
+   "stuck": {
+    "steps": 969,
+    "times": 3,
+    "worst": 23.98333333335242
    },
    "other": {
     "inWall": 8,
@@ -2541,6 +2756,11 @@
     "times": 72,
     "worst": 68.12670245428886
    },
+   "stuck": {
+    "steps": 65,
+    "times": 1,
+    "worst": 16.066666666679453
+   },
    "other": {
     "inWall": 16,
     "out": 519,
@@ -2713,6 +2933,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 14494,
+    "times": 5,
+    "worst": 107.41666666673501
    },
    "other": {
     "inWall": 0,
@@ -2887,6 +3112,11 @@
     "times": 72,
     "worst": 70.03196322923075
    },
+   "stuck": {
+    "steps": 419,
+    "times": 2,
+    "worst": 18.616666666665616
+   },
    "other": {
     "inWall": 38,
     "out": 173,
@@ -3059,6 +3289,11 @@
     "steps": 364,
     "times": 185,
     "worst": 106.1951855598791
+   },
+   "stuck": {
+    "steps": 23,
+    "times": 1,
+    "worst": 15.366666666678896
    },
    "other": {
     "inWall": 489,
@@ -3233,6 +3468,11 @@
     "times": 0,
     "worst": 0
    },
+   "stuck": {
+    "steps": 2502,
+    "times": 6,
+    "worst": 25.599999999998552
+   },
    "other": {
     "inWall": 0,
     "out": 42,
@@ -3405,6 +3645,11 @@
     "steps": 5992,
     "times": 242,
     "worst": 119.49628612247412
+   },
+   "stuck": {
+    "steps": 2720,
+    "times": 4,
+    "worst": 34.68333333333137
    },
    "other": {
     "inWall": 10,
@@ -3579,6 +3824,11 @@
     "times": 591,
     "worst": 133.23149375735466
    },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
+   },
    "other": {
     "inWall": 232,
     "out": 4244,
@@ -3751,6 +4001,11 @@
     "steps": 0,
     "times": 0,
     "worst": 0
+   },
+   "stuck": {
+    "steps": 6828,
+    "times": 6,
+    "worst": 40.76666666666436
    },
    "other": {
     "inWall": 9,
@@ -3930,6 +4185,11 @@
     "times": 34,
     "worst": 37.859057529668675
    },
+   "stuck": {
+    "steps": 585,
+    "times": 1,
+    "worst": 25.066666666665242
+   },
    "other": {
     "inWall": 31,
     "out": 4658,
@@ -4105,6 +4365,11 @@
     "times": 17,
     "worst": 54.450596956300224
    },
+   "stuck": {
+    "steps": 363,
+    "times": 1,
+    "worst": 21.033333333350072
+   },
    "other": {
     "inWall": 2294,
     "out": 531,
@@ -4279,6 +4544,11 @@
     "steps": 100,
     "times": 28,
     "worst": 45.3768968338571
+   },
+   "stuck": {
+    "steps": 0,
+    "times": 0,
+    "worst": 0
    },
    "other": {
     "inWall": 808,
