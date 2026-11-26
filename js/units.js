@@ -2,6 +2,7 @@
 // Heroes come from heroes.js (one def per hero, built below); extra enemy kinds come from enemies.js.
 import { HEROES } from './heroes.js';
 import { ENEMIES } from './enemies.js';
+import { FOLK_KINDS } from './folk-kind.js'; // (round 19, lane bases19: the Villager, a test unit that wears the folk layers)
 import { PRICES } from './prices.js';
 import { specOf, variantUrl, parseVariantUrl } from './recolor.js';
 // r: collider (covers shoulders), vr: head radius the sprite is sized from.
@@ -79,6 +80,7 @@ for (const [id, h] of Object.entries(HEROES)) {
 DEFS.wolf = { team: 'hero', name: 'Wolf', art: 'art/summons/wolf.svg', headR: 35, attackAnim: 'thrust', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 60, speed: 92, role: 'skirmish',
   range: 14, atkCd: 0.8, dmg: 7, arc: 1.4, temp: 0.5, commit: 0.5 };
 Object.assign(DEFS, ENEMIES);
+Object.assign(DEFS, FOLK_KINDS); // (round 19, lane bases19)
 // The raised skeleton (Raise Dead, the Bone Charm) wears the current skeleton art, the Rattler's; the old
 // art/skeleton.svg is gone (designer, round 7: "something is summoning the old skeleton visuals").
 Object.assign(DEFS.skeleton, { art: ENEMIES.rattler.art, headR: ENEMIES.rattler.headR, attackAnim: 'swing' });

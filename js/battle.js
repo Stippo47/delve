@@ -61,7 +61,7 @@ export function battleRoster(save) {
     dungeons.push({ id, name: T.name, open: devOpen(save) || dungeonState(save, id).cleared > 0, kinds: kinds.filter(fresh), bosses: bosses.filter(fresh) });
   }
   // round 19 (lane spider19): bosses that live in no dungeon yet (bosses.js LOOSE_BOSSES) on a tab of their own, always open
-  { const loose = LOOSE_BOSSES.filter((k) => DEFS[k] && !seen.has(k)); if (loose.length) dungeons.push({ id: 'loose', name: 'No dungeon yet', open: true, kinds: [], bosses: loose, note: 'Not in a dungeon yet. As strong as a boss of the third dungeon.' }); }
+  { const loose = LOOSE_BOSSES.filter((k) => DEFS[k] && !seen.has(k)); const folk = Object.keys(DEFS).filter((k) => DEFS[k].folk && !seen.has(k)); /* (round 19, lane bases19: the Villager, a test unit) */ if (loose.length || folk.length) dungeons.push({ id: 'loose', name: 'No dungeon yet', open: true, kinds: folk, bosses: loose, note: 'Not in a dungeon yet. As strong as a boss of the third dungeon.' }); }
   const heroes = HERO_IDS.filter((h) => devOpen(save) || (save.heroes[h] && save.heroes[h].owned));
   return { heroes, dungeons };
 }

@@ -11,6 +11,7 @@
 // Coordinates: everything here is in SVG units, the sprite's own frame (220 box, centre 100,100, front = +y).
 import { INK, OUTLINE, OUTLINES, clamp, wrapAngle } from './util.js';
 import { parseVariantUrl, recolorSvgText } from './recolor.js';
+import { isFolkUrl, parseFolkKey, folkSvg } from './folk.js'; // (round 19, lane bases19: figures built from layers in code)
 
 const LINE = 6;            // outline radius in SVG units when the caller doesn't say how big it draws the figure (about OUTLINE at hero size)
 const B0 = -24, BOX = 248; // the raster box: the 220 box plus room for the outline
@@ -21,6 +22,8 @@ export function loadArt(url) {
   if (arts.has(url)) return arts.get(url).promise;
   const e = { promise: null, rig: null, sets: new Map() };
   arts.set(url, e);
+  // (round 19, lane bases19: a folk url, 'folk:<its layers>', is no file: js/folk.js writes its SVG, split like any other)
+  if (isFolkUrl(url)) { e.promise = Promise.resolve().then(() => { e.rig = splitSvg(folkSvg(parseFolkKey(url))); }).catch(() => { e.rig = null; e.failed = true; }); return e.promise; }
   // a variant (recolor.js): the base file, its colours turned before it is split into parts
   const { file, spec } = parseVariantUrl(url);
   e.promise = fetch(file).then((r) => r.text()).then((text) => { e.rig = splitSvg(recolorSvgText(text, spec)); }).catch(() => { e.rig = null; e.failed = true; });
